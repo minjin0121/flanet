@@ -5,9 +5,11 @@ from os import getenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from dotenv import load_dotenv
 
 
 # DB 키 습득
+load_dotenv(verbose=True)
 DB_USER = getenv("DB_USER")
 DB_NAME = getenv("DB_NAME")
 

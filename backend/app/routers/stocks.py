@@ -93,11 +93,11 @@ def analysis_stocks_simple_DB(
 ):
     stock_list = crud.get_stocks_by_code(db=db, code=code)
 
-    df = pd.DataFrame(columns=["Code", "Date", "CurrentStock"])
+    df = pd.DataFrame(columns=["Date", "CurrentStock"])
     for sk in stock_list:
         conv_date = str(sk.year) + "-" + str(sk.month) + "-" + str(sk.day)
         df = df.append(
-            {"Code": sk.code, "Date": conv_date, "CurrentStock": str(sk.current_stock)},
+            {"Date": conv_date, "CurrentStock": str(sk.current_stock)},
             ignore_index=True,
         )
 

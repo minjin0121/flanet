@@ -5,7 +5,7 @@ import pandas as pd
 
 from fbprophet import Prophet
 
-
+# prophet 옵션 없는 상태.
 def prophet_stock(df_input, item, period_value):
     # 데이터 입력, 전처리
     df = pd.DataFrame({"ds": df_input.index, "y": df_input[item]})

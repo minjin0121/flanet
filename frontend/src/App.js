@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import SignIn from "./pages/user/SignIn";
 import SignUp from "./pages/user/SignUp";
-import "./styles/App.scss";
 
 function App() {
   return (

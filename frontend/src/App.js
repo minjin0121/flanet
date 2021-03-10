@@ -1,15 +1,15 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Signin from "./user/Signin";
-import Signup from "./user/Signup";
+import SignIn from "./pages/user/SignIn";
+import SignUp from "./pages/user/SignUp";
 
 function App() {
   return (
     <BrowserRouter>
       <Switch>
         <Route exact path="/" component={Test} />
-        <Route path="/signin" component={Signin} />
-        <Route path="/signup" component={Signup} />
+        <Route path="/signin" component={SignIn} />
+        <Route path="/signup" component={SignUp} />
       </Switch>
     </BrowserRouter>
   );

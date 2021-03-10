@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import firebase from "firebase";
 import { Link } from "react-router-dom";
 
-class Signin extends Component {
+class SignIn extends Component {
   state = {
     email: "",
     password: "",
@@ -111,4 +111,4 @@ class Signin extends Component {
   }
 }
 
-export default Signin;
+export default SignIn;

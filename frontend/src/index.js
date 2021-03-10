@@ -1,8 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
-import "./index.scss";
-import App from "./component/App";
+import "./styles/index.scss";
+import App from "./App";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_APIKEY,

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import firebase from "firebase";
 
-class Signup extends Component {
+class SignUp extends Component {
   state = {
     email: "",
     password: "",
@@ -77,4 +77,4 @@ class Signup extends Component {
   }
 }
 
-export default Signup;
+export default SignUp;

@@ -3,7 +3,7 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=vscode,pycharm,windows,macos,python,venv
 
 ### secretkey ###
-app/common/.env
+app/.env
 
 
 ### macOS ###
@@ -292,7 +292,7 @@ pip-selfcheck.json
 
 ### vscode ###
 .vscode/*
-!.vscode/settings.json
+.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json

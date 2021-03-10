@@ -12,24 +12,25 @@ router = APIRouter()
 
 # 주식 현재가를 국가 및 기업code별 크롤링
 @router.get(
-    "/crawling/{nation}/{stock_id}/",
+    "/crawling/{nation}/{code}/",
     tags=["crawling"],
     description="주식 현재가를 국가 및 기업code별 크롤링",
 )
-def crawling_current_stock(stock_id: int, nation: str):
+def crawling_current_stock(code: str, nation: str):
     # 야후는 robots.txt를 보고 크롤링해도 되는 것 확인.
-    code = "0" * (6 - len(str(stock_id))) + str(stock_id)
-    url = (
-        "https://finance.yahoo.com/quote/"
-        + code
-        + "."
-        + nation
-        + "?p="
-        + code
-        + "."
-        + nation
-        + "&.tsrc=fin-srch"
-    )
+    if nation == "US":
+        url = "https://finance.yahoo.com/quote/" + code + "?p=" + code
+    else:
+        url = (
+            "https://finance.yahoo.com/quote/"
+            + code
+            + "."
+            + nation
+            + "?p="
+            + code
+            + "."
+            + nation
+        )
     html = req.urlopen(url).read()
     soup = BeautifulSoup(html, "html.parser")
     point = soup.find_all(class_="Mend(20px)")
@@ -41,10 +42,16 @@ def crawling_current_stock(stock_id: int, nation: str):
         res_data += int(list_data[len(list_data) - 1 - i]) * 1000 ** i
 
     now = time.localtime()
+    date = (
+        str(now[0])
+        + "-"
+        + (str(now[1]) if len(str(now[1])) == 2 else ("0" + str(now[1])))
+        + "-"
+        + (str(now[2]) if len(str(now[2])) == 2 else ("0" + str(now[2])))
+    )
+
     return {
         "code": code,
-        "year": now.tm_year,
-        "month": now.tm_mon,
-        "day": now.tm_mday,
+        "date": date,
         "current_stock": res_data,
     }

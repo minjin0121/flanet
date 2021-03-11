@@ -1,0 +1,26 @@
+#blocklyDiv {
+  height: 50%;
+  width: 100%;
+  position: absolute;
+  top: 5vh;
+}
+
+.div1 {
+  height: 40%;
+  width: 43%;
+  position: absolute;
+  bottom: 0;
+  left: 3%;
+  border: solid;
+  display: inline-block;
+}
+
+.div2 {
+  height: 40%;
+  width: 43%;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  border: solid;
+  display: inline-block;
+}

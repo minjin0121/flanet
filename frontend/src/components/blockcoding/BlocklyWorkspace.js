@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import Blockly from "blockly/core";
 import locale from "blockly/msg/en";
 import "blockly/blocks";
@@ -15,14 +16,10 @@ class BlocklyWorkspace extends React.Component {
   componentDidMount() {
     const { initialXml, ...rest } = this.props;
 
-    this.primaryWorkspace = Blockly.inject(
-      this.blocklyDiv.current,
-
-      {
-        toolbox: this.toolbox.current,
-        ...rest,
-      }
-    );
+    this.primaryWorkspace = Blockly.inject(this.blocklyDiv.current, {
+      toolbox: this.toolbox.current,
+      ...rest,
+    });
 
     if (initialXml) {
       Blockly.Xml.domToWorkspace(
@@ -61,5 +58,10 @@ class BlocklyWorkspace extends React.Component {
     );
   }
 }
+
+BlocklyWorkspace.propTypes = {
+  initialXml: PropTypes.string.isRequired,
+  children: PropTypes.element.isRequired,
+};
 
 export default BlocklyWorkspace;

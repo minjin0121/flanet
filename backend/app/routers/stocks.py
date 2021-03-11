@@ -18,7 +18,7 @@ router = APIRouter()
 
 # 주식 데이터 입력
 @router.post("/api/stocks/store/", tags=["stocks"], description="주식 데이터 직접 입력")
-def get_stock_data(stocks_data: schemas.StockNameBase, db: Session = Depends(get_db)):
+def get_stock_data(stocks_data: schemas.StockBase, db: Session = Depends(get_db)):
     if stocks_data.current_stock > 0:
         if (
             len(stocks_data.date) == 10
@@ -57,48 +57,29 @@ def create_init_stock(code: str, db: Session = Depends(get_db)):
             continue
 
         current_stock = int(data_list[i][1])
-
-        if code == "005930":
-            db_stocks = models.Samsung(
-                code=code, date=date, current_stock=current_stock
-            )
-            db.add(db_stocks)
-            db.commit()
-            cnt += 1
-        elif code == "TSLA":
-            db_stocks = models.Tesla(code=code, date=date, current_stock=current_stock)
-            db.add(db_stocks)
-            db.commit()
-            cnt += 1
+        db_stocks = models.Stock(code=code, date=date, current_stock=current_stock)
+        db.add(db_stocks)
+        db.commit()
+        cnt += 1
 
     return cnt
 
 
 # 주식 데이터 생성
-def create_stocks_data(db: Session, stocks_data: schemas.StockNameBase):
-    if stocks_data.code == "005930":
-        if (
-            db.query(models.Samsung)
-            .filter(models.Samsung.date == stocks_data.date)
-            .all()
-        ):
-            raise HTTPException(status_code=400, detail="이미 입력된 데이터입니다.")
-        db_stocks = models.Samsung(
-            code=stocks_data.code,
-            date=stocks_data.date,
-            current_stock=stocks_data.current_stock,
-        )
-    elif stocks_data.code == "TSLA":
-        if db.query(models.Tesla).filter(models.Tesla.date == stocks_data.date).all():
-            raise HTTPException(status_code=400, detail="이미 입력된 데이터입니다.")
-        db_stocks = models.Tesla(
-            code=stocks_data.code,
-            date=stocks_data.date,
-            current_stock=stocks_data.current_stock,
-        )
-    else:
-        raise HTTPException(status_code=400, detail="Stocks에 등록된 데이터가 아닙니다.")
+def create_stocks_data(db: Session, stocks_data: schemas.StockBase):
+    if (
+        db.query(models.Stock)
+        .filter(models.Stock.date == stocks_data.date)
+        .filter(models.Stock.code == stocks_data.code)
+        .all()
+    ):
+        raise HTTPException(status_code=400, detail="이미 입력된 데이터입니다.")
 
+    db_stocks = models.Stock(
+        code=stocks_data.code,
+        date=stocks_data.date,
+        current_stock=stocks_data.current_stock,
+    )
     db.add(db_stocks)
     db.commit()
     db.refresh(db_stocks)
@@ -106,8 +87,8 @@ def create_stocks_data(db: Session, stocks_data: schemas.StockNameBase):
     return db_stocks
 
 
-# 모든 주식 종류 확인
-@router.get("/api/stocks/all/", tags=["stocks"], description="모든 주식 종류 확인")
+# 모든 주식 확인
+@router.get("/api/stocks/all/", tags=["stocks"], description="모든 주식 확인")
 def show_all_stocks(db: Session = Depends(get_db)):
     return crud.get_all_stocks(db=db)
 

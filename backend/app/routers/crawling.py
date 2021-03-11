@@ -12,7 +12,7 @@ router = APIRouter()
 
 # 주식 현재가를 국가 및 기업code별 크롤링
 @router.get(
-    "/crawling/{nation}/{code}/",
+    "/api/crawling/{nation}/{code}/",
     tags=["crawling"],
     description="주식 현재가를 국가 및 기업code별 크롤링",
 )

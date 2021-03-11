@@ -17,7 +17,10 @@ router = APIRouter()
 
 # 유저 생성
 @router.post(
-    "/users/create/", response_model=schemas.User, tags=["users"], description="유저 생성"
+    "/api/users/create/",
+    response_model=schemas.User,
+    tags=["users"],
+    description="유저 생성",
 )
 def create_user(user: schemas.UserBase, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
@@ -29,6 +32,6 @@ def create_user(user: schemas.UserBase, db: Session = Depends(get_db)):
 
 
 # 모든 유저 확인
-@router.get("/users/all/", tags=["users"], description="모든 유저 확인")
+@router.get("/api/users/all/", tags=["users"], description="모든 유저 확인")
 def show_all_users(db: Session = Depends(get_db)):
     return crud.get_all_users(db=db)

@@ -17,7 +17,7 @@ router = APIRouter()
 
 
 # 주식 데이터 입력
-@router.post("/stocks/store/", tags=["stocks"], description="주식 데이터 직접 입력")
+@router.post("/api/stocks/store/", tags=["stocks"], description="주식 데이터 직접 입력")
 def get_stock_data(stocks_data: schemas.StockNameBase, db: Session = Depends(get_db)):
     if stocks_data.current_stock > 0:
         if (
@@ -31,7 +31,7 @@ def get_stock_data(stocks_data: schemas.StockNameBase, db: Session = Depends(get
 
 
 # 주식 초기 데이터 입력
-@router.get("/stocks/initdata/{code}/", tags=["stocks"], description="주식 초기 데이터 입력")
+@router.get("/api/stocks/initdata/{code}/", tags=["stocks"], description="주식 초기 데이터 입력")
 def create_init_stock(code: str, db: Session = Depends(get_db)):
     # 초기 데이터 예외 처리 필요.
     if code == "005930":
@@ -57,7 +57,7 @@ def create_init_stock(code: str, db: Session = Depends(get_db)):
             continue
 
         current_stock = int(data_list[i][1])
-        
+
         if code == "005930":
             db_stocks = models.Samsung(
                 code=code, date=date, current_stock=current_stock
@@ -107,12 +107,14 @@ def create_stocks_data(db: Session, stocks_data: schemas.StockNameBase):
 
 
 # 모든 주식 종류 확인
-@router.get("/stocks/all/", tags=["stocks"], description="모든 주식 종류 확인")
+@router.get("/api/stocks/all/", tags=["stocks"], description="모든 주식 종류 확인")
 def show_all_stocks(db: Session = Depends(get_db)):
     return crud.get_all_stocks(db=db)
 
 
 # 주식 데이터 예측
-@router.get("/stocks/predict/{method}/", tags=["stocks"], description="입력 방법으로 주식 예측")
+@router.get(
+    "/api/stocks/predict/{method}/", tags=["stocks"], description="입력 방법으로 주식 예측"
+)
 def predict_stocks(method: str):
     return method + "에 대한 ML서버 연결"

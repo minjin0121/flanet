@@ -18,26 +18,13 @@ class User(UserBase):
 
 # 스톡 베이스
 class StockBase(BaseModel):
-    code: str
-
-
-# 상속된 스톡 데이터와 스톡의 디폴트 값 생성
-class Stock(StockBase):
-    id: int
-
-    class Config:
-        orm_mode = True
-
-
-# 세부 스톡 네임 데이터 프레임
-class StockNameBase(BaseModel):
     current_stock: int
     date: str
     code: str
 
 
-# 디폴트 값 생성
-class StockName(StockNameBase):
+# 상속된 스톡 데이터와 스톡의 디폴트 값 생성
+class Stock(StockBase):
     id: int
 
     class Config:

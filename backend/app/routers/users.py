@@ -21,9 +21,11 @@ router = APIRouter()
 )
 def create_user(user: schemas.UserBase, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    if "@" in user.email and "." in user.email.split("@")[1]:
+        if db_user:
+            raise HTTPException(status_code=400, detail="이미 등록된 이메일입니다.")
+        return crud.create_user(db=db, user=user)
+    raise HTTPException(status_code=400, detail="Email 형식이 맞지 않습니다.")
 
 
 # 모든 유저 확인

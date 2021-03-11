@@ -3,7 +3,7 @@ from sys import path as pth
 from os import path
 
 # 서드 파티 라이브러리
-from fastapi import APIRouter, Depends, File, UploadFile, Form
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 import pandas as pd
 
@@ -12,105 +12,107 @@ pth.append(path.dirname(path.abspath(path.dirname(__file__))))
 from database import crud, models, schemas
 from dependency import get_db
 
-import model.prophet as pr
-import csv
-import codecs
-import io
 
 router = APIRouter()
 
 
 # 주식 데이터 입력
 @router.post("/stocks/store/", tags=["stocks"], description="주식 데이터 직접 입력")
-def get_stock_data(stocks_data: schemas.StockBase, db: Session = Depends(get_db)):
-    # 데이터 예외 처리 필요.
-    return create_stocks_data(db=db, stocks_data=stocks_data)
+def get_stock_data(stocks_data: schemas.StockNameBase, db: Session = Depends(get_db)):
+    if stocks_data.current_stock > 0:
+        if (
+            len(stocks_data.date) == 10
+            and stocks_data.date[4] == "-"
+            and stocks_data.date[7] == "-"
+        ):
+            return create_stocks_data(db=db, stocks_data=stocks_data)
+        raise HTTPException(status_code=400, detail="날짜형식이 맞지 않습니다.")
+    raise HTTPException(status_code=400, detail="주식 가격은 0원 or 0달러 이상이어야 합니다.")
 
 
 # 주식 초기 데이터 입력
-@router.get("/stocks/initdata/", tags=["stocks"], description="주식 초기 데이터 입력")
-def create_init_stock(db: Session = Depends(get_db)):
+@router.get("/stocks/initdata/{code}/", tags=["stocks"], description="주식 초기 데이터 입력")
+def create_init_stock(code: str, db: Session = Depends(get_db)):
     # 초기 데이터 예외 처리 필요.
-    data = pd.read_csv("assets/005930.csv", usecols=["날짜", "종가"])
+    if code == "005930":
+        data = pd.read_csv("assets/005930.KS.csv", usecols=["Date", "Close"])
+    elif code == "TSLA":
+        data = pd.read_csv("assets/TSLA.csv", usecols=["Date", "Close"])
+    else:
+        raise HTTPException(status_code=400, detail="해당 초기 데이터는 존재하지 않습니다.")
+
+    if crud.get_stocks_by_code(db, code):
+        raise HTTPException(status_code=400, detail="이미 입력된 데이터입니다.")
+
+    db_stocks = models.Stock(code=code)
+    db.add(db_stocks)
+    db.commit()
     data_list = data.values
+    cnt = 0
+
     for i in range(len(data_list)):
-        code = "005930"
-        split_list = data_list[i][0].split()
-        year = int(split_list[0].rstrip("년"))
-        month = int(split_list[1].rstrip("월"))
-        day = int(split_list[2].rstrip("일"))
-        current_stock = 0
-        list_data = data_list[i][1].split(",")
-        for j in range(len(list_data) - 1, -1, -1):
-            current_stock += int(list_data[len(list_data) - 1 - j]) * 1000 ** j
-        db_stocks = models.Stock(
-            code=code, year=year, month=month, day=day, current_stock=current_stock
-        )
-        db.add(db_stocks)
-        db.commit()
-    return len(data_list)
+        date = data_list[i][0]
+
+        if str(data_list[i][1]) == "nan":
+            continue
+
+        current_stock = int(data_list[i][1])
+        
+        if code == "005930":
+            db_stocks = models.Samsung(
+                code=code, date=date, current_stock=current_stock
+            )
+            db.add(db_stocks)
+            db.commit()
+            cnt += 1
+        elif code == "TSLA":
+            db_stocks = models.Tesla(code=code, date=date, current_stock=current_stock)
+            db.add(db_stocks)
+            db.commit()
+            cnt += 1
+
+    return cnt
 
 
 # 주식 데이터 생성
-def create_stocks_data(db: Session, stocks_data: schemas.StockBase):
-    db_stocks = models.Stock(
-        code=stocks_data.code,
-        year=stocks_data.year,
-        month=stocks_data.month,
-        day=stocks_data.day,
-        current_stock=stocks_data.current_stock,
-    )
+def create_stocks_data(db: Session, stocks_data: schemas.StockNameBase):
+    if stocks_data.code == "005930":
+        if (
+            db.query(models.Samsung)
+            .filter(models.Samsung.date == stocks_data.date)
+            .all()
+        ):
+            raise HTTPException(status_code=400, detail="이미 입력된 데이터입니다.")
+        db_stocks = models.Samsung(
+            code=stocks_data.code,
+            date=stocks_data.date,
+            current_stock=stocks_data.current_stock,
+        )
+    elif stocks_data.code == "TSLA":
+        if db.query(models.Tesla).filter(models.Tesla.date == stocks_data.date).all():
+            raise HTTPException(status_code=400, detail="이미 입력된 데이터입니다.")
+        db_stocks = models.Tesla(
+            code=stocks_data.code,
+            date=stocks_data.date,
+            current_stock=stocks_data.current_stock,
+        )
+    else:
+        raise HTTPException(status_code=400, detail="Stocks에 등록된 데이터가 아닙니다.")
+
     db.add(db_stocks)
     db.commit()
     db.refresh(db_stocks)
+
     return db_stocks
 
 
-# 모든 주식 데이터 확인
-@router.get("/stocks/all/", tags=["stocks"], description="모든 주식 데이터 확인")
-def show_all_users(db: Session = Depends(get_db)):
+# 모든 주식 종류 확인
+@router.get("/stocks/all/", tags=["stocks"], description="모든 주식 종류 확인")
+def show_all_stocks(db: Session = Depends(get_db)):
     return crud.get_all_stocks(db=db)
 
 
-# csv파일 데이터 예측
-@router.post("/stocks/predict/csv", tags=["stocks"], description="csv 주식 파일 예측")
-def analysis_stocks_simple_csv(
-    my_file: UploadFile = File(...),
-    item: str = Form(...),
-    date_column: str = Form(...),
-    periods: int = Form(...),
-):
-    df = to_df(my_file)
-    df = pd.DataFrame(df)
-    df = pd.read_csv(io.StringIO(df.to_csv()), index_col=date_column)
-    return pr.prophet_stock(df, item, periods)
-
-
-# 주가 코드로 데이터 예측
-@router.post("/stocks/predict/db", tags=["stocks"], description="주가 코드로 데이터 예측")
-def analysis_stocks_simple_DB(
-    code: str = Form(...), periods: int = Form(...), db: Session = Depends(get_db)
-):
-    stock_list = crud.get_stocks_by_code(db=db, code=code)
-
-    df = pd.DataFrame(columns=["Date", "CurrentStock"])
-    for sk in stock_list:
-        conv_date = str(sk.year) + "-" + str(sk.month) + "-" + str(sk.day)
-        df = df.append(
-            {"Date": conv_date, "CurrentStock": str(sk.current_stock)},
-            ignore_index=True,
-        )
-
-    df = pd.read_csv(io.StringIO(df.to_csv()), index_col="Date")  # 기본 인덱스는 날짜기준.
-    df.sort_values(by=["Date"], axis=0, inplace=True)  # date 기준 내림차순 정렬
-
-    return pr.prophet_stock(df, "CurrentStock", periods)
-
-
-# csv -> DataFrame 변환
-def to_df(file):
-    data = file.file
-    data = csv.reader(codecs.iterdecode(data, "utf-8"), delimiter="\t")
-    header = data.__next__()
-    df = pd.DataFrame(data, columns=header)
-    return df
+# 주식 데이터 예측
+@router.get("/stocks/predict/{method}/", tags=["stocks"], description="입력 방법으로 주식 예측")
+def predict_stocks(method: str):
+    return method + "에 대한 ML서버 연결"

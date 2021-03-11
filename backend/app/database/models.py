@@ -1,5 +1,5 @@
 # 서드 파티 라이브러리
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey
 
 # 로컬
 from .database import Base
@@ -19,8 +19,24 @@ class Stock(Base):
     __tablename__ = "stocks"
 
     id = Column(Integer, primary_key=True, index=True)
-    code = Column(String(10), index=True)
-    year = Column(Integer, index=True)
-    month = Column(Integer, index=True)
-    day = Column(Integer, index=True)
+    code = Column(String(10), unique=True, index=True)
+
+
+# 삼성 주식 테이블
+class Samsung(Base):
+    __tablename__ = "samsung"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date = Column(String(15), index=True)
     current_stock = Column(Integer, index=True)
+    code = Column(String(10), ForeignKey("stocks.code"))
+
+
+# 테슬라 주식 테이블
+class Tesla(Base):
+    __tablename__ = "tesla"
+
+    id = Column(Integer, primary_key=True, index=True)
+    date = Column(String(15), index=True)
+    current_stock = Column(Integer, index=True)
+    code = Column(String(10), ForeignKey("stocks.code"))

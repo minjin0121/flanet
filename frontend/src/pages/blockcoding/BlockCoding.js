@@ -34,18 +34,20 @@ function BlockCoding() {
           `}
         >
           {/* Blockly Block 선언 */}
-          <Category name="데이터 수집">
-            <Block type="logic_compare" />
-          </Category>
-          <Category name="데이터 분석">
-            <Block type="controls_repeat_ext">
-              <Value name="TIMES">
-                <Shadow type="math_number">
-                  <Field name="NUM">10</Field>
-                </Shadow>
-              </Value>
-            </Block>
-          </Category>
+          <React.Fragment>
+            <Category name="데이터 수집">
+              <Block type="logic_compare" />
+            </Category>
+            <Category name="데이터 분석">
+              <Block type="controls_repeat_ext">
+                <Value name="TIMES">
+                  <Shadow type="math_number">
+                    <Field name="NUM">10</Field>
+                  </Shadow>
+                </Value>
+              </Block>
+            </Category>
+          </React.Fragment>
         </BlocklyWorkspace>
         {/* 영역 표시 기능 X */}
         <div>

@@ -17,7 +17,7 @@ DB_NAME = getenv("DB_NAME")
 SQLALCHEMY_DATABASE_URL = (
     "mysql+pymysql://"
     + (DB_USER if DB_USER else "flanet:budspro")
-    + "@localhost:3306/"
+    + "@j4f002.p.ssafy.io:3306/"
     + (DB_NAME if DB_NAME else "blockai")
 )
 

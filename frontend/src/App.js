@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import SignIn from "./pages/user/SignIn";
 import SignUp from "./pages/user/SignUp";
+import BlockCoding from "./pages/blockcoding/BlockCoding";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Route exact path="/" component={Test} />
         <Route path="/signin" component={SignIn} />
         <Route path="/signup" component={SignUp} />
+        <Route path="/blockcoding" component={BlockCoding} />
       </Switch>
     </BrowserRouter>
   );

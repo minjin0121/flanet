@@ -44,9 +44,6 @@ def create_init_stock(code: str, db: Session = Depends(get_db)):
     if crud.get_stocks_by_code(db, code):
         raise HTTPException(status_code=400, detail="이미 입력된 데이터입니다.")
 
-    db_stocks = models.Stock(code=code)
-    db.add(db_stocks)
-    db.commit()
     data_list = data.values
     cnt = 0
 

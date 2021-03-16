@@ -1,0 +1,172 @@
+# 표준 라이브러리
+from sys import path as pth
+from os import path
+
+# 서드 파티 라이브러리
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+import pandas as pd
+
+# 로컬
+pth.append(path.dirname(path.abspath(path.dirname(__file__))))
+from database import models, schemas
+from dependency import get_db
+from routers.data import check_data_set, create_data_set
+
+
+router = APIRouter()
+
+
+# 주식 데이터 입력
+@router.post("/api/create/datalist/stocks", tags=["create"], description="주식 데이터 목록 입력")
+def create_stock_data_list(data: schemas.DataListBase, db: Session = Depends(get_db)):
+    ans = check_data_list(data.data_list_name, data.stock_code, db)
+    if ans:
+        return create_data_list(db=db, data=data)
+    elif ans == False:
+        raise HTTPException(status_code=400, detail="이미 등록된 데이터입니다.")
+    raise HTTPException(status_code=400, detail="잘못된 입력입니다.")
+
+
+# 기온 데이터 입력
+@router.post(
+    "/api/create/datalist/temperature", tags=["create"], description="기온 데이터 목록 입력"
+)
+def create_temp_data_list(db: Session = Depends(get_db)):
+    return "미개발"
+
+
+# 목록 주식 데이터 유효성 검사
+def check_data_list(name, code, db):
+    if (
+        db.query(models.DataList)
+        .filter(models.DataList.data_list_name == name)
+        .filter(models.DataList.stock_code == code)
+        .first()
+    ):
+        return False
+    if name and code:
+        return True
+
+
+# 초기 데이터 목록 생성
+@router.post("/api/create/init/datalist", tags=["create"], description="초기 데이터 목록 생성")
+def create_initdata(db: Session = Depends(get_db)):
+    data_list = [
+        (
+            "stock",
+            "samsung",
+            "https://finance.yahoo.com/quote/005930.KS?p=005930.KS&.tsrc=fin-srch",
+            "005930",
+        ),
+        (
+            "stock",
+            "kakao",
+            "https://finance.yahoo.com/quote/035720.KS?p=035720.KS&.tsrc=fin-srch",
+            "035720",
+        ),
+        (
+            "stock",
+            "naver",
+            "https://finance.yahoo.com/quote/035420.KS?p=035420.KS&.tsrc=fin-srch",
+            "035420",
+        ),
+        (
+            "stock",
+            "apple",
+            "https://finance.yahoo.com/quote/AAPL?p=AAPL&.tsrc=fin-srch",
+            "AAPL",
+        ),
+        (
+            "stock",
+            "tesla",
+            "https://finance.yahoo.com/quote/TSLA?p=TSLA&.tsrc=fin-srch",
+            "TSLA",
+        ),
+        (
+            "stock",
+            "nvidia",
+            "https://finance.yahoo.com/quote/NVDA?p=NVDA&.tsrc=fin-srch",
+            "NVDA",
+        ),
+    ]
+
+    cnt = 0
+    for d in data_list:
+        data = schemas.DataListBase(
+            data_list_type=d[0],
+            data_list_name=d[1],
+            data_list_url=d[2],
+            stock_code=d[3],
+        )
+        if check_data_list(d[1], d[3], db):
+            create_data_list(data, db)
+        else:
+            cnt += 1
+    if cnt == 6:
+        raise HTTPException(status_code=400, detail="이미 초기 데이터 목록이 등록되었습니다.")
+    return HTTPException(status_code=200, detail="등록완료")
+
+
+# 목록 데이터 생성
+def create_data_list(data: schemas.DataListBase, db: Session):
+    db_stocks = models.DataList(
+        data_list_type=data.data_list_type,
+        data_list_name=data.data_list_name,
+        data_list_url=data.data_list_url,
+        stock_code=data.stock_code,
+    )
+    db.add(db_stocks)
+    db.commit()
+    db.refresh(db_stocks)
+
+    return db_stocks
+
+
+# csv 초기 데이터 셋 입력
+@router.post("/api/create/init/dataset", tags=["create"], description="csv 초기 데이터 셋 입력")
+def create_init_data_set(db: Session = Depends(get_db)):
+    for i in range(1, len(db.query(models.DataList).all()) + 1):
+        if i < 7:
+            try:
+                data = pd.read_csv(
+                    f"assets/data_list_{i}.csv", usecols=["Date", "Close"]
+                )
+            except:
+                raise HTTPException(status_code=400, detail=f"{i}번째 초기 데이터가 없습니다.")
+        else:
+            # 기온
+            try:
+                data = pd.read_csv(
+                    f"assets/data_list_{i}.csv", usecols=["Date", "Temp"]
+                )
+            except:
+                raise HTTPException(status_code=400, detail=f"{i}번째 초기 데이터가 없습니다.")
+
+        data_list = data.values
+        cnt = 0
+
+        for j in range(len(data_list)):
+            try:
+                float(data_list[j][1])
+                if str(data_list[j][1]) == "nan":
+                    continue
+            except:
+                continue
+            if (
+                db.query(models.DataSet)
+                .filter(models.DataSet.data_list_id == i)
+                .filter(models.DataSet.data_set_date == data_list[j][0])
+                .first()
+            ):
+                continue
+            db_stocks = models.DataSet(
+                data_list_id=i,
+                data_set_date=data_list[j][0],
+                data_set_value=float(data_list[j][1]),
+            )
+            db.add(db_stocks)
+            db.commit()
+            cnt += 1
+
+    return f"{cnt}개 데이터 입력"

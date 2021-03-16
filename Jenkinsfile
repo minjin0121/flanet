@@ -8,11 +8,12 @@ pipeline {
 				checkout scm
 			}
 		}
-		stage('Docker buildd') {
+		stage('Docker build') {
 			agent any
 			steps {
 				sh 'docker build -t frontend:latest /var/jenkins_home/workspace/flanet/frontend'
 				sh 'docker build -t backend:latest /var/jenkins_home/workspace/flanet/backend'
+				sh 'docker build -t mlserver:latest /var/jenkins_home/workspace/flanet/MLServer'
 			}
 		}
 		stage('Docker run') {
@@ -22,10 +23,14 @@ pipeline {
         | xargs --no-run-if-empty docker container stop'
 				sh 'docker ps -f name=backend -q \
 				| xargs --no-run-if-empty docker container stop'
+				sh 'docker ps -f name=mlserver -q \
+				| xargs --no-run-if-empty docker container stop'
 
 				sh 'docker container ls -a -f name=frontend -q \
         | xargs -r docker container rm'
 				sh 'docker container ls -a -f name=backend -q \
+        | xargs -r docker container rm'
+				sh 'docker container ls -a -f name=mlserver -q \
         | xargs -r docker container rm'
 				sh 'docker images -f dangling=true && \
 				docker rmi $(docker images -f dangling=true -q)'
@@ -38,6 +43,8 @@ pipeline {
 				frontend:latest'
 				sh 'docker run -d --name backend \
 				--network flanetwork backend:latest'
+				sh 'docker run -d --name mlserver \
+				--network flanetwork mlserver:latest'
 			}
 		}
 	}

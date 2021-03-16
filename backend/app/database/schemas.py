@@ -1,31 +1,26 @@
 # 서드 파티 라이브러리
 from pydantic import BaseModel
+from sqlalchemy import Date
 
 
-# 유저 베이스
-class UserBase(BaseModel):
-    email: str
+# 데이터 목록 베이스
+class DataListBase(BaseModel):
+    data_list_type: str
+    data_list_name: str
+    data_list_url: str
+    stock_code: str
 
 
-# 상속된 유저 데이터와 유저의 디폴트 값 생성
-class User(UserBase):
-    id: int
-    is_active: bool
-
-    class Config:
-        orm_mode = True
-
-
-# 스톡 베이스
-class StockBase(BaseModel):
-    current_stock: int
-    date: str
-    code: str
-
-
-# 상속된 스톡 데이터와 스톡의 디폴트 값 생성
-class Stock(StockBase):
-    id: int
+# 상속된 데이터 목록과 데이터 목록의 디폴트 값 생성
+class DataList(DataListBase):
+    data_list_id: int
 
     class Config:
         orm_mode = True
+
+
+# 데이터 셋 베이스
+class DataSet(BaseModel):
+    data_set_date: str
+    data_list_name: str
+    data_set_value: float

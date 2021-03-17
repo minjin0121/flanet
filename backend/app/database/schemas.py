@@ -22,5 +22,5 @@ class DataList(DataListBase):
 # 데이터 셋 베이스
 class DataSet(BaseModel):
     data_set_date: str
-    data_list_name: str
+    data_list_id: int
     data_set_value: float

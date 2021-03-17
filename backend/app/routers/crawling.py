@@ -32,7 +32,8 @@ def crawling_current_stock(data_list_id: int, db: Session = Depends(get_db)):
         point = soup.find_all(class_="Mend(20px)")
         data = point[1].find("span")
         list_data = str(data).split(">")[1].split("<")[0].split(".")[0].split(",")
-        res_data = 0
+        res_data = str(data).split(">")[1].split("<")[0].split(".")[1]
+        res_data = int(res_data) / (len(res_data) ** 10)
 
         for i in range(len(list_data) - 1, -1, -1):
             res_data += int(list_data[len(list_data) - 1 - i]) * 1000 ** i
@@ -47,8 +48,9 @@ def crawling_current_stock(data_list_id: int, db: Session = Depends(get_db)):
         )
 
         return {
-            "date": date,
-            "current_stock": res_data,
+            "data_set_date": date,
+            "data_list_id": data_list_id,
+            "data_set_value": res_data,
         }
     else:
         return HTTPException(status_code=400, detail="data_list 미등록 데이터입니다.")

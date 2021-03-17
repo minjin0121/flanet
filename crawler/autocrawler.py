@@ -9,7 +9,7 @@ import requests
 
 
 # chilling 값을 변화
-chilling_time = [86400, 86302, 83493, 85555, 89999, 85306, 87772, 85122, 86120, 87920]
+chilling_time = [86400, 86302, 83493, 85555, 89999, 85306, 87772, 85122, 86120, 87924]
 hidx = 0
 cidx = 0
 holiday = [False, False, False, False, True, True, False, False]
@@ -97,7 +97,7 @@ while True:
             res_dic["data_set_date"] = america_date
 
         resp = requests.post(
-            "http://127.0.0.1:8000/api/stocks/store/", data=json.dumps(res_dic)
+            "https://j4f002.p.ssafy.io/api/stocks/store/", data=json.dumps(res_dic)
         )
         print(
             "---------------------------------------- 데이터 추가 ----------------------------------------"

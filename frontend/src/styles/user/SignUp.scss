@@ -1,0 +1,23 @@
+.signUp {
+  h1 {
+    color: $flanet-green;
+  }
+
+  .signUpTerm {
+    input {
+      border-color: $flanet-green;
+
+      &:checked {
+        background-color: $flanet-green;
+      }
+    }
+
+    label {
+      color: $flanet-green;
+    }
+  }
+
+  .signUpButton {
+    background-color: $flanet-green;
+  }
+}

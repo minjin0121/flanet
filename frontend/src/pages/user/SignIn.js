@@ -44,6 +44,7 @@ function SignIn() {
             id="email"
             type="email"
             value={email}
+            placeholder="이메일을 입력해주세요."
             onChange={(event) => {
               setEmail(event.target.value);
             }}
@@ -55,6 +56,7 @@ function SignIn() {
             id="password"
             type="password"
             value={password}
+            placeholder="비밀번호를 입력해주세요."
             onChange={(event) => {
               setPassword(event.target.value);
             }}
@@ -62,8 +64,8 @@ function SignIn() {
         </div>
       </form>
       <button
-        type="submit"
         className="signInButton"
+        type="submit"
         onClick={(event) => {
           signInWithEmail(event);
         }}

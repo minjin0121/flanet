@@ -1,0 +1,20 @@
+.signIn {
+  h1 {
+    color: $flanet-yellow;
+  }
+
+  a {
+    color: $flanet-green;
+    font-weight: bold;
+    margin-left: 10px;
+  }
+
+  .signInButton {
+    background-color: $flanet-yellow;
+  }
+
+  .googleSignInButton {
+    width: 250px;
+    cursor: pointer;
+  }
+}

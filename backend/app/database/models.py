@@ -1,5 +1,8 @@
+# 표준 라이브러리
+import time
+
 # 서드 파티 라이브러리
-from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date, Float
+from sqlalchemy import Boolean, Column, Integer, String, ForeignKey, Date, Float, DateTime
 from sqlalchemy.orm import relationship
 
 # 로컬
@@ -38,10 +41,10 @@ class UserDataSet(Base):
     user_data_set_id = Column(Integer, primary_key=True, index=True)
     data_list_id = Column(Integer, ForeignKey("data_list.data_list_id"))
     user_id = Column(String(100), index=True)
-    # user_data_set_start = Column(Date, index=True)
-    # user_data_set_end = Column(Date, index=True)
+    user_data_set_start = Column(Date, index=True)
+    user_data_set_end = Column(Date, index=True)
     user_data_set_path = Column(String(100))
-    user_data_set_date = Column(Date, index=True)
+    user_data_set_date = Column(DateTime, index=True, default=time.localtime())
 
     data_list_own = relationship("DataList", back_populates="user_data_sets")
     user_data_predicts = relationship(
@@ -72,7 +75,7 @@ class UserDataPredict(Base):
     training_model_id = Column(Integer, ForeignKey("training_model.training_model_id"))
     user_id = Column(String(100), index=True)
     user_data_predict_path = Column(String(100))
-    user_data_predict_date = Column(Date, index=True)
+    user_data_predict_date = Column(DateTime, index=True, default=time.localtime())
 
     user_data_set_own = relationship("UserDataSet", back_populates="user_data_predicts")
     training_model_own = relationship(

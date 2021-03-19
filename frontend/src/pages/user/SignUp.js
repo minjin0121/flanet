@@ -21,7 +21,7 @@ function SignUp() {
   };
 
   return (
-    <div className="signUp">
+    <div className="signUp userContainer">
       <h1>회원가입</h1>
       <form action="" method="post">
         <div>
@@ -30,6 +30,7 @@ function SignUp() {
             id="email"
             type="email"
             value={email}
+            placeholder="ex. flanet@ssafy.com"
             onChange={(event) => {
               setEmail(event.target.value);
             }}
@@ -47,7 +48,13 @@ function SignUp() {
           />
         </div>
       </form>
+      <div className="signUpTerm">
+        <input id="term" type="checkbox" />
+        <label htmlFor="term">약관 동의</label>
+      </div>
       <button
+        className="signUpButton"
+        type="submit"
         onClick={(event) => {
           signUpWithEmail(event);
         }}

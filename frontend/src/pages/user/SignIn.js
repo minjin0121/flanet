@@ -11,13 +11,19 @@ function SignIn() {
   const signInWithEmail = (event) => {
     firebase
       .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then((result) => {
-        history.push("/");
+      .setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(() => {
+        firebase
+          .auth()
+          .signInWithEmailAndPassword(email, password)
+          .then((result) => {
+            history.push("/");
+          })
+          .catch((error) => {
+            console.log(error.code);
+          });
       })
-      .catch((error) => {
-        console.log(error.code);
-      });
+      .catch(() => {});
   };
 
   const signInWithGoogle = (event) => {
@@ -25,13 +31,19 @@ function SignIn() {
 
     firebase
       .auth()
-      .signInWithPopup(provider)
-      .then((response) => {
-        history.push("/");
+      .setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(() => {
+        firebase
+          .auth()
+          .signInWithPopup(provider)
+          .then((response) => {
+            history.push("/");
+          })
+          .catch((error) => {
+            console.log(error.code);
+          });
       })
-      .catch((error) => {
-        console.log(error.code);
-      });
+      .catch(() => {});
   };
 
   return (

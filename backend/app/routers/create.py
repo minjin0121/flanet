@@ -55,37 +55,37 @@ def create_initdata(db: Session = Depends(get_db)):
     data_list = [
         (
             "stock",
-            "samsung",
+            "삼성전자",
             "https://finance.yahoo.com/quote/005930.KS?p=005930.KS&.tsrc=fin-srch",
             "005930",
         ),
         (
             "stock",
-            "kakao",
+            "카카오",
             "https://finance.yahoo.com/quote/035720.KS?p=035720.KS&.tsrc=fin-srch",
             "035720",
         ),
         (
             "stock",
-            "naver",
+            "네이버",
             "https://finance.yahoo.com/quote/035420.KS?p=035420.KS&.tsrc=fin-srch",
             "035420",
         ),
         (
             "stock",
-            "apple",
+            "애플",
             "https://finance.yahoo.com/quote/AAPL?p=AAPL&.tsrc=fin-srch",
             "AAPL",
         ),
         (
             "stock",
-            "tesla",
+            "테슬라",
             "https://finance.yahoo.com/quote/TSLA?p=TSLA&.tsrc=fin-srch",
             "TSLA",
         ),
         (
             "stock",
-            "nvidia",
+            "엔비디아",
             "https://finance.yahoo.com/quote/NVDA?p=NVDA&.tsrc=fin-srch",
             "NVDA",
         ),

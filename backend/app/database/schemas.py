@@ -1,3 +1,6 @@
+# 표준 라이브러리
+import time
+
 # 서드 파티 라이브러리
 from pydantic import BaseModel
 from typing import Optional

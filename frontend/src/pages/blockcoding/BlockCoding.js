@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import BlocklyJS from "blockly/javascript";
 import BlocklyWorkspace from "../../components/blockcoding/BlocklyWorkspace";
-import {
-  Block,
-  Category,
-  Value,
-  Field,
-  Shadow,
-} from "../../components/blockcoding/BlocklyElement";
+import { Block, Category } from "../../components/blockcoding/BlocklyElement";
 import "../../components/blockcoding/blocks/CrawlingNowPrice";
 import "../../components/blockcoding/blocks/CrawlingPeriodPrice";
 import "../../components/blockcoding/blocks/DataPreprocessing";
+import "../../components/blockcoding/blocks/AnalysisCNN";
+import "../../components/blockcoding/blocks/AnalysisLSTM";
+import "../../components/blockcoding/blocks/AnalysisProphet";
 
 function BlockCoding() {
   const [simpleWorkspace] = useState(React.createRef());
@@ -51,13 +48,9 @@ function BlockCoding() {
               <Block type="data_preprocessing_field" />
             </Category>
             <Category name="데이터 분석">
-              <Block type="controls_repeat_ext">
-                <Value name="TIMES">
-                  <Shadow type="math_number">
-                    <Field name="NUM">10</Field>
-                  </Shadow>
-                </Value>
-              </Block>
+              <Block type="analysis_cnn_field" />
+              <Block type="analysis_lstm_field" />
+              <Block type="analysis_prophet_field" />
             </Category>
           </React.Fragment>
         </BlocklyWorkspace>

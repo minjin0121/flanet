@@ -1,0 +1,32 @@
+.footer {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5%;
+  margin-top: auto;
+  color: $flanet_black;
+  background-color: $flanet-gray;
+  .logo {
+    width: 50px;
+    height: 40px;
+    margin-left: 5%;
+  }
+  .footerExplanation {
+    display: inline;
+    margin-left: 30%;
+    font-size: small;
+    text-align: start;
+    .footerBold {
+      font-weight: bold;
+      display: flex;
+      span {
+        justify-content: space-between;
+        width: 180px;
+      }
+    }
+    .footerSmall {
+      font-size: smaller;
+    }
+    .footerCorp {
+    }
+  }
+}

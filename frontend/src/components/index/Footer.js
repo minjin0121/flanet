@@ -8,7 +8,7 @@ function Footer() {
         className="logo"
         alt="logo"
       />
-      <div className="footerExplanation d-inline">
+      <div className="footerExplanation">
         <div className="footerBold">
           <span>플래닛 이용약관</span>
           <span>개인정보 처리방침</span>
@@ -17,7 +17,7 @@ function Footer() {
           <span>플래닛 운영 정책</span>
         </div>
         <div className="footerSmall">
-          플래닛은 SSAFY 필드프로젝트에서 시작한 AI/ML 교육 플랫폼입니다. 모든
+          플래닛은 SSAFY 넷싸프로젝트에서 시작한 AI/ML 교육 플랫폼입니다. 모든
           저작물은 교육 목적에 한해 출처를 밝히고 자유롭게 이용할 수 있습니다. 
         </div>
         <div className="footerCorp">@FlaNET corp.</div>

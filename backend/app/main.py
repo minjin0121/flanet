@@ -11,6 +11,8 @@ from routers.create import router as create_router
 from routers.data import router as data_router
 from routers.stocks import router as stocks_router
 from routers.csv import router as csv_router
+from routers.predict import router as predict_router
+from routers.code import router as code_router
 
 
 models.Base.metadata.create_all(bind=database.engine)
@@ -29,8 +31,10 @@ app.add_middleware(
 app.include_router(crawling_router)
 app.include_router(create_router)
 app.include_router(data_router)
+app.include_router(predict_router)
 app.include_router(stocks_router)
 app.include_router(csv_router)
+app.include_router(code_router)
 
 
 if __name__ == "__main__":

@@ -5,7 +5,7 @@ from io import StringIO
 # 서드파티 라이브러리
 from fastapi import FastAPI, File, Form, HTTPException
 from starlette.responses import FileResponse
-import uvicorn
+import uvicorn, h5py
 
 app = FastAPI()
 
@@ -161,6 +161,24 @@ def csv_download_userdatapredict_file(user_data_predict_id: int):
         f"assets/predictdata/user_data_predict_{user_data_predict_id}.csv",
         media_type="application/octet-stream",
         filename="data analysis.csv",
+    )
+
+
+# trainingmodel 파일 다운로드
+@app.get(
+    "/csv/download/trainingmodel/{training_model_id}",
+    tags=["model"],
+    description="trainingmodel 파일 다운로드 파일 다운로드",
+)
+def csv_download_userdatapredict_file(training_model_id: int):
+    try:
+        h5py.File(f"assets/model/training_model_{training_model_id}.h5")
+    except:
+        raise HTTPException(status_code=400, detail="데이터가 존재하지 않습니다.")
+    return FileResponse(
+        f"assets/model/training_model_{training_model_id}.h5",
+        media_type="application/octet-stream",
+        filename="model.h5",
     )
 
 

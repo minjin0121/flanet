@@ -4,7 +4,7 @@ from os import path
 import time
 
 # 서드 파티 라이브러리
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 # 로컬
@@ -17,7 +17,7 @@ router = APIRouter()
 
 
 # 데이터 목록 확인
-@router.get("/api/data/datalist/all", tags=["dataset"], description="모든 데이터 목록 확인")
+@router.get("/api/data/datalist/all", tags=["datalist"], description="모든 데이터 목록 확인")
 def show_all_data_list(db: Session = Depends(get_db)):
     return db.query(models.DataList).all()
 
@@ -71,7 +71,9 @@ def show_select_data_set(data_list_id: int, db: Session = Depends(get_db)):
 
 
 # 모든 유저 데이터 셋 확인
-@router.get("/api/data/userdataset/all", tags=["dataset"], description="모든 유저 데이터 셋 확인")
+@router.get(
+    "/api/data/userdataset/all", tags=["userdataset"], description="모든 유저 데이터 셋 확인"
+)
 def show_all_user_data_set(db: Session = Depends(get_db)):
     return db.query(models.UserDataSet).all()
 
@@ -79,13 +81,39 @@ def show_all_user_data_set(db: Session = Depends(get_db)):
 # 선택된 유저의 데이터 확인
 @router.get(
     "/api/data/userdataset/select/{user_id}",
-    tags=["dataset"],
+    tags=["userdataset"],
     description="선택된 유저의 데이터 확인",
 )
 def show_select_user_data_set(user_id: str, db: Session = Depends(get_db)):
     return (
         db.query(models.UserDataSet).filter(models.UserDataSet.user_id == user_id).all()
     )
+
+
+# 선택된 유저 데이터 셋의 기간 데이터 반환
+@router.get(
+    "/api/data/userdataset/{user_data_set_id}",
+    tags=["userdataset"],
+    description="선택된 유저 데이터 셋의 기간 데이터 반환",
+)
+def show_period_user_data_set(user_data_set_id: int, db: Session = Depends(get_db)):
+    data = (
+        db.query(models.UserDataSet)
+        .filter(models.UserDataSet.user_data_set_id == user_data_set_id)
+        .all()
+    )
+    if data:
+        data = data[0]
+        if data.user_data_set_start and data.user_data_set_end:
+            return (
+                db.query(models.DataSet)
+                .filter(models.DataSet.data_set_date >= data.user_data_set_start)
+                .filter(models.DataSet.data_set_date <= data.user_data_set_end)
+                .all()
+            )
+        raise HTTPException(status_code=400, detail="해당 데이터는 기간 데이터가 아닌 csv 입력 데이터입니다.")
+    else:
+        raise HTTPException(status_code=400, detail="유저 데이터 목록에 없는 데이터입니다.")
 
 
 # 유저 데이터 셋 생성
@@ -103,3 +131,5 @@ def create_user_data_set(db: Session, data: schemas.UserDataSetBase):
     db.refresh(db_stocks)
 
     return db_stocks
+
+

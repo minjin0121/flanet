@@ -48,7 +48,7 @@ def analysis_stocks_DB(
             {"Date": sk.date, "CurrentStock": str(sk.current_stock)},
             ignore_index=True,
         )
-
+    
     df = pd.read_csv(io.StringIO(df.to_csv()), index_col="Date")  # 기본 인덱스는 날짜기준.
     df.sort_values(by=["Date"], axis=0, inplace=True)  # date 기준 내림차순 정렬
     df = df.drop(["Unnamed: 0"], axis=1)

@@ -49,6 +49,14 @@ def check_data_list(name, code, db):
         return True
 
 
+# 목록 사용자 정의 데이터 유효성 검사
+def check_user_set(name, db):
+    if db.query(models.DataList).filter(models.DataList.data_list_name == name).first():
+        return False
+    if name:
+        return True
+
+
 # 초기 데이터 목록 생성
 @router.post("/api/create/init/datalist", tags=["create"], description="초기 데이터 목록 생성")
 def create_initdata(db: Session = Depends(get_db)):
@@ -103,7 +111,17 @@ def create_initdata(db: Session = Depends(get_db)):
             create_data_list(data, db)
         else:
             cnt += 1
-    if cnt == 6:
+    if check_user_set("사용자정의", db):
+        u_data = models.DataList(
+            data_list_type="user",
+            data_list_name="사용자정의",
+        )
+        db.add(u_data)
+        db.commit()
+        db.refresh(u_data)
+    else:
+        cnt += 1
+    if cnt == 7:
         raise HTTPException(status_code=400, detail="이미 초기 데이터 목록이 등록되었습니다.")
     return HTTPException(status_code=200, detail="등록완료")
 

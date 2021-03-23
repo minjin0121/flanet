@@ -10,6 +10,7 @@ from routers.crawling import router as crawling_router
 from routers.create import router as create_router
 from routers.data import router as data_router
 from routers.stocks import router as stocks_router
+from routers.csv import router as csv_router
 
 
 models.Base.metadata.create_all(bind=database.engine)
@@ -29,6 +30,7 @@ app.include_router(crawling_router)
 app.include_router(create_router)
 app.include_router(data_router)
 app.include_router(stocks_router)
+app.include_router(csv_router)
 
 
 if __name__ == "__main__":

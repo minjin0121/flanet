@@ -10,14 +10,25 @@ import BlockCoding from "./pages/blockcoding/BlockCoding";
 function App() {
   return (
     <BrowserRouter>
-      <Header />
       <Switch>
-        <Route exact path="/" component={Home} />
-        <Route path="/signin" component={SignIn} />
-        <Route path="/signup" component={SignUp} />
-        <Route path="/blockcoding" component={BlockCoding} />
+        <Route exact path="/">
+          <Home />
+        </Route>
+        <Route path="/signin">
+          <Header />
+          <SignIn />
+          <Footer />
+        </Route>
+        <Route path="/signup">
+          <Header />
+          <SignUp />
+          <Footer />
+        </Route>
+        <Route path="/blockcoding">
+          <Header />
+          <BlockCoding />
+        </Route>
       </Switch>
-      <Footer />
     </BrowserRouter>
   );
 }

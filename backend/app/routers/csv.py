@@ -15,6 +15,7 @@ import requests
 pth.append(path.dirname(path.abspath(path.dirname(__file__))))
 from dependency import get_db
 from database import models, schemas
+from routers.data import check_user
 
 
 router = APIRouter()
@@ -25,6 +26,8 @@ router = APIRouter()
 def show_all_data_list(
     file: bytes = File(...), user_id: str = Form(...), db: Session = Depends(get_db)
 ):
+    if check_user(user_id):
+        raise HTTPException(status_code=400, detail="유저가 유효하지 않습니다.")
     data_list_id = (
         db.query(models.DataList)
         .filter(models.DataList.data_list_name == "사용자정의")
@@ -33,7 +36,7 @@ def show_all_data_list(
     )
     if user_id:
         db_data = models.UserDataSet(
-            data_list_id=data_list_id, user_id=user_id, user_data_set_path="True", user_data_set_date=time.localtime()
+            data_list_id=data_list_id, user_id=user_id, user_data_set_date=time.localtime()
         )
         db.add(db_data)
         db.commit()
@@ -46,4 +49,4 @@ def show_all_data_list(
         requests.post("http://127.0.0.1:8003/csv/upload/userdataset", files = upload, data=data)
     except:
         raise HTTPException(status_code=400, detail="저장 실패")
-    return f"{user_data_set_id}번째 데이터 저장완료"
+    return {"user_data_set":db_data}

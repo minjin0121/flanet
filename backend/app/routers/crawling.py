@@ -13,7 +13,7 @@ from sqlalchemy.orm import Session
 pth.append(path.dirname(path.abspath(path.dirname(__file__))))
 from dependency import get_db
 from database import models, schemas
-from routers.data import create_user_data_set
+from routers.data import create_user_data_set, check_user
 
 
 router = APIRouter()
@@ -71,6 +71,8 @@ def crawling_current_stock(data_list_id: int, db: Session = Depends(get_db)):
 def crawling_current_stock_for_user(
     data: schemas.UserCrawling, db: Session = Depends(get_db)
 ):
+    if check_user(data.user_id):
+        raise HTTPException(status_code=400, detail="유저가 유효하지 않습니다.")
     url = (
         db.query(models.DataList)
         .filter(models.DataList.data_list_id == data.data_list_id)
@@ -103,8 +105,8 @@ def crawling_current_stock_for_user(
             user_data_set_start=date,
             user_data_set_end=date,
         )
-        create_user_data_set(db, db_data)
         return {
+            "user_data_set_id":create_user_data_set(db, db_data),
             "data_set_date": date,
             "data_list_id": data.data_list_id,
             "data_set_value": res_data,
@@ -122,6 +124,8 @@ def crawling_current_stock_for_user(
 def crawling_stock_period_data(
     data: schemas.UserDataSetInputBase, db: Session = Depends(get_db)
 ):
+    if check_user(data.user_id):
+        raise HTTPException(status_code=400, detail="유저가 유효하지 않습니다.")
     url = (
         db.query(models.DataList)
         .filter(models.DataList.data_list_id == data.data_list_id)
@@ -134,7 +138,7 @@ def crawling_stock_period_data(
             user_data_set_start=data.user_data_set_start,
             user_data_set_end=data.user_data_set_end,
         )
-        create_user_data_set(db, db_data)
+        tmp = create_user_data_set(db, db_data)
 
         s_date = transform_date(data.user_data_set_start)
         e_date = transform_date(data.user_data_set_end)
@@ -152,7 +156,10 @@ def crawling_stock_period_data(
             .filter(models.DataSet.data_set_date <= data.user_data_set_end)
             .all()
         )
-        return value_data
+        return {
+            "user_data_set": tmp,
+            "data_set": value_data,
+        }
     else:
         raise HTTPException(status_code=400, detail="data_list 미등록 데이터입니다.")
 

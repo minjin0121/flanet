@@ -46,8 +46,9 @@ class UserDataSetInputBase(BaseModel):
 
 # 유저 데이터 셋 베이스
 class UserDataSetBase(UserDataSetInputBase):
-    user_data_set_path: Optional[str] = None
+    user_data_set_name: Optional[str] = None
     user_data_set_date: Optional[str] = None
+    user_data_set_xml: Optional[str] = None
 
 
 # 상속된 유저 데이터 셋 베이스와 유저 데이터 셋의 디폴트 값 생성

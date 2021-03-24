@@ -164,13 +164,27 @@ def csv_download_userdatapredict_file(user_data_predict_id: int):
     )
 
 
+# userdata csv 파일 저장
+@app.post(
+    "/csv/upload/trainingmodel", tags=["model"], description="trainingmodel 파일 저장"
+)
+async def csv_upload_trainingmodel(
+    file: bytes = File(...),
+    training_model_id: int = Form(...),
+):
+    with open(f"assets/model/training_model_{training_model_id}.h5", "wb") as f:
+        f.write(file)
+
+    return f"{training_model_id}번째 트레이닝 모델 저장 완료"
+
+
 # trainingmodel 파일 다운로드
 @app.get(
     "/csv/download/trainingmodel/{training_model_id}",
     tags=["model"],
     description="trainingmodel 파일 다운로드 파일 다운로드",
 )
-def csv_download_userdatapredict_file(training_model_id: int):
+def csv_download_trainingmodel_file(training_model_id: int):
     try:
         h5py.File(f"assets/model/training_model_{training_model_id}.h5")
     except:

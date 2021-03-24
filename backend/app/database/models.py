@@ -43,7 +43,8 @@ class UserDataSet(Base):
     user_id = Column(String(100), index=True)
     user_data_set_start = Column(Date, index=True)
     user_data_set_end = Column(Date, index=True)
-    user_data_set_path = Column(String(100))
+    user_data_set_name = Column(String(20), index=True)
+    user_data_set_xml = Column(String(10000))
     user_data_set_date = Column(DateTime, index=True, default=time.localtime())
 
     data_list_own = relationship("DataList", back_populates="user_data_sets")
@@ -58,7 +59,7 @@ class TrainingModel(Base):
 
     training_model_id = Column(Integer, primary_key=True, index=True)
     training_model_name = Column(String(20), index=True)
-    training_model_path = Column(String(100))
+    training_model_xml = Column(String(10000))
     user_id = Column(String(100), index=True)
 
     user_data_predicts = relationship(
@@ -74,7 +75,8 @@ class UserDataPredict(Base):
     user_data_set_id = Column(Integer, ForeignKey("user_data_set.user_data_set_id"))
     training_model_id = Column(Integer, ForeignKey("training_model.training_model_id"))
     user_id = Column(String(100), index=True)
-    user_data_predict_path = Column(String(100))
+    user_data_predict_name = Column(String(20), index=True)
+    user_data_predict_xml = Column(String(10000))
     user_data_predict_date = Column(DateTime, index=True, default=time.localtime())
 
     user_data_set_own = relationship("UserDataSet", back_populates="user_data_predicts")

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Plotly from "plotly.js";
 import BlocklyJS from "blockly/javascript";
 import BlocklyWorkspace from "../../components/blockcoding/BlocklyWorkspace";
 import { Block, Category } from "../../components/blockcoding/BlocklyElement";
@@ -18,6 +19,41 @@ function BlockCoding() {
     const check = BlocklyJS.workspaceToCode(simpleWorkspace.current.workspace);
 
     console.log(check);
+
+    // 실행 시 시각화
+    // [동식님 says] prophet 모델에서는 추론 값이 날짜(x축), 예측 값(평균), 최소 예측값, 최대 예측값, 기존 데이터으로 던져줄꺼에요!
+
+    // 시각화할 csv 주소
+    const csvAddress =
+      "https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv";
+
+    Plotly.d3.csv(csvAddress, function (rows) {
+      console.log(rows);
+
+      function unpack(atts, key) {
+        return atts.map(function (att) {
+          return att[key];
+        });
+      }
+
+      // 각각의 값들 매칭 => 날짜(x축), 예측 값(평균), 최소 예측값, 최대 예측값, 기존 데이터
+      const trace1 = {
+        type: "scatter",
+        mode: "lines",
+        name: "AAPL High",
+        x: unpack(rows, "Date"),
+        y: unpack(rows, "AAPL.High"),
+        line: { color: "#17BECF" },
+      };
+
+      const data = [trace1];
+
+      const layout = {
+        title: "시각화 결과는!",
+      };
+
+      Plotly.newPlot("visualization", data, layout);
+    });
   };
 
   // 데이터 다운 버튼
@@ -87,7 +123,10 @@ function BlockCoding() {
       {/* 영역 표시 기능 X */}
       <div>
         <div className="div1">데이터</div>
-        <div className="div2">코드</div>
+        <div className="div2" id="visualization">
+          시각화
+        </div>
+        <div className="div3">코드</div>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import BlocklyWorkspace from "../../components/blockcoding/BlocklyWorkspace";
 import { Block, Category } from "../../components/blockcoding/BlocklyElement";
 import "../../components/blockcoding/blocks/CrawlingNowPrice";
 import "../../components/blockcoding/blocks/CrawlingPeriodPrice";
+import "../../components/blockcoding/blocks/DataFileInput";
 import "../../components/blockcoding/blocks/DataPreprocessing";
 import "../../components/blockcoding/blocks/AnalysisCNN";
 import "../../components/blockcoding/blocks/AnalysisLSTM";
@@ -45,6 +46,7 @@ function BlockCoding() {
             <Category name="데이터 수집">
               <Block type="crawling_now_price_field" />
               <Block type="crawling_period_price_field" />
+              <Block type="data_file_input" />
               <Block type="data_preprocessing_field" />
             </Category>
             <Category name="데이터 분석">

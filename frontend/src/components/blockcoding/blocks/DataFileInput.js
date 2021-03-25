@@ -28,32 +28,25 @@ Blockly.Blocks.data_file_input = {
 };
 
 Blockly.JavaScript.data_file_input = function (block) {
-  console.log(file);
-
   const user = JSON.parse(
     sessionStorage.getItem(
       `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
     )
   );
 
-  console.log(user.uid);
+  const formData = new FormData();
 
-  // const formData = new FormData();
+  formData.append("file", file);
+  formData.append("user_id", user.uid);
 
-  // formData.append("file", file);
-  // formData.append("user_id", user.uid);
-
-  // fetch(`https://localhost:8003/csv/upload/userdataset`, {
-  //   method: "POST",
-  //   headers: {
-  //     "Content-Type": "multipart/form-data",
-  //   },
-  //   data: formData,
-  // })
-  //   .then((res) => res.json())
-  //   .then((res) => {
-  //     console.log(res);
-  //   });
+  fetch(`https://j4f002.p.ssafy.io/api/csv/upload/userdataset`, {
+    method: "POST",
+    body: formData,
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+    });
 
   return "dataFileInput return";
 };

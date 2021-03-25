@@ -14,12 +14,7 @@ DB_USER = getenv("DB_USER")
 DB_NAME = getenv("DB_NAME")
 
 # 숨겨진 키로 DB 연결 / 하지만 지금은 default 값을 두었습니다.
-SQLALCHEMY_DATABASE_URL = (
-    "mysql+pymysql://"
-    + (DB_USER if DB_USER else "flanet:budspro")
-    + "@localhost:3306/"
-    + (DB_NAME if DB_NAME else "blockai")
-)
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://" + DB_USER + "@j4f002.p.ssafy.io:3306/" + DB_NAME
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 

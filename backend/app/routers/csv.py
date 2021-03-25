@@ -46,7 +46,7 @@ def show_all_data_list(
     data = {"user_data_set_id": user_data_set_id}
     upload = {'file':file}
     try:
-        requests.post("http://127.0.0.1:8003/csv/upload/userdataset", files = upload, data=data)
+        requests.post("https://j4f002.p.ssafy.io/csv/upload/userdataset", files = upload, data=data)
     except:
         raise HTTPException(status_code=400, detail="저장 실패")
     return {"user_data_set":db_data}

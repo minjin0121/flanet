@@ -16,7 +16,10 @@ async def csv_upload_userdata(
     file: bytes = File(...),
     user_data_set_id: int = Form(...),
 ):
-    data = file.decode("utf-8").splitlines()
+    try:
+        data = file.decode("utf-8").splitlines()
+    except:
+        data = file.decode("cp949").splitlines()
     with open(f"assets/userdata/user_data_set_{user_data_set_id}.csv", "w") as f:
         for line in data:
             f.write(line)
@@ -32,7 +35,10 @@ async def csv_upload_predictdata(
     file: bytes = File(...),
     user_data_predict_id: int = Form(...),
 ):
-    data = file.decode("utf-8").splitlines()
+    try:
+        data = file.decode("utf-8").splitlines()
+    except:
+        data = file.decode("cp949").splitlines()
     with open(
         f"assets/predictdata/user_data_predict_{user_data_predict_id}.csv", "w"
     ) as f:
@@ -48,7 +54,7 @@ async def csv_upload_predictdata(
     tags=["csv"],
     description="userdataset bytes 파일 전송",
 )
-def csv_download_userdata_bytes(user_data_set_id: int):
+async def csv_download_userdata_bytes(user_data_set_id: int):
     try:
         s = open(f"assets/userdata/user_data_set_{user_data_set_id}.csv").read()
     except:
@@ -62,7 +68,7 @@ def csv_download_userdata_bytes(user_data_set_id: int):
     tags=["csv"],
     description="userdatapredict bytes 파일 전송",
 )
-def csv_download_userdatapredict_bytes(user_data_predict_id: int):
+async def csv_download_userdatapredict_bytes(user_data_predict_id: int):
     try:
         s = open(
             f"assets/predictdata/user_data_predict_{user_data_predict_id}.csv"
@@ -78,7 +84,7 @@ def csv_download_userdatapredict_bytes(user_data_predict_id: int):
     tags=["csv"],
     description="userdatapredict json 파일 전송",
 )
-def csv_download_userdataset_json(user_data_set_id: int):
+async def csv_download_userdataset_json(user_data_set_id: int):
     try:
         s = open(f"assets/userdata/user_data_set_{user_data_set_id}.csv").read()
     except:
@@ -104,7 +110,7 @@ def csv_download_userdataset_json(user_data_set_id: int):
     tags=["csv"],
     description="userdatapredict json 파일 전송",
 )
-def csv_download_userdatapredict_json(user_data_predict_id: int):
+async def csv_download_userdatapredict_json(user_data_predict_id: int):
     try:
         s = open(
             f"assets/predictdata/user_data_predict_{user_data_predict_id}.csv"
@@ -132,7 +138,7 @@ def csv_download_userdatapredict_json(user_data_predict_id: int):
     tags=["csv"],
     description="userdataset csv 파일 다운로드",
 )
-def csv_download_userdataset_file(user_data_set_id: int):
+async def csv_download_userdataset_file(user_data_set_id: int):
     try:
         s = open(f"assets/userdata/user_data_set_{user_data_set_id}.csv").read()
     except:
@@ -150,7 +156,7 @@ def csv_download_userdataset_file(user_data_set_id: int):
     tags=["csv"],
     description="userdatapredict csv 파일 다운로드",
 )
-def csv_download_userdatapredict_file(user_data_predict_id: int):
+async def csv_download_userdatapredict_file(user_data_predict_id: int):
     try:
         s = open(
             f"assets/predictdata/user_data_predict_{user_data_predict_id}.csv"
@@ -184,7 +190,7 @@ async def csv_upload_trainingmodel(
     tags=["model"],
     description="trainingmodel 파일 다운로드 파일 다운로드",
 )
-def csv_download_trainingmodel_file(training_model_id: int):
+async def csv_download_trainingmodel_file(training_model_id: int):
     try:
         h5py.File(f"assets/model/training_model_{training_model_id}.h5")
     except:

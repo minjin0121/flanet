@@ -97,6 +97,30 @@ def create_initdata(db: Session = Depends(get_db)):
             "https://finance.yahoo.com/quote/NVDA?p=NVDA&.tsrc=fin-srch",
             "NVDA",
         ),
+        (
+            "temperature",
+            "서울",
+            "https://www.weather.go.kr/weather/climate/past_cal.jsp?stn=108&obs=1",
+            "108",
+        ),
+        (
+            "temperature",
+            "구미",
+            "https://www.weather.go.kr/weather/climate/past_cal.jsp?stn=279&obs=1",
+            "279",
+        ),
+        (
+            "temperature",
+            "광주",
+            "https://www.weather.go.kr/weather/climate/past_cal.jsp?stn=156&obs=1",
+            "156",
+        ),
+        (
+            "temperature",
+            "대전",
+            "https://www.weather.go.kr/weather/climate/past_cal.jsp?stn=133&obs=1",
+            "133",
+        ),
     ]
 
     cnt = 0

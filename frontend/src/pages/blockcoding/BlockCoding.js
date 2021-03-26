@@ -7,17 +7,25 @@ import { Block, Category } from "../../components/blockcoding/BlocklyElement";
 import "../../components/blockcoding/blocks/CrawlingNowPrice";
 import "../../components/blockcoding/blocks/CrawlingPeriodPrice";
 import "../../components/blockcoding/blocks/DataFileInput";
+import "../../components/blockcoding/blocks/DataSelect";
 import "../../components/blockcoding/blocks/DataPreprocessing";
 import "../../components/blockcoding/blocks/AnalysisCNN";
 import "../../components/blockcoding/blocks/AnalysisLSTM";
 import "../../components/blockcoding/blocks/AnalysisProphet";
-import { getDataList } from "../../actions/index";
+import { getDataList, getUserDataSet } from "../../actions/index";
 
 function BlockCoding() {
   const [simpleWorkspace] = useState(React.createRef());
   const dispatch = useDispatch();
 
+  const user = JSON.parse(
+    sessionStorage.getItem(
+      `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
+    )
+  );
+
   dispatch(getDataList());
+  dispatch(getUserDataSet(user.uid));
 
   // 실행 버튼
   const execute = () => {
@@ -117,6 +125,7 @@ function BlockCoding() {
             <Block type="crawling_now_price_field" />
             <Block type="crawling_period_price_field" />
             <Block type="data_file_input" />
+            <Block type="data_select" />
             <Block type="data_preprocessing_field" />
           </Category>
           <Category name="데이터 분석">

@@ -1,8 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import firebase from "firebase";
-import "./styles/index.scss";
+import { applyMiddleware, createStore } from "redux";
+import { Provider } from "react-redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import ReduxThunk from "redux-thunk";
+import ReduxLogger from "redux-logger";
+import rootReducer from "./reducers";
 import App from "./App";
+import "./styles/index.scss";
 
 const firebaseConfig = {
   apiKey: process.env.REACT_APP_FIREBASE_APIKEY,
@@ -16,4 +22,14 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-ReactDOM.render(<App />, document.getElementById("root"));
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(ReduxThunk, ReduxLogger))
+);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
+);

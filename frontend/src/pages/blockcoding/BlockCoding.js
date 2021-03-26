@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import Plotly from "plotly.js";
 import BlocklyJS from "blockly/javascript";
 import BlocklyWorkspace from "../../components/blockcoding/BlocklyWorkspace";
@@ -10,9 +11,13 @@ import "../../components/blockcoding/blocks/DataPreprocessing";
 import "../../components/blockcoding/blocks/AnalysisCNN";
 import "../../components/blockcoding/blocks/AnalysisLSTM";
 import "../../components/blockcoding/blocks/AnalysisProphet";
+import { getDataList } from "../../actions/index";
 
 function BlockCoding() {
   const [simpleWorkspace] = useState(React.createRef());
+  const dispatch = useDispatch();
+
+  dispatch(getDataList());
 
   // 실행 버튼
   const execute = () => {
@@ -111,6 +116,7 @@ function BlockCoding() {
           <Category name="데이터 수집">
             <Block type="crawling_now_price_field" />
             <Block type="crawling_period_price_field" />
+            <Block type="data_file_input" />
             <Block type="data_preprocessing_field" />
           </Category>
           <Category name="데이터 분석">

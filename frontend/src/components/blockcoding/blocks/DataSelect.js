@@ -29,10 +29,10 @@ Blockly.Blocks.data_select = {
       makeOptionsArray(Object.values(userDataSets)[0])
     );
 
-    this.appendValueInput("user_data_set")
-      .setCheck(null)
-      .appendField("입력 데이터 선택 : ")
+    this.appendDummyInput("user_data_set")
+      .appendField("입력 데이터")
       .appendField(dataSelect, "SELECT");
+    this.setNextStatement(true, null);
     this.setColour(225);
   },
 };

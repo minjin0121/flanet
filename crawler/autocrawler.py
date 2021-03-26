@@ -57,7 +57,7 @@ while True:
                 check = True
                 break
     # 삼성 전자 데이터만 추가.
-    for data_list_id in range(1,7):
+    for data_list_id in range(1,12):
         if 3 < data_list_id < 7:
             if america_holiday[hidx]:
                 print('---------------------------')
@@ -82,7 +82,13 @@ while True:
                 print('한국 주식시장 휴무일')
                 print('---------------------------')
                 continue
-        res_c = requests.get(f"https://j4f002.p.ssafy.io/api/crawling/stocks/{data_list_id}/")
+
+        if data_list_id == 7:
+            continue
+        if data_list_id < 7:
+            res_c = requests.get(f"https://j4f002.p.ssafy.io/api/crawling/stocks/{data_list_id}/")
+        else:
+            res_c = requests.get(f"https://j4f002.p.ssafy.io/api/crawling/temperatures/{data_list_id}/")
 
         if str(res_c) == "<Response [500]>": 
             print(f"{data_list_id}번째 데이터 크롤링 실패")
@@ -109,4 +115,6 @@ while True:
         print(
             "--------------------------------------------------------------------------------------------"
         )
+
+    
     time.sleep(chilling)

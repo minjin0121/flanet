@@ -98,6 +98,10 @@ def create_initdata(db: Session = Depends(get_db)):
             "NVDA",
         ),
         (
+            "user",
+            "사용자정의",
+        ),
+        (
             "temperature",
             "서울",
             "https://www.weather.go.kr/weather/climate/past_cal.jsp?stn=108&obs=1",
@@ -124,28 +128,30 @@ def create_initdata(db: Session = Depends(get_db)):
     ]
 
     cnt = 0
-    for d in data_list:
+    for d in range(11):
+        if d == 6:
+            if check_user_set("사용자정의", db):
+                u_data = models.DataList(
+                    data_list_type="user",
+                    data_list_name="사용자정의",
+                )
+                db.add(u_data)
+                db.commit()
+                db.refresh(u_data)
+            else:
+                cnt += 1
+            continue
         data = schemas.DataListBase(
-            data_list_type=d[0],
-            data_list_name=d[1],
-            data_list_url=d[2],
-            stock_code=d[3],
+            data_list_type=data_list[d][0],
+            data_list_name=data_list[d][1],
+            data_list_url=data_list[d][2],
+            stock_code=data_list[d][3],
         )
-        if check_data_list(d[1], d[3], db):
+        if check_data_list(data_list[d][1], data_list[d][3], db):
             create_data_list(data, db)
         else:
             cnt += 1
-    if check_user_set("사용자정의", db):
-        u_data = models.DataList(
-            data_list_type="user",
-            data_list_name="사용자정의",
-        )
-        db.add(u_data)
-        db.commit()
-        db.refresh(u_data)
-    else:
-        cnt += 1
-    if cnt == 7:
+    if cnt == 11:
         raise HTTPException(status_code=400, detail="이미 초기 데이터 목록이 등록되었습니다.")
     return HTTPException(status_code=200, detail="등록완료")
 
@@ -176,11 +182,13 @@ def create_init_data_set(db: Session = Depends(get_db)):
                 )
             except:
                 raise HTTPException(status_code=400, detail=f"{i}번째 초기 데이터가 없습니다.")
+        elif i == 7:
+            continue
         else:
             # 기온
             try:
                 data = pd.read_csv(
-                    f"assets/data_list_{i}.csv", usecols=["Date", "Temp"]
+                    f"assets/data_list_{i}.csv", usecols=["일시", "평균기온(°C)"], encoding='cp949'
                 )
             except:
                 raise HTTPException(status_code=400, detail=f"{i}번째 초기 데이터가 없습니다.")

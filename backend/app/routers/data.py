@@ -100,7 +100,7 @@ def show_select_user_data_set(user_id: str, db: Session = Depends(get_db)):
     tags=["userdataset"],
     description="해당 데이터의 현재 상태 xml 저장",
 )
-def show_update_user_data_set(
+def update_user_data_set_xml(
     user_data_set_id: int, user_data_set_xml: str, user_data_set_name: str = None, db: Session = Depends(get_db)
 ):
     db_data = (
@@ -111,6 +111,28 @@ def show_update_user_data_set(
     db_data.user_data_set_xml = user_data_set_xml
     if user_data_set_name:
         db_data.user_data_set_name = user_data_set_name
+    db.commit()
+    db.refresh(db_data)
+
+    return {"user_data_set": db_data}
+
+
+# 해당 데이터의 현재 상태 xml 삭제
+@router.put(
+    "/api/data/userdataset/xml/delete/{user_data_set_id}",
+    tags=["userdataset"],
+    description="해당 데이터의 현재 상태 xml 삭제",
+)
+def delete_user_data_set_xml(
+    user_data_set_id: int, db: Session = Depends(get_db)
+):
+    db_data = (
+        db.query(models.UserDataSet)
+        .filter(models.UserDataSet.user_data_set_id == user_data_set_id)
+        .first()
+    )
+    db_data.user_data_set_xml = None
+    db_data.user_data_set_name = None
     db.commit()
     db.refresh(db_data)
 

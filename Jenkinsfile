@@ -39,11 +39,14 @@ pipeline {
 				-p 80:80 \
 				-p 443:443 \
 				-v /home/ubuntu/sslkey/:/var/jenkins_home/workspace/flanet/sslkey/ \
+				-v /etc/localtime:/etc/localtime:ro \
 				--network flanetwork \
 				frontend:latest'
 				sh 'docker run -d --name backend \
+				-v /etc/localtime:/etc/localtime:ro \
 				--network flanetwork backend:latest'
 				sh 'docker run -d --name mlserver \
+				-v /etc/localtime:/etc/localtime:ro \
 				--network flanetwork mlserver:latest'
 			}
 		}

@@ -14,7 +14,7 @@ class DataList(Base):
     __tablename__ = "data_list"
 
     data_list_id = Column(Integer, primary_key=True, index=True)
-    data_list_type = Column(String(10), index=True)
+    data_list_type = Column(String(15), index=True)
     data_list_name = Column(String(20), unique=True, index=True)
     data_list_url = Column(String(200), index=True)
     stock_code = Column(String(10), unique=True, index=True)

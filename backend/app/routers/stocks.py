@@ -19,7 +19,7 @@ router = APIRouter()
 
 
 # 주식 데이터 입력
-@router.post("/api/stocks/store/", tags=["stocks"], description="주식 데이터 직접 입력")
+@router.post("/api/stocks/store/", tags=["post"], description="주식 데이터 직접 입력")
 def store_stock_data(data: schemas.DataSet, db: Session = Depends(get_db)):
     ans = check_data_set(data.data_set_date, data.data_list_id, db)
     if ans == True:
@@ -27,11 +27,3 @@ def store_stock_data(data: schemas.DataSet, db: Session = Depends(get_db)):
     elif ans == False:
         raise HTTPException(status_code=400, detail="이미 등록된 데이터입니다.")
     raise HTTPException(status_code=400, detail="데이터 목록에 없는 데이터입니다.")
-
-
-# 주식 데이터 예측
-@router.get(
-    "/api/stocks/predict/{method}/", tags=["stocks"], description="입력 방법으로 주식 예측"
-)
-def predict_stocks(method: str):
-    return method + "에 대한 ML서버 연결"

@@ -42,7 +42,6 @@ def get_data_list_by_id_date(db: Session, start_date: str, end_date: str, code: 
 def insert_user_data_set(
     data_list_id, user_id, user_data_set_start, user_data_set_end, db: Session
 ):
-
     if user_data_set_start == None:
         db_user_data = models.UserDataSet(data_list_id=data_list_id, user_id=user_id)
     else:

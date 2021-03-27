@@ -25,6 +25,8 @@ router = APIRouter()
     description="실시간 크롤링 코드 반환",
 )
 def crawling_stock_code(data_list_id: int, db: Session = Depends(get_db)):
+    if data_list_id == 7:
+        raise HTTPException(status_code=400, detail="data_list 잘못된 데이터 접근입니다.")
     url = (
         db.query(models.DataList)
         .filter(models.DataList.data_list_id == data_list_id)
@@ -34,7 +36,10 @@ def crawling_stock_code(data_list_id: int, db: Session = Depends(get_db)):
     s = []
     s.append("import urllib.request as req")
     s.append("from bs4 import BeautifulSoup")
-    s.append(f"html = req.urlopen('{url.data_list_url}').read()")
+    if data_list_id > 7:
+        s.append(f"html = req.urlopen('https://www.weather.go.kr/weather/observation/currentweather.jsp').read()")
+    else:
+        s.append(f"html = req.urlopen('{url.data_list_url}').read()")
     s.append("soup = BeautifulSoup(html, 'html.parser')")
 
     return {"code": s}
@@ -47,18 +52,23 @@ def crawling_stock_code(data_list_id: int, db: Session = Depends(get_db)):
     description="기간별 주식 크롤링 코드 반환",
 )
 def crawling_stock_code(data_list_id: int, db: Session = Depends(get_db)):
+    if data_list_id == 7:
+        raise HTTPException(status_code=400, detail="data_list 잘못된 데이터 접근입니다.")
     url = (
         db.query(models.DataList)
         .filter(models.DataList.data_list_id == data_list_id)
         .first()
     )
-    
+    temp_url = url.data_list_url
     tmp = url.data_list_url.split("?")
     url = tmp[0] + "/history?" + tmp[1]
     s = []
     s.append("import urllib.request as req")
     s.append("from bs4 import BeautifulSoup")
-    s.append(f"html = req.urlopen('{url}').read()")
+    if data_list_id > 7:
+        s.append(f"html = req.urlopen('{temp_url}&yy=<%해당 년도(ex.2021)%>&mm=<%해당 월(ex.3)%>').read()")
+    else:
+        s.append(f"html = req.urlopen('{url}').read()")
     s.append("soup = BeautifulSoup(html, 'html.parser')")
 
     return {"code": s}
@@ -68,7 +78,7 @@ def crawling_stock_code(data_list_id: int, db: Session = Depends(get_db)):
 @router.get(
     "/api/code/dataprocessing/stock",
     tags=["code"],
-    description="실시간 크롤링 데이터 전처리 코드 반환",
+    description="실시간 주식 크롤링 데이터 전처리 코드 반환",
 )
 def crawling_stock_dataprocessing_code():
     s = []
@@ -79,16 +89,46 @@ def crawling_stock_dataprocessing_code():
     return {"code": s}
 
 
-# 실시간 크롤링 데이터 전처리 코드 반환
+# 기간 크롤링 데이터 전처리 코드 반환
 @router.get(
     "/api/code/dataprocessing/stock/period",
     tags=["code"],
-    description="기간 크롤링 데이터 전처리 코드 반환",
+    description="기간 주식 크롤링 데이터 전처리 코드 반환",
 )
 def crawling_period_stock_dataprocessing_code():
     s = []    
     s.append("point = soup.find_all('td')")
     s.append("for i in range(4, len(point), 7):")
     s.append("  print(str(point[i]).split('>')[2].split('<')[0])")
+
+    return {"code": s}
+
+
+# 실시간 기온 크롤링 데이터 전처리 코드 반환
+@router.get(
+    "/api/code/dataprocessing/temperature",
+    tags=["code"],
+    description="실시간 기온 크롤링 데이터 전처리 코드 반환",
+)
+def crawling_temperature_dataprocessing_code():
+    s = []
+    s.append("point = str(soup)[40000:].split('<%지역이름(ex.구미)%>')[1]")
+    s.append("res = point.split('td')[14][1:].split('<')[0]")
+    s.append("print(res)")
+
+    return {"code": s}
+
+
+# 기간 기온 크롤링 데이터 전처리 코드 반환
+@router.get(
+    "/api/code/dataprocessing/temperature/period",
+    tags=["code"],
+    description="기간 기온 크롤링 데이터 전처리 코드 반환",
+)
+def crawling_period_temperature_dataprocessing_code():
+    s = []
+    s.append("# 찾을 일자는 월마다 최대 28~31이며, 미래에 대해서는 제공하지 않습니다.")
+    s.append("for i in range(<%찾을 시작일자(1~31)%>, <%찾을 끝일자(1~31)%>):")
+    s.append("    print(str(soup).split('평균기온')[i].split('℃')[0][1:])")
 
     return {"code": s}

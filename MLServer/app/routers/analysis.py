@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 import pandas as pd
 import requests
 
+
 # 로컬
 pth.append(path.dirname(path.abspath(path.dirname(__file__))))
 from database import crud
@@ -29,11 +30,12 @@ def analysis_prophet(
     cps: float,
     db: Session = Depends(get_db),
 ):
+    analysis_value = "Close"
     data = crud.get_user_data_set(user_data_set_id=user_data_set_id, db=db)
 
     # csv
-    if data.user_data_set_start == None:
-        original_df = csv_data_call(data)
+    if data.user_data_set_start == None:  # 7
+        original_df, analysis_value = csv_data_call(data)
         df = pd.read_csv(io.StringIO(original_df.to_csv()), index_col="Date")
         df = df.drop(["Unnamed: 0"], axis=1)
     # 기간별
@@ -44,7 +46,7 @@ def analysis_prophet(
         df = df.drop(["Unnamed: 0"], axis=1)
 
     # 호출
-    result = pr.prophet_stock(df, "Close", periods, cps, original_df)
+    result = pr.prophet_stock(df, analysis_value, periods, cps, original_df)
 
     # 1.모델 임시 생성 (1번 prphet_test로 임의 생성)
     # 2.사용자-데이터 분석에 결과 저장
@@ -81,14 +83,22 @@ def csv_data_call(data):
     except:
         raise HTTPException(status_code=400, detail="호출 X")
     data = StringIO(files["file"])
-    df = pd.read_csv(data, delimiter="\t")
-    df = df[["Date", "Close"]]
-    return df
+    df = pd.read_csv(data, delimiter=",")
+
+    s = set(["Date", "Close"])
+    analysis_value = "Close"
+
+    if s.issubset(set(df.columns)):
+        df = df[["Date", "Close"]]
+    else:
+        analysis_value = "Temp"
+        df = df[["Date", "Temp"]]
+
+    return df, analysis_value
 
 
 # 긱간과 코드 정보 가져오기
 def db_data_call(data, db: Session):
-    # 디비에서 호출
     stock_list = crud.get_data_list_by_id_date(
         db=db,
         start_date=data.user_data_set_start,

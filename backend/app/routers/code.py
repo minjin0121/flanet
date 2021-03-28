@@ -47,7 +47,7 @@ def crawling_stock_code(data_list_id: int, db: Session = Depends(get_db)):
 
 # 기간별 주식 크롤링 코드 반환
 @router.get(
-    "/api/code/crawling/{data_list_id}/stock/period",
+    "/api/code/crawling/{data_list_id}/period",
     tags=["code"],
     description="기간별 주식 크롤링 코드 반환",
 )

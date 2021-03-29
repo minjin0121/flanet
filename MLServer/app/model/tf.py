@@ -17,7 +17,7 @@ import requests
 from database import crud
 
 
-def data_preprocessing(input_data):
+def data_preprocess(input_data):
     input_dataframe = csv_format_to_dataframe(input_data)
     input_dataframe.dropna(inplace=True)
 
@@ -197,7 +197,7 @@ def model_evaluate(input_data, training_model_id):
     return processed_data.to_csv(index=False)
 
 
-def predict_future(input_data, training_model_id, period):
+def predict_future(user_data_set_id, input_data, training_model_id, user_id, period, db):
     look_back = 14
     x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
 
@@ -235,6 +235,14 @@ def predict_future(input_data, training_model_id, period):
                 shuffle=True,
             )
 
+    insert_user_data_predict = crud.insert_user_data_predict(
+        user_data_set_id=user_data_set_id,
+        training_model_id=training_model_id,
+        user_id=user_id,
+        user_data_predict_name="test",
+        db=db,
+    )
+
     predicted_data = y_future[-period:].reshape(-1, 1) * scale
 
     remove(model_file_path)
@@ -243,7 +251,7 @@ def predict_future(input_data, training_model_id, period):
 
 
 def csv_format_to_dataframe(data):
-    split_data = json.loads(data).split("\n")
+    split_data = data.split("\n")
     split_data.pop(-1)
 
     ck = 1

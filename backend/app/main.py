@@ -1,6 +1,5 @@
 # 서드파티 라이브러리
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 

@@ -52,13 +52,21 @@ class TfPredict(BaseModel):
     period: int
 
 
+class ProphetInput(BaseModel):
+    user_data_set_id: int
+    periods: int
+    cps: float
+
+
 @router.post("/ml/prophet/stock/", tags=["prophet"], description=" 데이터 입력")
 def analysis_prophet(
-    user_data_set_id: int,
-    periods: int,
-    cps: float,
+    prophet_input: ProphetInput,
     db: Session = Depends(get_db),
 ):
+    user_data_set_id = prophet_input.user_data_set_id
+    periods = prophet_input.periods
+    cps = prophet_input.cps
+
     analysis_value = "Close"
     data = crud.get_user_data_set(user_data_set_id=user_data_set_id, db=db)
 
@@ -99,7 +107,7 @@ def analysis_prophet(
     except:
         raise HTTPException(status_code=400, detail="호출 X")
 
-    return result
+    return predict_data.user_data_predict_id
 
 
 @router.post("/ml/tensorflow/input", tags=["tensorflow"], description="데이터 입력")

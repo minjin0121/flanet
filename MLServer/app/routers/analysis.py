@@ -1,13 +1,14 @@
 # 표준 라이브러리
 from sys import path as pth
-from os import path
+from os import path, remove
 import csv
 import codecs
 import io
 
 # 서드 파티 라이브러리
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 import pandas as pd
 import requests
 
@@ -17,10 +18,38 @@ pth.append(path.dirname(path.abspath(path.dirname(__file__))))
 from database import crud
 from dependency import get_db
 import model.prophet as pr
+import model.tf as tf
 
 from io import StringIO
 
 router = APIRouter()
+
+
+class TfInput(BaseModel):
+    user_data_set_id: int
+
+
+class TfPreprocess(BaseModel):
+    input_raw_data: str
+
+
+class TfTraining(BaseModel):
+    input_processed_data: str
+    training_model_id: int
+    user_id: str
+
+
+class TfEvaluate(BaseModel):
+    input_processed_data: str
+    training_model_id: int
+
+
+class TfPredict(BaseModel):
+    user_data_set_id: int
+    input_processed_data: str
+    training_model_id: int
+    user_id: str
+    period: int
 
 
 @router.post("/ml/prophet/stock/", tags=["prophet"], description=" 데이터 입력")
@@ -71,6 +100,70 @@ def analysis_prophet(
         raise HTTPException(status_code=400, detail="호출 X")
 
     return result
+
+
+@router.post("/ml/tensorflow/input", tags=["tensorflow"], description="데이터 입력")
+def data_input(tf_input: TfInput, db: Session = Depends(get_db)):
+    data = crud.get_user_data_set(user_data_set_id=tf_input.user_data_set_id, db=db)
+
+    # csv
+    if data.user_data_set_start == None:
+        original_df = csv_data_call(data)
+        df = pd.read_csv(io.StringIO(original_df.to_csv()))
+        df = df.drop(["Unnamed: 0"], axis=1)
+    # 기간별
+    else:
+        original_df = db_data_call(data, db=db)
+        df = pd.read_csv(io.StringIO(original_df.to_csv()))  # 기본 인덱스는 날짜기준.
+        df.sort_values(by=["Date"], axis=0, inplace=True)  # date 기준 내림차순 정렬
+        df = df.drop(["Unnamed: 0"], axis=1)
+
+    return df.to_csv(index=False)
+
+
+@router.post("/ml/tensorflow/preprocess", tags=["tensorflow"], description="데이터 전처리")
+def data_preprocess(tf_preprocess: TfPreprocess):
+    return tf.data_preprocess(tf_preprocess.input_raw_data)
+
+
+@router.post("/ml/tensorflow/cnn/training", tags=["tensorflow"], description="CNN Model Training")
+def model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
+    return tf.cnn_model_training(
+        tf_training.input_processed_data,
+        tf_training.training_model_id,
+        tf_training.user_id,
+        db,
+    )
+
+
+@router.post("/ml/tensorflow/lstm/training", tags=["tensorflow"], description="LSTM Model Training")
+def model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
+    return tf.lstm_model_training(
+        tf_training.input_processed_data,
+        tf_training.training_model_id,
+        tf_training.user_id,
+        db,
+    )
+
+
+@router.post("/ml/tensorflow/evaluate", tags=["tensorflow"], description="Model Evaluate")
+def model_evaluate(tf_evaluate: TfEvaluate):
+    return tf.model_evaluate(
+        tf_evaluate.input_processed_data,
+        tf_evaluate.training_model_id,
+    )
+
+
+@router.post("/ml/tensorflow/predict", tags=["tensorflow"], description="Model Predict")
+def model_predict(tf_predict: TfPredict, db: Session = Depends(get_db)):
+    return tf.predict_future(
+        tf_predict.user_data_set_id,
+        tf_predict.input_processed_data,
+        tf_predict.training_model_id,
+        tf_predict.user_id,
+        tf_predict.period,
+        db,
+    )
 
 
 # 파일 받아오기

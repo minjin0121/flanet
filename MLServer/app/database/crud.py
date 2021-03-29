@@ -85,3 +85,20 @@ def insert_user_data_predict(
     db.refresh(db_user_data)
 
     return db_user_data
+
+
+# model 데이터 삽입
+def insert_training_model(
+    training_model_id, training_model_name, user_id, db: Session
+):
+    db_training_model = models.TrainingModel(
+        training_model_id=training_model_id,
+        training_model_name=training_model_name,
+        user_id=user_id
+    )
+
+    db.add(db_training_model)
+    db.commit()
+    db.refresh(db_training_model)
+
+    return db_training_model

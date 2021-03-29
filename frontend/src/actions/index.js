@@ -28,29 +28,23 @@ export const getUserDataSet = function (userId) {
   };
 };
 
-export const setNowUserDataId = function (nowUserDataId) {
-  return function (dispatch) {
-    dispatch({
-      type: "SET_NOW_USER_DATA_ID",
-      payload: nowUserDataId,
-    });
+export const setUserDataSetId = function (userDataSetId) {
+  return {
+    type: "SET_USER_DATA_SET_ID",
+    payload: userDataSetId,
   };
 };
 
-export const setData = function (datas) {
-  return function (dispatch) {
-    dispatch({
-      type: "SET_DATA",
-      payload: datas,
-    });
+export const setDisplayData = function (data) {
+  return {
+    type: "SET_DISPLAY_DATA",
+    payload: data,
   };
 };
 
-export const setNowCode = function (nowCode) {
-  return function (dispatch) {
-    dispatch({
-      type: "SET_NOW_CODE",
-      payload: nowCode,
-    });
+export const setDisplayCode = function (code) {
+  return {
+    type: "SET_DISPLAY_CODE",
+    payload: code,
   };
 };

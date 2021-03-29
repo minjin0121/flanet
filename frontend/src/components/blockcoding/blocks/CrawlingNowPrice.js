@@ -1,5 +1,6 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
+import { setDisplayCode } from "../../../actions/index.js";
 
 const makeOptionsArray = function (dataLists) {
   const options = [];
@@ -9,14 +10,16 @@ const makeOptionsArray = function (dataLists) {
       const temp = [];
 
       temp.push(
-        `${dataLists[index].data_list_type} - ${dataLists[index].data_list_name}`
+        `${dataLists[index].data_list_type === "stock" ? "주식" : "기온"} - ${
+          dataLists[index].data_list_name
+        }`
       );
       temp.push(String(dataLists[index].data_list_id));
       options.push(temp);
     }
   }
 
-  return options;
+  return options.sort();
 };
 
 Blockly.Blocks.crawling_now_price_field = {
@@ -29,14 +32,15 @@ Blockly.Blocks.crawling_now_price_field = {
 
     this.appendDummyInput()
       .appendField("실시간 데이터 수집")
-      .appendField(dataSelect, "data");
+      .appendField(dataSelect, "DATA");
     this.setTooltip("원하는 데이터 값을 실시간으로 확인할 수 있습니다.");
-    this.setColour(225);
+    this.setColour("#47A644");
+    this.setNextStatement(true, null);
   },
 };
 
 Blockly.JavaScript.crawling_now_price_field = function (block) {
-  const dataId = block.getFieldValue("data");
+  const dataId = block.getFieldValue("DATA");
 
   const user = JSON.parse(
     sessionStorage.getItem(
@@ -64,17 +68,19 @@ Blockly.JavaScript.crawling_now_price_field = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
+      // store.dispatch(setUserDataSetId(res.user_data_set.user_data_set_id));
+      // store.dispatch(setDisplayData(res));
     });
 
-  const codeurl = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}`;
+  url = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}`;
 
-  fetch(codeurl, { method: "GET" })
+  fetch(url, {
+    method: "GET",
+  })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res.code);
-      return res.code;
+      store.dispatch(setDisplayCode(res.code));
     });
 
-  return "return문 : 실시간 데이터 겟 \n";
+  return "실시간 데이터 수집";
 };

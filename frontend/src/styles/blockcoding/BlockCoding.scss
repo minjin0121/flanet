@@ -1,11 +1,11 @@
-#blocklyDiv {
+.blocklyDiv {
   height: 42%;
   width: 100%;
   position: absolute;
   top: 13vh;
 }
 
-.div1 {
+.displayTable {
   height: 42%;
   width: 31%;
   position: absolute;
@@ -15,7 +15,7 @@
   display: inline-block;
 }
 
-.div2 {
+.displayChart {
   height: 42%;
   width: 31%;
   position: absolute;
@@ -25,7 +25,7 @@
   display: inline-block;
 }
 
-.div3 {
+.displayCode {
   height: 42%;
   width: 31%;
   position: absolute;
@@ -33,4 +33,5 @@
   left: 68%;
   border: solid;
   display: inline-block;
+  white-space: pre-line;
 }

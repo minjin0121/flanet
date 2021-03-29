@@ -1,85 +1,29 @@
 import * as Blockly from "blockly/core";
 import "blockly/javascript";
 import store from "../../../index.js";
-
-const analysisProphet = {
-  type: "analysis_prophet",
-  message0: "Prophet 분석을 하자!",
-  message1: "주가 코드 : %1",
-  args1: [
-    {
-      type: "field_dropdown",
-      name: "STOCK",
-      options: [
-        ["삼성전자", "1"],
-        ["카카오", "2"],
-      ],
-    },
-  ],
-  message2: "분석 기간 : %1 ~ %2",
-  args2: [
-    {
-      type: "field_date",
-      name: "STARTDATE",
-      date: "2021-03-22",
-    },
-    {
-      type: "field_date",
-      name: "ENDDATE",
-      date: "2021-03-22",
-    },
-  ],
-  message3: "예측 기간 : %1 ~ %2",
-  args3: [
-    {
-      type: "field_date",
-      name: "PREDICTSTARTDATE",
-      date: "2021-03-22",
-    },
-    {
-      type: "field_date",
-      name: "PREDICTENDDATE",
-      date: "2021-03-22",
-    },
-  ],
-  message4: "민감도 : %1",
-  args4: [
-    {
-      type: "field_input",
-      name: "CPS",
-      text: "입력해주세요.",
-    },
-  ],
-  previousStatement: null,
-  colour: 111,
-};
+import { setNowUserDataId, setData } from "../../../actions/index";
 
 Blockly.Blocks.analysis_prophet_field = {
   init() {
-    this.jsonInit(analysisProphet);
+    this.appendDummyInput().appendField("Prophet");
+    this.appendDummyInput()
+      .appendField("기간")
+      .appendField(new Blockly.FieldTextInput("기간을 입력해주세요"), "PERIOD");
+    this.appendDummyInput()
+      .appendField("CPS")
+      .appendField(new Blockly.FieldTextInput("민감도을 입력해주세요"), "CPS");
+    this.setTooltip("Prophet을 통해 분석을 진행할 수 있습니다.");
+    this.setColour(225);
+    this.setPreviousStatement(true, null);
   },
 };
 
 Blockly.JavaScript.analysis_prophet_field = function (block) {
-  const stockId = block.getField("STOCK").value_;
-  const startDate = block.getField("STARTDATE").value_;
-  const endDate = block.getField("ENDDATE").value_;
-  const predictStartDate = block.getField("PREDICTSTARTDATE").value_;
-  const predictEndDate = block.getField("PREDICTENDDATE").value_;
-  const cps = block.getField("CPS").value_;
+  const dataId = store.getState().nowUserDataId[1];
+  const periods = block.getFieldValue("PERIOD");
+  const cps = block.getFieldValue("CPS");
 
-  console.log(
-    stockId,
-    startDate,
-    endDate,
-    predictStartDate,
-    predictEndDate,
-    cps
-  );
-
-  const dataId = store.getState().nowUserData;
-
-  console.log("분석할 데이터는", dataId);
+  console.log("block input is", dataId, periods, cps);
 
   const url = "https://j4f002.p.ssafy.io/ml/prophet/stock/";
 
@@ -89,14 +33,25 @@ Blockly.JavaScript.analysis_prophet_field = function (block) {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      user_data_set_id: 105,
-      periods: 10,
-      cps: 1,
+      user_data_set_id: dataId,
+      periods,
+      cps,
     }),
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log("prophet res is", res);
+      console.log("block result is ", res);
+      const dataurl = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/json/${res}`;
+
+      store.dispatch(setNowUserDataId(["prophet", res]));
+      fetch(dataurl, {
+        method: "GET",
+      })
+        .then((data) => data.json())
+        .then((data) => {
+          console.log("block result data is", data);
+          store.dispatch(setData(data));
+        });
     });
 
   return "return문 : Prophet 분석 \n";

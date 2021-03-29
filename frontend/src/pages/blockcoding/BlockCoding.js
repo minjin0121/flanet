@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import Plotly from "plotly.js";
 import BlocklyJS from "blockly/javascript";
 import BlocklyWorkspace from "../../components/blockcoding/BlocklyWorkspace";
 import { Block, Category } from "../../components/blockcoding/BlocklyElement";
@@ -18,8 +19,8 @@ import {
   setData,
   setNowCode,
 } from "../../actions/index";
-import DataTable from "../../components/blockcoding/DataTable";
-import DataVisualization from "../../components/blockcoding/DataVisualization";
+// import DataTable from "../../components/blockcoding/DataTable";
+// import DataVisualization from "../../components/blockcoding/DataVisualization";
 import store from "../../index.js";
 
 function BlockCoding() {
@@ -39,8 +40,8 @@ function BlockCoding() {
   dispatch(setNowUserDataId(105));
   dispatch(setNowCode("코드입니다."));
 
-  let DataTableArea = "";
-  let DataVisualizationArea = "";
+  // let DataTableArea = "";
+  // let DataVisualizationArea = "";
 
   // 실행 버튼
   function execute() {
@@ -51,15 +52,119 @@ function BlockCoding() {
     // store용 => 현재 작동하는건 이 친구
     setCode(store.getState().nowCode);
 
-    DataTableArea = DataTable();
-    DataVisualizationArea = DataVisualization();
+    // DataTableArea = DataTable();
+    // DataVisualizationArea = DataVisualization();
+    // 화면에 표시할 데이터
+    const datas = store.getState().datas;
+
+    // datas를 날짜와 값만 뽑아서 가공
+    let datasDisplay = [];
+    let dataPlotly = [];
+    let visualPlotly = [];
+
+    if (store.getState().nowUserDataId[0] === "crawling") {
+      console.log("this is crawling");
+
+      if (datas) {
+        const datasDate = datas.map((d) => d.data_set_date);
+        const datasValue = datas.map((d) => d.data_set_value);
+
+        datasDisplay = [datasDate, datasValue];
+        console.log(datasDisplay);
+      }
+
+      // 표 그리기
+      dataPlotly = [
+        {
+          type: "table",
+          header: {
+            values: [["<b>Date</b>"], ["<b>Value</b>"]],
+            align: "center",
+            line: { width: 1, color: "black" },
+            fill: { color: "grey" },
+            font: { family: "Arial", size: 12, color: "white" },
+          },
+          cells: {
+            values: datasDisplay,
+            align: "center",
+            line: { color: "black", width: 1 },
+            font: { family: "Arial", size: 11, color: ["black"] },
+          },
+        },
+      ];
+
+      // 그래프 그리기
+      visualPlotly = [
+        {
+          x: datasDisplay[0],
+          y: datasDisplay[1],
+          line: { color: "#17BECF" },
+          type: "scatter",
+        },
+      ];
+    } else if (store.getState().nowUserDataId[0] === "prophet") {
+      console.log("this is prophet");
+
+      if (datas) {
+        const datasDate = datas.map((d) => d.ds);
+        const datasYhat = datas.map((d) => d.yhat);
+        const datasClose = datas.map((d) => d.Close);
+
+        datasDisplay = [datasDate, datasYhat, datasClose];
+        console.log(datasDisplay);
+      }
+
+      // 표 그리기
+      dataPlotly = [
+        {
+          type: "table",
+          header: {
+            values: [["<b>Date</b>"], ["<b>Yhat</b>"], ["<b>Close</b>"]],
+            align: "center",
+            line: { width: 1, color: "black" },
+            fill: { color: "grey" },
+            font: { family: "Arial", size: 12, color: "white" },
+          },
+          cells: {
+            values: datasDisplay,
+            align: "center",
+            line: { color: "black", width: 1 },
+            font: { family: "Arial", size: 11, color: ["black"] },
+          },
+        },
+      ];
+
+      // 그래프 그리기
+      visualPlotly = [
+        {
+          x: datasDisplay[0],
+          y: datasDisplay[1],
+          line: { color: "red" },
+          type: "scatter",
+        },
+        {
+          x: datasDisplay[0],
+          y: datasDisplay[2],
+          line: { color: "#17BECF" },
+          type: "scatter",
+        },
+      ];
+    }
+
+    Plotly.newPlot("dataset", dataPlotly);
+    Plotly.newPlot("visualization", visualPlotly);
   }
 
   // 데이터 다운 버튼
   const dataDownload = () => {
+    // 이거 기점으로 다운로드 링크 설정해줄게요 !
+    if (store.getState().nowUserDataId[0] === "crawling") {
+      console.log("crawling down");
+    } else if (store.getState().nowUserDataId[0] === "prophet") {
+      console.log("analysis down");
+    }
     // 사용자가 지금 작업 중인 data랑 매칭 해줄 datanum
     const datanum = store.getState().nowUserDataId;
-    // const datanum = 105;
 
     fetch(
       `https://j4f002.p.ssafy.io/csv/download/userdataset/file/${datanum}`,
@@ -123,8 +228,14 @@ function BlockCoding() {
       </BlocklyWorkspace>
       {/* 영역 표시 기능 X */}
       <div>
-        {DataTableArea}
-        {DataVisualizationArea}
+        {/* {DataTableArea}
+        {DataVisualizationArea} */}
+        <div className="div1" id="dataset">
+          데이터
+        </div>
+        <div className="div2" id="visualization">
+          시각화
+        </div>
         <div className="div3" id="code">
           코드 <br />
           {code}

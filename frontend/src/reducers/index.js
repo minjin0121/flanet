@@ -2,7 +2,7 @@ const initialState = {
   dataLists: {},
   userDataSets: {},
   datas: {},
-  nowUserDataId: {},
+  nowUserDataId: [],
   nowCode: "",
 };
 

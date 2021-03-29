@@ -77,9 +77,11 @@ Blockly.JavaScript.crawling_period_price_field = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log("res is", res);
-      store.dispatch(setData(res));
-      store.dispatch(setNowUserDataId(res.user_data_set.user_data_set_id));
+      // console.log("res is", res);
+      store.dispatch(setData(res.data_set));
+      store.dispatch(
+        setNowUserDataId(["crawling", res.user_data_set.user_data_set_id])
+      );
     });
 
   const codeurl = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}/period`;
@@ -88,8 +90,6 @@ Blockly.JavaScript.crawling_period_price_field = function (block) {
   fetch(codeurl, { method: "GET" })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res.code);
-      console.log(JSON.stringify(res.code));
       code = res.code;
       store.dispatch(setNowCode(res.code));
     });

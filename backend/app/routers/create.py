@@ -18,7 +18,6 @@ router = APIRouter()
 
 
 # 주식 데이터 입력
-@router.post("/api/create/datalist/stocks", tags=["create"], description="주식 데이터 목록 입력")
 def create_stock_data_list(data: schemas.DataListBase, db: Session = Depends(get_db)):
     ans = check_data_list(data.data_list_name, data.stock_code, db)
     if ans:
@@ -26,14 +25,6 @@ def create_stock_data_list(data: schemas.DataListBase, db: Session = Depends(get
     elif ans == False:
         raise HTTPException(status_code=400, detail="이미 등록된 데이터입니다.")
     raise HTTPException(status_code=400, detail="잘못된 입력입니다.")
-
-
-# 기온 데이터 입력
-@router.post(
-    "/api/create/datalist/temperature", tags=["create"], description="기온 데이터 목록 입력"
-)
-def create_temp_data_list(db: Session = Depends(get_db)):
-    return "미개발"
 
 
 # 목록 주식 데이터 유효성 검사

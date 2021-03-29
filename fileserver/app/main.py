@@ -4,10 +4,22 @@ from io import StringIO
 
 # 서드파티 라이브러리
 from fastapi import FastAPI, File, Form, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import FileResponse
 import uvicorn, h5py
 
+
 app = FastAPI()
+
+origins = ['*']
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # userdata csv 파일 저장

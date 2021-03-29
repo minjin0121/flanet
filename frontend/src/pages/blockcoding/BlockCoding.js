@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import Plotly from "plotly.js";
 import BlocklyJS from "blockly/javascript";
 import BlocklyWorkspace from "../../components/blockcoding/BlocklyWorkspace";
 import { Block, Category } from "../../components/blockcoding/BlocklyElement";
@@ -19,6 +18,8 @@ import {
   setData,
   setNowCode,
 } from "../../actions/index";
+import DataTable from "../../components/blockcoding/DataTable";
+import DataVisualization from "../../components/blockcoding/DataVisualization";
 import store from "../../index.js";
 
 function BlockCoding() {
@@ -38,75 +39,20 @@ function BlockCoding() {
   dispatch(setNowUserDataId(105));
   dispatch(setNowCode("코드입니다."));
 
+  let DataTableArea = "";
+  let DataVisualizationArea = "";
+
   // 실행 버튼
   function execute() {
-    // 코드 반환용 code
-    setCode(BlocklyJS.workspaceToCode(simpleWorkspace.current.workspace));
+    // 코드 반환용 code 둘 중 하나 사용 예정
 
+    // return문용
+    setCode(BlocklyJS.workspaceToCode(simpleWorkspace.current.workspace));
+    // store용 => 현재 작동하는건 이 친구
     setCode(store.getState().nowCode);
 
-    // 화면에 표시할 데이터
-    const datas = store.getState().datas;
-
-    // datas를 날짜와 값만 뽑아서 가공
-    let datasDisplay = [];
-
-    if (datas) {
-      const datasDate = datas.data_set.map((d) => d.data_set_date);
-      const datasValue = datas.data_set.map((d) => d.data_set_value);
-
-      datasDisplay = [datasDate, datasValue];
-      console.log(datasDisplay);
-    }
-
-    // 실시간과 기간별 크롤링 구분하기 위한 TRY
-    // if (typeof datas === "number") {
-    //   values = [[datas.data_set_date, datas.data_set_value]];
-    //   console.log("ho");
-    // } else if (typeof datas === "object") {
-    // values = datas.data_set.map((d) => [d.data_set_date, d.data_set_value]);
-    // }
-
-    // 표 그리기
-    const dataPlotly = [
-      {
-        type: "table",
-        header: {
-          values: [["<b>Date</b>"], ["<b>Value</b>"]],
-          align: "center",
-          line: { width: 1, color: "black" },
-          fill: { color: "grey" },
-          font: { family: "Arial", size: 12, color: "white" },
-        },
-        cells: {
-          values: datasDisplay,
-          align: "center",
-          line: { color: "black", width: 1 },
-          font: { family: "Arial", size: 11, color: ["black"] },
-        },
-      },
-    ];
-
-    Plotly.newPlot("dataset", dataPlotly);
-
-    // 그래프 그리기
-    // 각각의 값들 매칭 => 날짜(x축), 예측 값(평균), 최소 예측값, 최대 예측값, 기존 데이터
-    const visualPlotly = [
-      {
-        // mode: "lines",
-        // name: "AAPL High",
-        x: datasDisplay[0],
-        y: datasDisplay[1],
-        line: { color: "#17BECF" },
-        type: "scatter",
-      },
-    ];
-
-    const visualLayout = {
-      title: "시각화 결과는!",
-    };
-
-    Plotly.newPlot("visualization", visualPlotly, visualLayout);
+    DataTableArea = DataTable();
+    DataVisualizationArea = DataVisualization();
   }
 
   // 데이터 다운 버튼
@@ -177,12 +123,8 @@ function BlockCoding() {
       </BlocklyWorkspace>
       {/* 영역 표시 기능 X */}
       <div>
-        <div className="div1" id="dataset">
-          데이터
-        </div>
-        <div className="div2" id="visualization">
-          시각화
-        </div>
+        {DataTableArea}
+        {DataVisualizationArea}
         <div className="div3" id="code">
           코드 <br />
           {code}

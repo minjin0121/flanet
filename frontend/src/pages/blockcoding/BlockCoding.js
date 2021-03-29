@@ -12,11 +12,19 @@ import "../../components/blockcoding/blocks/DataPreprocessing";
 import "../../components/blockcoding/blocks/AnalysisCNN";
 import "../../components/blockcoding/blocks/AnalysisLSTM";
 import "../../components/blockcoding/blocks/AnalysisProphet";
-import { getDataList, getUserDataSet } from "../../actions/index";
+import {
+  getDataList,
+  getUserDataSet,
+  setNowUserDataId,
+  setData,
+  setNowCode,
+} from "../../actions/index";
+import store from "../../index.js";
 
 function BlockCoding() {
   const [simpleWorkspace] = useState(React.createRef());
   const dispatch = useDispatch();
+  const [code, setCode] = useState("code");
 
   const user = JSON.parse(
     sessionStorage.getItem(
@@ -26,53 +34,86 @@ function BlockCoding() {
 
   dispatch(getDataList());
   dispatch(getUserDataSet(user.uid));
+  dispatch(setData(0));
+  dispatch(setNowUserDataId(105));
+  dispatch(setNowCode("코드입니다."));
 
   // 실행 버튼
-  const execute = () => {
-    const check = BlocklyJS.workspaceToCode(simpleWorkspace.current.workspace);
+  function execute() {
+    // 코드 반환용 code
+    setCode(BlocklyJS.workspaceToCode(simpleWorkspace.current.workspace));
 
-    console.log(check);
+    setCode(store.getState().nowCode);
 
-    // 실행 시 시각화
-    // [동식님 says] prophet 모델에서는 추론 값이 날짜(x축), 예측 값(평균), 최소 예측값, 최대 예측값, 기존 데이터으로 던져줄꺼에요!
+    // 화면에 표시할 데이터
+    const datas = store.getState().datas;
 
-    // 시각화할 csv 주소
-    const csvAddress =
-      "https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv";
+    // datas를 날짜와 값만 뽑아서 가공
+    let datasDisplay = [];
 
-    Plotly.d3.csv(csvAddress, function (rows) {
-      console.log(rows);
+    if (datas) {
+      const datasDate = datas.data_set.map((d) => d.data_set_date);
+      const datasValue = datas.data_set.map((d) => d.data_set_value);
 
-      function unpack(atts, key) {
-        return atts.map(function (att) {
-          return att[key];
-        });
-      }
+      datasDisplay = [datasDate, datasValue];
+      console.log(datasDisplay);
+    }
 
-      // 각각의 값들 매칭 => 날짜(x축), 예측 값(평균), 최소 예측값, 최대 예측값, 기존 데이터
-      const trace1 = {
-        type: "scatter",
-        mode: "lines",
-        name: "AAPL High",
-        x: unpack(rows, "Date"),
-        y: unpack(rows, "AAPL.High"),
+    // 실시간과 기간별 크롤링 구분하기 위한 TRY
+    // if (typeof datas === "number") {
+    //   values = [[datas.data_set_date, datas.data_set_value]];
+    //   console.log("ho");
+    // } else if (typeof datas === "object") {
+    // values = datas.data_set.map((d) => [d.data_set_date, d.data_set_value]);
+    // }
+
+    // 표 그리기
+    const dataPlotly = [
+      {
+        type: "table",
+        header: {
+          values: [["<b>Date</b>"], ["<b>Value</b>"]],
+          align: "center",
+          line: { width: 1, color: "black" },
+          fill: { color: "grey" },
+          font: { family: "Arial", size: 12, color: "white" },
+        },
+        cells: {
+          values: datasDisplay,
+          align: "center",
+          line: { color: "black", width: 1 },
+          font: { family: "Arial", size: 11, color: ["black"] },
+        },
+      },
+    ];
+
+    Plotly.newPlot("dataset", dataPlotly);
+
+    // 그래프 그리기
+    // 각각의 값들 매칭 => 날짜(x축), 예측 값(평균), 최소 예측값, 최대 예측값, 기존 데이터
+    const visualPlotly = [
+      {
+        // mode: "lines",
+        // name: "AAPL High",
+        x: datasDisplay[0],
+        y: datasDisplay[1],
         line: { color: "#17BECF" },
-      };
+        type: "scatter",
+      },
+    ];
 
-      const data = [trace1];
+    const visualLayout = {
+      title: "시각화 결과는!",
+    };
 
-      const layout = {
-        title: "시각화 결과는!",
-      };
-
-      Plotly.newPlot("visualization", data, layout);
-    });
-  };
+    Plotly.newPlot("visualization", visualPlotly, visualLayout);
+  }
 
   // 데이터 다운 버튼
   const dataDownload = () => {
     // 사용자가 지금 작업 중인 data랑 매칭 해줄 datanum
-    const datanum = 105;
+    const datanum = store.getState().nowUserDataId;
+    // const datanum = 105;
 
     fetch(
       `https://j4f002.p.ssafy.io/csv/download/userdataset/file/${datanum}`,
@@ -102,7 +143,6 @@ function BlockCoding() {
       <button onClick={execute}>실행</button>
       <button>저장</button>
       <button onClick={dataDownload}>데이터 다운</button>
-      <button>분석결과 다운</button>
       <button onClick={reset}>블록 작업실 초기화</button>
       {/* Blockly Workspace */}
       <BlocklyWorkspace
@@ -137,11 +177,16 @@ function BlockCoding() {
       </BlocklyWorkspace>
       {/* 영역 표시 기능 X */}
       <div>
-        <div className="div1">데이터</div>
+        <div className="div1" id="dataset">
+          데이터
+        </div>
         <div className="div2" id="visualization">
           시각화
         </div>
-        <div className="div3">코드</div>
+        <div className="div3" id="code">
+          코드 <br />
+          {code}
+        </div>
       </div>
     </div>
   );

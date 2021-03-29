@@ -1,5 +1,6 @@
 import * as Blockly from "blockly/core";
 import "blockly/javascript";
+import store from "../../../index.js";
 
 const analysisProphet = {
   type: "analysis_prophet",
@@ -49,7 +50,7 @@ const analysisProphet = {
       text: "입력해주세요.",
     },
   ],
-  nextStatement: null,
+  previousStatement: null,
   colour: 111,
 };
 
@@ -75,6 +76,28 @@ Blockly.JavaScript.analysis_prophet_field = function (block) {
     predictEndDate,
     cps
   );
+
+  const dataId = store.getState().nowUserData;
+
+  console.log("분석할 데이터는", dataId);
+
+  const url = "https://j4f002.p.ssafy.io/ml/prophet/stock/";
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user_data_set_id: 105,
+      periods: 10,
+      cps: 1,
+    }),
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log("prophet res is", res);
+    });
 
   return "return문 : Prophet 분석 \n";
 };

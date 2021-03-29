@@ -5,6 +5,7 @@ const dataPreprocessing = {
   type: "data_preprocessing",
   message0: "데이터 전처리",
   previousStatement: null,
+  nextStatement: null,
   colour: 444,
 };
 

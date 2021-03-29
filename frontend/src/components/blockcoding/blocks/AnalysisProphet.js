@@ -1,7 +1,7 @@
 import * as Blockly from "blockly/core";
 import "blockly/javascript";
 import store from "../../../index.js";
-import { setNowUserDataId, setData } from "../../../actions/index";
+import { setUserDataSetId, setDisplayData } from "../../../actions/index";
 
 Blockly.Blocks.analysis_prophet_field = {
   init() {
@@ -19,40 +19,43 @@ Blockly.Blocks.analysis_prophet_field = {
 };
 
 Blockly.JavaScript.analysis_prophet_field = function (block) {
-  const dataId = store.getState().nowUserDataId[1];
-  const periods = block.getFieldValue("PERIOD");
-  const cps = block.getFieldValue("CPS");
+  setTimeout(function () {
+    const dataId = store.getState().userDataSetId[1];
+    const periods = block.getFieldValue("PERIOD");
+    const cps = block.getFieldValue("CPS");
 
-  console.log("block input is", dataId, periods, cps);
+    console.log("block input is", dataId, periods, cps);
 
-  const url = "https://j4f002.p.ssafy.io/ml/prophet/stock/";
+    const url = "https://j4f002.p.ssafy.io/ml/prophet/stock/";
 
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      user_data_set_id: dataId,
-      periods,
-      cps,
-    }),
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      console.log("block result is ", res);
-      const dataurl = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/json/${res}`;
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_data_set_id: dataId,
+        periods,
+        cps,
+      }),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        console.log("block result is ", res);
+        const dataurl = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/json/${res}`;
 
-      store.dispatch(setNowUserDataId(["prophet", res]));
-      fetch(dataurl, {
-        method: "GET",
-      })
-        .then((data) => data.json())
-        .then((data) => {
-          console.log("block result data is", data);
-          store.dispatch(setData(data));
-        });
-    });
+        store.dispatch(setUserDataSetId(["prophet", res]));
+
+        fetch(dataurl, {
+          method: "GET",
+        })
+          .then((data) => data.json())
+          .then((data) => {
+            console.log("block result data is", data);
+            store.dispatch(setDisplayData(data));
+          });
+      });
+  }, 500);
 
   return "return문 : Prophet 분석 \n";
 };

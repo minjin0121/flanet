@@ -251,7 +251,7 @@ def crawling_current_temperature_for_user(
     if url:
         html = req.urlopen(f"https://www.weather.go.kr/weather/observation/currentweather.jsp").read()
         soup = BeautifulSoup(html, "html.parser")
-        point = str(soup).split("광주")[2]
+        point = str(soup)[40000:].split("광주")[1]
         point2 = point.split("구미")[1]
         point3 = point2.split("대전")[1]
         point4 = point3.split("서울")[1]

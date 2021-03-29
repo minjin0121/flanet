@@ -1,6 +1,10 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
-import { setUserDataSetId } from "../../../actions/index";
+import {
+  setUserDataSetId,
+  setDisplayData,
+  setDisplayCode,
+} from "../../../actions/index";
 
 let file = "";
 
@@ -47,7 +51,14 @@ Blockly.JavaScript.data_file_input = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      store.dispatch(setUserDataSetId(res.user_data_set.user_data_set_id));
+      console.log(res);
+      store.dispatch(
+        setUserDataSetId(["FileInput", res.user_data_set.user_data_set_id])
+      );
+      store.dispatch(
+        setDisplayData(["파일이 정상적으로 업로드 완료되었습니다."])
+      );
+      store.dispatch(setDisplayCode([]));
     });
 
   return "CSV 파일 데이터 입력";

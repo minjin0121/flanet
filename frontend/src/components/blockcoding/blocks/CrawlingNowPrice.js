@@ -1,6 +1,10 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
-import { setDisplayCode } from "../../../actions/index.js";
+import {
+  setUserDataSetId,
+  setDisplayData,
+  setDisplayCode,
+} from "../../../actions/index";
 
 const makeOptionsArray = function (dataLists) {
   const options = [];
@@ -35,7 +39,6 @@ Blockly.Blocks.crawling_now_price_field = {
       .appendField(dataSelect, "DATA");
     this.setTooltip("원하는 데이터 값을 실시간으로 확인할 수 있습니다.");
     this.setColour("#47A644");
-    this.setNextStatement(true, null);
   },
 };
 
@@ -68,8 +71,15 @@ Blockly.JavaScript.crawling_now_price_field = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      // store.dispatch(setUserDataSetId(res.user_data_set.user_data_set_id));
-      // store.dispatch(setDisplayData(res));
+      console.log(res);
+      store.dispatch(
+        setUserDataSetId(["crawling", res.user_data_set.user_data_set_id])
+      );
+      store.dispatch(
+        setDisplayData([
+          `실시간 데이터 수집 결과는 ${res.data_set_value} 입니다.`,
+        ])
+      );
     });
 
   url = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}`;

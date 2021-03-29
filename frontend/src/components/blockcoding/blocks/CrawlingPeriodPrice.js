@@ -1,57 +1,75 @@
 import * as Blockly from "blockly/core";
 import "@blockly/field-date";
 import "blockly/javascript";
+import store from "../../../index.js";
+import { setNowUserDataId, setData, setNowCode } from "../../../actions/index";
 
-const crawlingPeriodPrice = {
-  type: "crawling_period_price",
-  message0: "기간별 크롤링 : %1의 주가, 기간 %2 ~ %3",
-  args0: [
-    {
-      type: "field_dropdown",
-      name: "STOCK",
-      options: [
-        ["삼성전자", "1"],
-        ["카카오", "2"],
-      ],
-    },
-    {
-      type: "field_date",
-      name: "STARTDATE",
-      date: "2016-03-17",
-    },
-    {
-      type: "field_date",
-      name: "ENDDATE",
-      date: "2021-03-19",
-    },
-  ],
-  nextStatement: null,
-  colour: 444,
+const makeOptionsArray = function (dataLists) {
+  const options = [];
+
+  for (let index = 0; index < dataLists.length; index++) {
+    if (dataLists[index].data_list_url !== null) {
+      const temp = [];
+
+      temp.push(
+        `${dataLists[index].data_list_type} - ${dataLists[index].data_list_name}`
+      );
+      temp.push(String(dataLists[index].data_list_id));
+      options.push(temp);
+    }
+  }
+
+  return options;
 };
 
 Blockly.Blocks.crawling_period_price_field = {
   init() {
-    this.jsonInit(crawlingPeriodPrice);
+    const dataLists = store.getState().dataLists;
+
+    const dataSelect = new Blockly.FieldDropdown(
+      makeOptionsArray(Object.values(dataLists)[0])
+    );
+
+    this.appendDummyInput()
+      .appendField("기간별 데이터 수집")
+      .appendField(dataSelect, "DATA");
+    this.appendDummyInput()
+      .appendField("시작")
+      .appendField(new Blockly.FieldDate("2016-03-17"), "STARTDATE");
+    this.appendDummyInput()
+      .appendField("끝")
+      .appendField(new Blockly.FieldDate("2021-03-27"), "ENDDATE");
+    this.setTooltip("원하는 데이터 값을 기간을 설정해 확인할 수 있습니다.");
+    this.setColour(225);
+    this.setNextStatement(true, null);
   },
 };
 
 Blockly.JavaScript.crawling_period_price_field = function (block) {
-  const stockId = block.getField("STOCK").value_;
-  const startDate = block.getField("STARTDATE").value_;
-  const endDate = block.getField("ENDDATE").value_;
+  const dataId = block.getFieldValue("DATA");
+  const startDate = block.getFieldValue("STARTDATE");
+  const endDate = block.getFieldValue("ENDDATE");
   const user = JSON.parse(
     sessionStorage.getItem(
       `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
     )
   );
 
-  fetch(`https://j4f002.p.ssafy.io/api/crawling/stocks/period`, {
+  let url = "";
+
+  if (dataId <= 6) {
+    url = "https://j4f002.p.ssafy.io/api/crawling/stocks/period";
+  } else {
+    url = "https://j4f002.p.ssafy.io/api/crawling/temperatures/period";
+  }
+
+  fetch(url, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      data_list_id: stockId,
+      data_list_id: dataId,
       user_id: user.uid,
       user_data_set_start: startDate,
       user_data_set_end: endDate,
@@ -59,8 +77,22 @@ Blockly.JavaScript.crawling_period_price_field = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
+      console.log("res is", res);
+      store.dispatch(setData(res));
+      store.dispatch(setNowUserDataId(res.user_data_set.user_data_set_id));
     });
 
-  return "return문 : 기간별 데이터 겟 \n";
+  const codeurl = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}/period`;
+  let code = "기간별 데이터 code";
+
+  fetch(codeurl, { method: "GET" })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res.code);
+      console.log(JSON.stringify(res.code));
+      code = res.code;
+      store.dispatch(setNowCode(res.code));
+    });
+
+  return code;
 };

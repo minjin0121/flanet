@@ -67,5 +67,14 @@ Blockly.JavaScript.crawling_now_price_field = function (block) {
       console.log(res);
     });
 
-  return "return문 : 실시간 데이터 수집 \n";
+  const codeurl = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}`;
+
+  fetch(codeurl, { method: "GET" })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res.code);
+      return res.code;
+    });
+
+  return "return문 : 실시간 데이터 겟 \n";
 };

@@ -27,3 +27,30 @@ export const getUserDataSet = function (userId) {
       });
   };
 };
+
+export const setNowUserDataId = function (nowUserDataId) {
+  return function (dispatch) {
+    dispatch({
+      type: "SET_NOW_USER_DATA_ID",
+      payload: nowUserDataId,
+    });
+  };
+};
+
+export const setData = function (datas) {
+  return function (dispatch) {
+    dispatch({
+      type: "SET_DATA",
+      payload: datas,
+    });
+  };
+};
+
+export const setNowCode = function (nowCode) {
+  return function (dispatch) {
+    dispatch({
+      type: "SET_NOW_CODE",
+      payload: nowCode,
+    });
+  };
+};

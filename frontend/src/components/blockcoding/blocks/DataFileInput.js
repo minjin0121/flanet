@@ -1,4 +1,6 @@
 import * as Blockly from "blockly/core";
+import store from "../../../index.js";
+import { setNowUserDataId } from "../../../actions/index";
 
 let file = "";
 
@@ -45,7 +47,8 @@ Blockly.JavaScript.data_file_input = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
+      console.log("res is", res);
+      store.dispatch(setNowUserDataId(res.user_data_set.user_data_set_id));
     });
 
   return "dataFileInput return";

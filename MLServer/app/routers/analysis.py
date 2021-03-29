@@ -19,6 +19,7 @@ from database import crud
 from dependency import get_db
 import model.prophet as pr
 import model.tf as tf
+import routers.codes as codes
 
 from io import StringIO
 
@@ -107,7 +108,9 @@ def analysis_prophet(
     except:
         raise HTTPException(status_code=400, detail="호출 X")
 
-    return predict_data.user_data_predict_id
+    s = codes.prophet_code(analysis_value, periods, cps)
+
+    return {"code": s, "user_data_predict_id": predict_data.user_data_predict_id}
 
 
 @router.post("/ml/tensorflow/input", tags=["tensorflow"], description="데이터 입력")
@@ -198,7 +201,7 @@ def csv_data_call(data):
     return df, analysis_value
 
 
-# 긱간과 코드 정보 가져오기
+# 기간과 코드 정보 가져오기
 def db_data_call(data, db: Session):
     stock_list = crud.get_data_list_by_id_date(
         db=db,

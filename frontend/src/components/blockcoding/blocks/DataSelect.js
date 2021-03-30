@@ -1,4 +1,4 @@
-import * as Blockly from "blockly/core";
+import Blockly from "blockly";
 import store from "../../../index.js";
 import {
   setUserDataSetId,
@@ -10,11 +10,19 @@ const makeOptionsArray = function (userDataSets) {
   const options = [];
 
   for (let index = 0; index < userDataSets.length; index++) {
-    const temp = [];
+    const dateStart = new Date(userDataSets[index].user_data_set_start);
+    const dateEnd = new Date(userDataSets[index].user_data_set_end);
 
-    temp.push(userDataSets[index].user_data_set_date);
-    temp.push(String(userDataSets[index].user_data_set_id));
-    options.push(temp);
+    const dateDiff =
+      (dateEnd.getTime() - dateStart.getTime()) / (1000 * 60 * 60 * 24);
+
+    if (dateDiff > 300 || userDataSets[index].user_data_set_start === null) {
+      const temp = [];
+
+      temp.push(userDataSets[index].user_data_set_date);
+      temp.push(String(userDataSets[index].user_data_set_id));
+      options.push(temp);
+    }
   }
 
   if (options.length === 0) {

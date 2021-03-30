@@ -59,7 +59,14 @@ function DisplayChart({ result, data }) {
       "<h5>차트를 그릴 수 없습니다.</h5>";
   }
 
-  return <div className="displayChart" id="displayChart"></div>;
+  return (
+    <div className="displayChart">
+      <div className="displayTitle">
+        <span>차트</span>
+      </div>
+      <div className="displayContent" id="displayChart"></div>
+    </div>
+  );
 }
 
 DisplayChart.propTypes = {

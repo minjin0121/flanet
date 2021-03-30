@@ -72,7 +72,14 @@ function DisplayTable({ result, data }) {
     document.getElementById("displayTable").innerHTML = `<h5>${data}</h5>`;
   }
 
-  return <div className="displayTable" id="displayTable"></div>;
+  return (
+    <div className="displayTable">
+      <div className="displayTitle">
+        <span>데이터</span>
+      </div>
+      <div className="displayContent" id="displayTable"></div>
+    </div>
+  );
 }
 
 DisplayTable.propTypes = {

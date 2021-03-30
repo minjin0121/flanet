@@ -12,8 +12,7 @@ Blockly.Blocks.data_file_input = {
   init() {
     const fileInput = new Blockly.FieldTextInput(".csv 파일을 선택해주세요");
 
-    this.appendValueInput("file_name")
-      .setCheck()
+    this.appendDummyInput("file_name")
       .appendField("데이터 입력 : ")
       .appendField(fileInput);
     this.setNextStatement(true, null);

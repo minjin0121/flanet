@@ -41,10 +41,10 @@ Blockly.JavaScript.analysis_prophet_field = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("block result is ", res);
-        const dataurl = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/json/${res}`;
+        console.log("block result is ", res.user_data_predict_id);
+        const dataurl = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/json/${res.user_data_predict_id}`;
 
-        store.dispatch(setUserDataSetId(["prophet", res]));
+        store.dispatch(setUserDataSetId(["prophet", res.user_data_predict_id]));
 
         fetch(dataurl, {
           method: "GET",

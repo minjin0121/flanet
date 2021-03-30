@@ -1,5 +1,10 @@
 import * as Blockly from "blockly/core";
 import store from "../../../index.js";
+import {
+  setUserDataSetId,
+  setDisplayData,
+  setDisplayCode,
+} from "../../../actions/index";
 
 const makeOptionsArray = function (userDataSets) {
   const options = [];
@@ -38,5 +43,31 @@ Blockly.Blocks.data_select = {
 };
 
 Blockly.JavaScript.data_select = function (block) {
-  return block.getFieldValue("SELECT");
+  const selectId = block.getFieldValue("SELECT");
+
+  // 이거 링크 합쳐준다구 했음! 합쳐진 링크 넣으면 csv 파일도 긁어오기 가능!! => 벗 csv 데이터 시각화가 가능할까?
+  const dataurl = `https://j4f002.p.ssafy.io/api/data/userdataset/${selectId}`;
+
+  store.dispatch(setUserDataSetId(["crawling", selectId]));
+  store.dispatch(setDisplayCode([]));
+
+  fetch(dataurl, {
+    method: "GET",
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log(res);
+      console.log(res.data_set);
+      if (res.data_set.length > 1) {
+        store.dispatch(setDisplayData(res.data_set));
+      } else if (res.data_set.length > 0) {
+        store.dispatch(
+          setDisplayData([
+            `실시간 데이터 수집 결과는 ${res.data_set[0].data_set_value} 입니다.`,
+          ])
+        );
+      }
+    });
+
+  return "Data Select";
 };

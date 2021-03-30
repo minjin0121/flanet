@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import Plotly from "plotly.js";
 
 function DisplayTable({ result, data }) {
-  if (Object.values(data).length > 0) {
+  if (Object.values(data).length > 1) {
     // datas를 날짜와 값만 뽑아서 가공
     let dataDisplay = [];
     let tablePlotly = [];
@@ -66,7 +66,10 @@ function DisplayTable({ result, data }) {
       ];
     }
 
+    document.getElementById("displayTable").innerHTML = "";
     Plotly.newPlot("displayTable", tablePlotly);
+  } else if (Object.values(data).length > 0) {
+    document.getElementById("displayTable").innerHTML = `<h5>${data}</h5>`;
   }
 
   return <div className="displayTable" id="displayTable"></div>;

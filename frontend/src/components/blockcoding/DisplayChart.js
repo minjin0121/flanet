@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import Plotly from "plotly.js";
 
 function DisplayChart({ result, data }) {
-  if (Object.values(data).length > 0) {
+  if (Object.values(data).length > 1) {
     // datas를 날짜와 값만 뽑아서 가공
     let dataDisplay = [];
     let chartPlotly = [];
@@ -52,7 +52,11 @@ function DisplayChart({ result, data }) {
       ];
     }
 
+    document.getElementById("displayChart").innerHTML = "";
     Plotly.newPlot("displayChart", chartPlotly);
+  } else if (Object.values(data).length > 0) {
+    document.getElementById("displayChart").innerHTML =
+      "<h5>차트를 그릴 수 없습니다.</h5>";
   }
 
   return <div className="displayChart" id="displayChart"></div>;

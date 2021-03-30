@@ -55,3 +55,18 @@ export const setCNNChartMark = function (chart) {
     payload: chart,
   };
 };
+
+export const getUserModelSet = function (userId) {
+  return function (dispatch) {
+    fetch(`https://j4f002.p.ssafy.io/api/data/trainingmodel/select/${userId}`, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        dispatch({
+          type: "GET_USER_MODEL_SET",
+          payload: res,
+        });
+      });
+  };
+};

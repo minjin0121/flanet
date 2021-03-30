@@ -96,18 +96,20 @@ def download_easy_user_data_set(user_data_set_id: int, db: Session = Depends(get
                 s_data += str(i.data_list_id) + ","
                 s_data += str(i.data_set_value) + ","
                 s_data += str(i.data_set_date) + "\n"
-            return {
-                "filename":"user data.csv",
-                "file":Response(s_data, media_type="text/csv")
-            }
+            return Response(
+                s_data,
+                media_type="application/octet-stream",
+                headers={"Content-Disposition": 'inline; filename="user data.csv"'},
+            )
         else:
             csv_data = requests.get(
                 f"https://j4f002.p.ssafy.io/csv/download/userdataset/file/{user_data_set_id}"
             ).text
-            return {
-                "filename":"user data.csv",
-                "file":Response(csv_data, media_type="text/csv")
-            }
+            return Response(
+                csv_data,
+                media_type="application/octet-stream",
+                headers={"Content-Disposition": 'inline; filename="user data.csv"'},
+            )
 
     else:
         raise HTTPException(status_code=400, detail="유저 데이터 목록에 없는 데이터입니다.")

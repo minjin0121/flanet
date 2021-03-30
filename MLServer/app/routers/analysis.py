@@ -1,12 +1,13 @@
 # 표준 라이브러리
 from sys import path as pth
 from os import path, remove
+from io import StringIO
 import csv
 import codecs
-import io
+
 
 # 서드 파티 라이브러리
-from fastapi import APIRouter, Depends, HTTPException, Form
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 import pandas as pd
@@ -21,8 +22,6 @@ import model.prophet as pr
 import model.tf as tf
 import routers.codes as codes
 
-from io import StringIO
-
 router = APIRouter()
 
 
@@ -36,7 +35,6 @@ class TfPreprocess(BaseModel):
 
 class TfTraining(BaseModel):
     input_processed_data: str
-    training_model_id: int
     user_id: str
 
 
@@ -74,12 +72,12 @@ def analysis_prophet(
     # csv
     if data.user_data_set_start == None:  # 7
         original_df, analysis_value = csv_data_call(data)
-        df = pd.read_csv(io.StringIO(original_df.to_csv()), index_col="Date")
+        df = pd.read_csv(StringIO(original_df.to_csv()), index_col="Date")
         df = df.drop(["Unnamed: 0"], axis=1)
     # 기간별
     else:
         original_df = db_data_call(data, db=db)
-        df = pd.read_csv(io.StringIO(original_df.to_csv()), index_col="Date")  # 기본 인덱스는 날짜기준.
+        df = pd.read_csv(StringIO(original_df.to_csv()), index_col="Date")  # 기본 인덱스는 날짜기준.
         df.sort_values(by=["Date"], axis=0, inplace=True)  # date 기준 내림차순 정렬
         df = df.drop(["Unnamed: 0"], axis=1)
 
@@ -120,13 +118,13 @@ def data_input(tf_input: TfInput, db: Session = Depends(get_db)):
     # csv
     if data.user_data_set_start == None:
         original_df = csv_data_call(data)
-        df = pd.read_csv(io.StringIO(original_df.to_csv()))
+        df = pd.read_csv(StringIO(original_df.to_csv()))
         df = df.drop(["Unnamed: 0"], axis=1)
     # 기간별
     else:
         original_df = db_data_call(data, db=db)
-        df = pd.read_csv(io.StringIO(original_df.to_csv()))  # 기본 인덱스는 날짜기준.
-        df.sort_values(by=["Date"], axis=0, inplace=True)  # date 기준 내림차순 정렬
+        df = pd.read_csv(StringIO(original_df.to_csv()))
+        df.sort_values(by=["Date"], axis=0, inplace=True)
         df = df.drop(["Unnamed: 0"], axis=1)
 
     return df.to_csv(index=False)
@@ -141,7 +139,6 @@ def data_preprocess(tf_preprocess: TfPreprocess):
 def model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
     return tf.cnn_model_training(
         tf_training.input_processed_data,
-        tf_training.training_model_id,
         tf_training.user_id,
         db,
     )
@@ -151,7 +148,6 @@ def model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
 def model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
     return tf.lstm_model_training(
         tf_training.input_processed_data,
-        tf_training.training_model_id,
         tf_training.user_id,
         db,
     )

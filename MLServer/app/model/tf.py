@@ -2,6 +2,7 @@
 from os import path, remove
 import json
 
+
 # 서드 파티 라이브러리
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential, load_model
@@ -12,6 +13,7 @@ from keras.optimizers import Adam
 import pandas as pd
 import numpy as np
 import requests
+
 
 # 로컬
 from database import crud
@@ -48,7 +50,6 @@ def data_preprocess(input_data):
     x_train_columns = [f"x_train_{i}" for i in range(look_back)]
     x_test_columns = [f"x_test_{i}" for i in range(look_back)]
 
-    # processed_data = pd.DataFrame(y_data, columns=["actual"])
     actual_data = pd.DataFrame(y_data, columns=["actual"])
     x_train = pd.DataFrame(x_train.reshape(-1, 14), columns=x_train_columns)
     x_test = pd.DataFrame(x_test.reshape(-1, 14), columns=x_test_columns)
@@ -66,7 +67,7 @@ def data_preprocess(input_data):
     return processed_data.to_csv(index=False)
 
 
-def cnn_model_training(input_data, training_model_id, user_id, db):
+def cnn_model_training(input_data, user_id, db):
     x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
 
     adam = Adam(lr=0.003)
@@ -107,12 +108,15 @@ def cnn_model_training(input_data, training_model_id, user_id, db):
     )
 
     training_model = crud.insert_training_model(
-        training_model_id=training_model_id, training_model_name="ho", user_id=user_id, db=db
+        training_model_name="ho",
+        user_id=user_id,
+        db=db,
     )
+    training_model_id = training_model.training_model_id
 
     model_file = open(f"./asset/models/{user_id}.h5", "rb")
     req_upload = {"file": model_file}
-    req_data = {"training_model_id": training_model.training_model_id}
+    req_data = {"training_model_id": training_model_id}
 
     req = requests.post(
         "https://j4f002.p.ssafy.io/csv/upload/trainingmodel",
@@ -120,12 +124,18 @@ def cnn_model_training(input_data, training_model_id, user_id, db):
         data=req_data,
     )
 
+    training_model_id = [training_model_id]
+    training_model_id = pd.DataFrame(training_model_id, columns=["training_model_id"])
+
+    result_data = pd.DataFrame(history.history)
+    result_data = pd.concat([result_data, training_model_id], axis=1)
+
     remove(f"./asset/models/{user_id}.h5")
 
-    return pd.DataFrame(history.history).to_csv(index=False)
+    return result_data.to_csv(index=False)
 
 
-def lstm_model_training(input_data, training_model_id, user_id, db):
+def lstm_model_training(input_data, user_id, db):
     x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
 
     adam = Adam(lr=0.003)
@@ -157,8 +167,11 @@ def lstm_model_training(input_data, training_model_id, user_id, db):
     )
 
     training_model = crud.insert_training_model(
-        training_model_id=training_model_id, training_model_name="ho", user_id=user_id, db=db
+        training_model_name="ho",
+        user_id=user_id,
+        db=db,
     )
+    training_model_id = training_model.training_model_id
 
     model_file = open(f"./asset/models/{user_id}.h5", "rb")
     req_upload = {"file": model_file}
@@ -170,9 +183,15 @@ def lstm_model_training(input_data, training_model_id, user_id, db):
         data=req_data,
     )
 
+    training_model_id = [training_model_id]
+    training_model_id = pd.DataFrame(training_model_id, columns=["training_model_id"])
+
+    result_data = pd.DataFrame(history.history)
+    result_data = pd.concat([result_data, training_model_id], axis=1)
+
     remove(f"./asset/models/{user_id}.h5")
 
-    return pd.DataFrame(history.history).to_csv(index=False)
+    return result_data.to_csv(index=False)
 
 
 def model_evaluate(input_data, training_model_id):
@@ -187,14 +206,14 @@ def model_evaluate(input_data, training_model_id):
     x_train_prediction = trained_model.predict(x_train) * scale
     x_test_prediction = trained_model.predict(x_test) * scale
 
-    processed_data = pd.DataFrame(x_train_prediction, columns=["x_train_prediction"])
+    result_data = pd.DataFrame(x_train_prediction, columns=["x_train_prediction"])
     x_test_prediction = pd.DataFrame(x_test_prediction, columns=["x_test_prediction"])
 
-    processed_data = pd.concat([processed_data, x_test_prediction], axis=1)
+    result_data = pd.concat([result_data, x_test_prediction], axis=1)
 
     remove(model_file_path)
 
-    return processed_data.to_csv(index=False)
+    return result_data.to_csv(index=False)
 
 
 def predict_future(user_data_set_id, input_data, training_model_id, user_id, period, db):
@@ -243,11 +262,20 @@ def predict_future(user_data_set_id, input_data, training_model_id, user_id, per
         db=db,
     )
 
-    predicted_data = y_future[-period:].reshape(-1, 1) * scale
+    result_data = y_future[-period:].reshape(-1, 1) * scale
+    result_data = pd.DataFrame(result_data, columns=["future"]).to_csv(index=False)
+
+    req_upload = {"file": result_data.encode("utf-8")}
+    req_data = {"user_data_predict_id": insert_user_data_predict.user_data_predict_id}
+    req = requests.post(
+        "https://j4f002.p.ssafy.io/csv/upload/userpredictdata",
+        files=req_upload,
+        data=req_data,
+    )
 
     remove(model_file_path)
 
-    return pd.DataFrame(predicted_data, columns=["future"]).to_csv(index=False)
+    return result_data
 
 
 def csv_format_to_dataframe(data):

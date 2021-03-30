@@ -37,12 +37,6 @@ function BlockCoding() {
 
   // 데이터 다운 버튼
   const dataDownload = () => {
-    // 이거 기점으로 다운로드 링크 설정해줄게요 !
-    if (store.getState().nowUserDataId[0] === "crawling") {
-      console.log("crawling down");
-    } else if (store.getState().nowUserDataId[0] === "prophet") {
-      console.log("analysis down");
-    }
     // 사용자가 지금 작업 중인 data랑 매칭 해줄 datanum
     const datanum = store.getState().userDataSetId[1];
     let url = "";
@@ -63,7 +57,7 @@ function BlockCoding() {
         }
       });
     } else if (store.getState().userDataSetId[0] === "prophet") {
-      url = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/file/${datanum}`;
+      url = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/${datanum}`;
       fetch(url, {
         method: "GET",
         headers: {

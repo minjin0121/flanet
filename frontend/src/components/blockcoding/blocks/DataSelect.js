@@ -56,6 +56,7 @@ Blockly.JavaScript.data_select = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
+      console.log(res);
       console.log(res.data_set);
       if (res.data_set.length > 1) {
         store.dispatch(setDisplayData(res.data_set));

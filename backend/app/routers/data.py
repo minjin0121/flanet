@@ -4,7 +4,7 @@ from os import path
 import time, json
 
 # 서드 파티 라이브러리
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 import requests
 
@@ -97,24 +97,22 @@ def show_select_user_data_set(user_id: str, db: Session = Depends(get_db)):
 
 # 해당 데이터의 현재 상태 xml 저장
 @router.put(
-    "/api/data/userdataset/xml/update/{user_data_set_id}",
+    "/api/data/userdataset/xml/update",
     tags=["userdataset"],
     description="해당 데이터의 현재 상태 xml 저장",
 )
 def update_user_data_set_xml(
-    user_data_set_id: int,
-    user_data_set_xml: str,
-    user_data_set_name: str = None,
+    data: schemas.UserDataSetXML,
     db: Session = Depends(get_db),
 ):
     db_data = (
         db.query(models.UserDataSet)
-        .filter(models.UserDataSet.user_data_set_id == user_data_set_id)
+        .filter(models.UserDataSet.user_data_set_id == data.user_data_set_id)
         .first()
     )
-    db_data.user_data_set_xml = user_data_set_xml
-    if user_data_set_name:
-        db_data.user_data_set_name = user_data_set_name
+    db_data.user_data_set_xml = data.user_data_set_xml
+    if data.user_data_set_name:
+        db_data.user_data_set_name = data.user_data_set_name
     db.commit()
     db.refresh(db_data)
 
@@ -123,11 +121,11 @@ def update_user_data_set_xml(
 
 # 해당 데이터의 현재 상태 xml 삭제
 @router.put(
-    "/api/data/userdataset/xml/delete/{user_data_set_id}",
+    "/api/data/userdataset/xml/delete",
     tags=["userdataset"],
     description="해당 데이터의 현재 상태 xml 삭제",
 )
-def delete_user_data_set_xml(user_data_set_id: int, db: Session = Depends(get_db)):
+def delete_user_data_set_xml(user_data_set_id: int = Form(...), db: Session = Depends(get_db)):
     db_data = (
         db.query(models.UserDataSet)
         .filter(models.UserDataSet.user_data_set_id == user_data_set_id)
@@ -231,55 +229,3 @@ def check_user(user_id: str):
         return False
     else:
         return True
-
-
-# 선택된 데이터 id의 유저 데이터 셋
-@router.get(
-    "/api/easy/userdataset/{user_data_set_id}",
-    tags=["easy"],
-    description="선택된 데이터 id의 유저 데이터 셋에 해당하는 데이터 가져오기",
-)
-def show_easy_user_data_set(user_data_set_id: int, db: Session = Depends(get_db)):
-    data = (
-        db.query(models.UserDataSet)
-        .filter(models.UserDataSet.user_data_set_id == user_data_set_id)
-        .all()
-    )
-    if data:
-        data = data[0]
-        if data.user_data_set_start and data.user_data_set_end:
-            return {
-                "data_set": db.query(models.DataSet)
-                .filter(models.DataSet.data_list_id == data.data_list_id)
-                .filter(models.DataSet.data_set_date >= data.user_data_set_start)
-                .filter(models.DataSet.data_set_date <= data.user_data_set_end)
-                .all()
-            }
-        else:
-            csv_data = requests.get(
-                f"https://j4f002.p.ssafy.io/csv/download/userdataset/json/{user_data_set_id}"
-            ).text
-            dcsv_data = json.loads(csv_data)
-            dic = dict()
-            dic["data_set"] = []
-
-            for i in range(len(dcsv_data)):
-                tmp = dict()
-                tmp["data_list_id"] = 7
-                if dcsv_data[i].get("Close"):
-                    tmp["data_set_value"] = float(dcsv_data[i]["Close"])
-                    tmp["data_set_date"] = dcsv_data[i]["Date"]
-                    dic["data_set"].append(tmp)
-                elif dcsv_data[i].get("평균기온(°C)"):
-                    tmp["data_set_value"] = float(dcsv_data[i]["평균기온(°C)"])
-                    tmp["data_set_date"] = dcsv_data[i]["일시"]
-                    dic["data_set"].append(tmp)
-                else:
-                    raise HTTPException(
-                        status_code=400, detail="파싱 불가능한 csv파일입니다. csv 파일서버에서 직접 불러오세요."
-                    )
-
-            return dic
-
-    else:
-        raise HTTPException(status_code=400, detail="유저 데이터 목록에 없는 데이터입니다.")

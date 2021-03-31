@@ -4,6 +4,7 @@ const initialState = {
   userDataSetId: [],
   displayData: [],
   displayCode: [],
+  cnnChartMark: 0,
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -18,6 +19,8 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, displayData: action.payload };
     case "SET_DISPLAY_CODE":
       return { ...state, displayCode: action.payload };
+    case "SET_CNN_CHART_MARK":
+      return { ...state, cnnChartMark: action.payload };
     default:
       return state;
   }

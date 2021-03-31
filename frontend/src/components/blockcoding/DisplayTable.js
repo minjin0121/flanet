@@ -9,6 +9,7 @@ function DisplayTable({ result, data }) {
     let dataDisplay = [];
     let tablePlotly = [];
 
+    // 데이터 수집 그래프 그리기
     if (result[0] === "crawling") {
       if (data) {
         const dataDate = data.map((d) => d.data_set_date);
@@ -17,7 +18,6 @@ function DisplayTable({ result, data }) {
         dataDisplay = [dataDate, dataValue];
       }
 
-      // 표 그리기
       tablePlotly = [
         {
           type: "table",
@@ -36,7 +36,12 @@ function DisplayTable({ result, data }) {
           },
         },
       ];
-    } else if (result[0] === "prophet") {
+
+      document.getElementById("displayTable").innerHTML = "";
+      Plotly.newPlot("displayTable", tablePlotly);
+    }
+    // Prophet 그래프 그리기
+    else if (result[0] === "prophet") {
       if (data) {
         const datasDate = data.map((d) => d.ds);
         const datasYhat = data.map((d) => d.yhat);
@@ -45,7 +50,6 @@ function DisplayTable({ result, data }) {
         dataDisplay = [datasDate, datasYhat, datasClose];
       }
 
-      // 표 그리기
       tablePlotly = [
         {
           type: "table",
@@ -64,10 +68,99 @@ function DisplayTable({ result, data }) {
           },
         },
       ];
+
+      document.getElementById("displayTable").innerHTML = "";
+      Plotly.newPlot("displayTable", tablePlotly);
     }
 
-    document.getElementById("displayTable").innerHTML = "";
-    Plotly.newPlot("displayTable", tablePlotly);
+    // CNN 그래프 그리기
+    else if (
+      result[0] === "cnn training" ||
+      result[0] === "cnn evaluate" ||
+      result[0] === "cnn predict"
+    ) {
+      if (result[0] === "cnn training") {
+        if (data) {
+          const datasLoss = data.map((d) => d.loss);
+          const datasValLoss = data.map((d) => d.val_loss);
+
+          dataDisplay = [datasLoss, datasValLoss];
+        }
+
+        tablePlotly = [
+          {
+            type: "table",
+            header: {
+              values: [["<b>Loss</b>"], ["<b>Var_Loss</b>"]],
+              align: "center",
+              line: { width: 1, color: "black" },
+              fill: { color: "grey" },
+              font: { family: "Arial", size: 12, color: "white" },
+            },
+            cells: {
+              values: dataDisplay,
+              align: "center",
+              line: { color: "black", width: 1 },
+              font: { family: "Arial", size: 11, color: ["black"] },
+            },
+          },
+        ];
+
+        Plotly.newPlot("displayTable", tablePlotly);
+      } else if (result[0] === "cnn evaluate") {
+        if (data) {
+          const datasTrain = data.map((d) => d.x_train_prediction);
+          const datasTest = data.map((d) => d.x_test_prediction);
+
+          dataDisplay = [datasTrain, datasTest];
+        }
+
+        tablePlotly = [
+          {
+            type: "table",
+            header: {
+              values: [["<b>Table_Prediction</b>"], ["<b>Test_Prediction</b>"]],
+              align: "center",
+              line: { width: 1, color: "black" },
+              fill: { color: "grey" },
+              font: { family: "Arial", size: 12, color: "white" },
+            },
+            cells: {
+              values: dataDisplay,
+              align: "center",
+              line: { color: "black", width: 1 },
+              font: { family: "Arial", size: 11, color: ["black"] },
+            },
+          },
+        ];
+
+        Plotly.newPlot("displayTable", tablePlotly);
+      } else if (result[0] === "cnn predict") {
+        const datasFuture = data.map((d) => d.future);
+        const datasDisplay = [datasFuture];
+
+        tablePlotly = [
+          {
+            type: "table",
+            header: {
+              values: [["<b>Future</b>"]],
+              align: "center",
+              line: { width: 1, color: "black" },
+              fill: { color: "grey" },
+              font: { family: "Arial", size: 12, color: "white" },
+            },
+            cells: {
+              values: datasDisplay,
+              align: "center",
+              line: { color: "black", width: 1 },
+              font: { family: "Arial", size: 11, color: ["black"] },
+            },
+          },
+        ];
+
+        Plotly.newPlot("displayTable", tablePlotly);
+      }
+    }
   } else if (Object.values(data).length > 0) {
     document.getElementById("displayTable").innerHTML = `<h5>${data}</h5>`;
   }

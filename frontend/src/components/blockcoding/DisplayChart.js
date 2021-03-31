@@ -2,6 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Plotly from "plotly.js";
+import store from "../../index.js";
+import { setCNNChartMark } from "../../actions/index";
 
 function DisplayChart({ result, data }) {
   if (Object.values(data).length > 1) {
@@ -9,6 +11,7 @@ function DisplayChart({ result, data }) {
     let dataDisplay = [];
     let chartPlotly = [];
 
+    // 데이터 수집 그래프 그리기
     if (result[0] === "crawling") {
       if (data) {
         const dataDate = data.map((d) => d.data_set_date);
@@ -17,7 +20,6 @@ function DisplayChart({ result, data }) {
         dataDisplay = [dataDate, dataValue];
       }
 
-      // 그래프 그리기
       chartPlotly = [
         {
           x: dataDisplay[0],
@@ -26,7 +28,12 @@ function DisplayChart({ result, data }) {
           type: "scatter",
         },
       ];
-    } else if (result[0] === "prophet") {
+
+      document.getElementById("displayChart").innerHTML = "";
+      Plotly.newPlot("displayChart", chartPlotly);
+    }
+    // Prophet 그래프 그리기
+    else if (result[0] === "prophet") {
       if (data) {
         const datasDate = data.map((d) => d.ds);
         const datasYhat = data.map((d) => d.yhat);
@@ -35,25 +42,125 @@ function DisplayChart({ result, data }) {
         dataDisplay = [datasDate, datasYhat, datasClose];
       }
 
-      // 그래프 그리기
       chartPlotly = [
         {
+          name: "yhat",
           x: dataDisplay[0],
           y: dataDisplay[1],
           line: { color: "red" },
           type: "scatter",
         },
         {
+          name: "Close",
           x: dataDisplay[0],
           y: dataDisplay[2],
           line: { color: "#17BECF" },
           type: "scatter",
         },
       ];
-    }
 
-    document.getElementById("displayChart").innerHTML = "";
-    Plotly.newPlot("displayChart", chartPlotly);
+      document.getElementById("displayChart").innerHTML = "";
+      Plotly.newPlot("displayChart", chartPlotly);
+    }
+    // CNN 그래프 그리기
+    else if (
+      result[0] === "cnn training" ||
+      result[0] === "cnn evaluate" ||
+      result[0] === "cnn predict"
+    ) {
+      if (result[0] === "cnn training") {
+        if (data) {
+          const datasLoss = data.map((d) => d.loss);
+          const datasValLoss = data.map((d) => d.val_loss);
+
+          dataDisplay = [datasLoss, datasValLoss];
+        }
+
+        chartPlotly = [
+          {
+            name: "loss",
+            y: dataDisplay[0],
+            line: { color: "red" },
+            type: "scatter",
+          },
+          {
+            name: "var_loss",
+            y: dataDisplay[1],
+            line: { color: "#17BECF" },
+            type: "scatter",
+          },
+        ];
+
+        Plotly.newPlot("displayChart", chartPlotly);
+      } else if (result[0] === "cnn evaluate") {
+        if (data) {
+          const datasTrain = data.map((d) => d.x_train_prediction);
+          let datasTest = data.map((d) => d.x_test_prediction);
+
+          datasTest = datasTest.filter(function (d) {
+            return d !== "";
+          });
+
+          dataDisplay = [datasTrain, datasTest];
+        }
+
+        const datasTrainLength = dataDisplay[0].length;
+        const idxTrain = [];
+
+        for (let i = 1; i <= datasTrainLength + 2; i++) {
+          idxTrain.push(i);
+        }
+
+        const datasTestLength = dataDisplay[1].length;
+        const idxTest = [];
+
+        for (
+          let i = datasTrainLength;
+          i <= datasTrainLength + datasTestLength + 1;
+          i++
+        ) {
+          idxTest.push(i);
+        }
+
+        store.dispatch(setCNNChartMark(datasTrainLength + datasTestLength));
+
+        chartPlotly = [
+          {
+            name: "test prediction",
+            x: idxTrain,
+            y: dataDisplay[0],
+            line: { color: "red" },
+            type: "scatter",
+          },
+          {
+            name: "train prediction",
+            x: idxTest,
+            y: dataDisplay[1],
+            line: { color: "#17BECF" },
+            type: "scatter",
+          },
+        ];
+
+        Plotly.newPlot("displayChart", chartPlotly);
+      } else if (result[0] === "cnn predict") {
+        const datasFuture = data.map((d) => d.future);
+        const idx = [];
+
+        const chart = store.getState().cnnChartMark;
+
+        for (let i = chart + 1; i <= chart + data.length; i++) {
+          idx.push(i);
+        }
+
+        Plotly.addTraces("displayChart", {
+          name: "future",
+          x: idx,
+          y: datasFuture,
+          line: { color: "blue" },
+          type: "scatter",
+        });
+      }
+    }
   } else if (Object.values(data).length > 0) {
     document.getElementById("displayChart").innerHTML =
       "<h5>차트를 그릴 수 없습니다.</h5>";

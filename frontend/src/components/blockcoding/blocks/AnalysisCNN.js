@@ -1,6 +1,6 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
-import { setUserDataSetId } from "../../../actions/index";
+import { setUserDataSetId, setDisplayData } from "../../../actions/index";
 
 const changeCSV = function (csv) {
   const lines = csv.split("\n");
@@ -99,13 +99,14 @@ Blockly.JavaScript.analysis_cnn_field = function (block) {
               .then((res3) => res3.json())
               .then((res3) => {
                 console.log("*** TENSORFLOW CNN TRAINING DONE ***");
-                console.log(res3);
+                console.log(changeCSV(res3));
 
                 const trainingModelId = Number(
                   changeCSV(res3)[0].training_model_id
                 );
 
                 store.dispatch(setUserDataSetId(["cnn training", res3]));
+                store.dispatch(setDisplayData(changeCSV(res3)));
 
                 url = "https://j4f002.p.ssafy.io/ml/tensorflow/evaluate";
 
@@ -122,9 +123,10 @@ Blockly.JavaScript.analysis_cnn_field = function (block) {
                   .then((res4) => res4.json())
                   .then((res4) => {
                     console.log("*** TENSORFLOW CNN EVALUATE DONE ***");
-                    console.log(res4);
+                    console.log(changeCSV(res4));
 
                     store.dispatch(setUserDataSetId(["cnn evaluate", res4]));
+                    store.dispatch(setDisplayData(changeCSV(res4)));
 
                     url = "https://j4f002.p.ssafy.io/ml/tensorflow/predict";
 
@@ -147,6 +149,7 @@ Blockly.JavaScript.analysis_cnn_field = function (block) {
                         console.log(res5);
 
                         store.dispatch(setUserDataSetId(["cnn predict", res5]));
+                        store.dispatch(setDisplayData(changeCSV(res5)));
                       });
                   });
               });

@@ -48,3 +48,10 @@ export const setDisplayCode = function (code) {
     payload: code,
   };
 };
+
+export const setCNNChartMark = function (chart) {
+  return {
+    type: "SET_CNN_CHART_MARK",
+    payload: chart,
+  };
+};

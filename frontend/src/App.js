@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import Header from "./components/index/Header";
 import Footer from "./components/index/Footer";
 import Home from "./pages/Home";
@@ -33,6 +33,7 @@ function App() {
           <Header />
           <BlockCoding />
         </Route>
+        <Redirect path="*" to="/" />
       </Switch>
     </BrowserRouter>
   );

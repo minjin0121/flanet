@@ -3,21 +3,19 @@ import store from "../../../index.js";
 import { setUserDataSetId, setDisplayData } from "../../../actions/index";
 
 const changeCSV = function (csv) {
-  const lines = csv.split("\n");
-
   const result = [];
-
+  const lines = csv.split("\n");
   const headers = lines[0].split(",");
 
   for (let i = 1; i < lines.length; i++) {
-    const obj = {};
-    const currentline = lines[i].split(",");
+    const temp = {};
+    const currentLine = lines[i].split(",");
 
     for (let j = 0; j < headers.length; j++) {
-      obj[headers[j]] = currentline[j];
+      temp[headers[j]] = currentLine[j];
     }
 
-    result.push(obj);
+    result.push(temp);
   }
 
   return result;

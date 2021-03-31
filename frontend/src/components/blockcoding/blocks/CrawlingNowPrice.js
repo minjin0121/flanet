@@ -52,11 +52,14 @@ Blockly.JavaScript.crawling_now_price_field = function (block) {
   );
 
   let url = "";
+  let userDataSetName = "";
 
   if (dataId <= 6) {
     url = "https://j4f002.p.ssafy.io/api/crawling/stocks";
+    userDataSetName = "stock crawling";
   } else {
     url = "https://j4f002.p.ssafy.io/api/crawling/temperatures";
+    userDataSetName = "temperature crawling";
   }
 
   fetch(url, {
@@ -73,7 +76,7 @@ Blockly.JavaScript.crawling_now_price_field = function (block) {
     .then((res) => {
       console.log(res);
       store.dispatch(
-        setUserDataSetId(["crawling", res.user_data_set.user_data_set_id])
+        setUserDataSetId([userDataSetName, res.user_data_set.user_data_set_id])
       );
       store.dispatch(
         setDisplayData([
@@ -82,13 +85,14 @@ Blockly.JavaScript.crawling_now_price_field = function (block) {
       );
     });
 
-  url = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}`;
+  const codeurl = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}`;
 
-  fetch(url, {
+  fetch(codeurl, {
     method: "GET",
   })
     .then((res) => res.json())
     .then((res) => {
+      console.log("crawl", res);
       store.dispatch(setDisplayCode(res.code));
     });
 

@@ -106,7 +106,7 @@ def crawling_current_stock_for_user(
             user_data_set_end=date,
         )
         return {
-            "user_data_set_id":create_user_data_set(db, db_data),
+            "user_data_set":create_user_data_set(db, db_data),
             "data_set_date": date,
             "data_list_id": data.data_list_id,
             "data_set_value": res_data,

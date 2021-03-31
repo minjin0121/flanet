@@ -1,6 +1,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import ExitToAppRoundedIcon from "@material-ui/icons/ExitToAppRounded";
+// import ExitToAppRoundedIcon from "@material-ui/icons/ExitToAppRounded";
+import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 
 function Home() {
   const history = useHistory();
@@ -9,7 +10,7 @@ function Home() {
     sessionStorage.removeItem(
       `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
     );
-    history.push("/");
+    history.push("*");
   };
 
   const startFlanetButton = (event) => {
@@ -24,25 +25,62 @@ function Home() {
     }
   };
 
+  const user = JSON.parse(
+    sessionStorage.getItem(
+      `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
+    )
+  );
+
   return (
-    <div className="App">
-      안녕 ! FlaNET !
-      <div>
-        <ExitToAppRoundedIcon
+    <div className="Home">
+      <div className="fixAppBackgroundDuplicate"></div>
+      <img
+        src={`${process.env.PUBLIC_URL}/img/home_block_1.png`}
+        className="homepageTransitionDesign1"
+        alt="home_block"
+      />
+      <img
+        src={`${process.env.PUBLIC_URL}/img/home_block_2.png`}
+        className="homepageTransitionDesign2"
+        alt="home_block"
+      />
+      <img
+        src={`${process.env.PUBLIC_URL}/img/home_block_3.png`}
+        className="homepageTransitionDesign3"
+        alt="home_block"
+      />
+      <img
+        src={`${process.env.PUBLIC_URL}/img/home_block_4.png`}
+        className="homepageTransitionDesign4"
+        alt="home_block"
+      />
+      <div className="logoutButtonLocation">
+        <div>
+          <span
+            onClick={(event) => {
+              signOut(event);
+            }}
+          >
+            {(function () {
+              if (user) return <div>Logout</div>;
+              else return <div></div>;
+            })()}
+          </span>
+        </div>
+      </div>
+      <div className="startFlanetButton">
+        <h1>FlaNET</h1>
+        <br />
+        <br />
+        <DoubleArrowIcon
+          className="dubbleArrowIconStyle"
           onClick={(event) => {
-            signOut(event);
+            startFlanetButton(event);
           }}
         />
+        <div>블록코딩 Go!Go!</div>
       </div>
-      <button
-        className="startFlanetButton"
-        type="submit"
-        onClick={(event) => {
-          startFlanetButton(event);
-        }}
-      >
-        FlaNET 시작하기
-      </button>
+      <div className="startFlanetButtonDefault"></div>
     </div>
   );
 }

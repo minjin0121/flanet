@@ -62,8 +62,6 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
         console.log("*** TENSORFLOW DATA INPUT DONE ***");
         console.log(res1);
 
-        store.dispatch(setUserDataSetId(["lstm", res1]));
-
         url = "https://j4f002.p.ssafy.io/ml/tensorflow/preprocess";
 
         fetch(url, {
@@ -79,8 +77,6 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
           .then((res2) => {
             console.log("*** TENSORFLOW DATA PREPROCESSING DONE ***");
             console.log(res2);
-
-            store.dispatch(setUserDataSetId(["lstm preprocessing", res2]));
 
             url = "https://j4f002.p.ssafy.io/ml/tensorflow/lstm/training";
 
@@ -103,7 +99,7 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
                   changeCSV(res3)[0].training_model_id
                 );
 
-                store.dispatch(setUserDataSetId(["lstm training", res3]));
+                store.dispatch(setUserDataSetId(["training", res3]));
                 store.dispatch(setDisplayData(changeCSV(res3)));
 
                 url = "https://j4f002.p.ssafy.io/ml/tensorflow/evaluate";

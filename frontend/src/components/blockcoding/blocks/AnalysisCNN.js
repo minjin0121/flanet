@@ -62,8 +62,6 @@ Blockly.JavaScript.analysis_cnn_field = function (block) {
         console.log("*** TENSORFLOW DATA INPUT DONE ***");
         console.log(res1);
 
-        store.dispatch(setUserDataSetId(["cnn", res1]));
-
         url = "https://j4f002.p.ssafy.io/ml/tensorflow/preprocess";
 
         fetch(url, {
@@ -79,8 +77,6 @@ Blockly.JavaScript.analysis_cnn_field = function (block) {
           .then((res2) => {
             console.log("*** TENSORFLOW DATA PREPROCESSING DONE ***");
             console.log(res2);
-
-            store.dispatch(setUserDataSetId(["cnn preprocessing", res2]));
 
             url = "https://j4f002.p.ssafy.io/ml/tensorflow/cnn/training";
 
@@ -103,7 +99,7 @@ Blockly.JavaScript.analysis_cnn_field = function (block) {
                   changeCSV(res3)[0].training_model_id
                 );
 
-                store.dispatch(setUserDataSetId(["cnn training", res3]));
+                store.dispatch(setUserDataSetId(["training", res3]));
                 store.dispatch(setDisplayData(changeCSV(res3)));
 
                 url = "https://j4f002.p.ssafy.io/ml/tensorflow/evaluate";
@@ -123,7 +119,7 @@ Blockly.JavaScript.analysis_cnn_field = function (block) {
                     console.log("*** TENSORFLOW CNN EVALUATE DONE ***");
                     console.log(changeCSV(res4));
 
-                    store.dispatch(setUserDataSetId(["cnn evaluate", res4]));
+                    store.dispatch(setUserDataSetId(["evaluate", res4]));
                     store.dispatch(setDisplayData(changeCSV(res4)));
 
                     url = "https://j4f002.p.ssafy.io/ml/tensorflow/predict";
@@ -146,7 +142,7 @@ Blockly.JavaScript.analysis_cnn_field = function (block) {
                         console.log("*** TENSORFLOW CNN PREDICT DONE ***");
                         console.log(res5);
 
-                        store.dispatch(setUserDataSetId(["cnn predict", res5]));
+                        store.dispatch(setUserDataSetId(["predict", res5]));
                         store.dispatch(setDisplayData(changeCSV(res5)));
                       });
                   });

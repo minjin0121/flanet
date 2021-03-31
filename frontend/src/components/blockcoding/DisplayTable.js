@@ -73,13 +73,13 @@ function DisplayTable({ result, data }) {
       Plotly.newPlot("displayTable", tablePlotly);
     }
 
-    // CNN 그래프 그리기
+    // TENSORFLOW (CNN, LSTM) 그래프 그리기
     else if (
-      result[0] === "cnn training" ||
-      result[0] === "cnn evaluate" ||
-      result[0] === "cnn predict"
+      result[0] === "training" ||
+      result[0] === "evaluate" ||
+      result[0] === "predict"
     ) {
-      if (result[0] === "cnn training") {
+      if (result[0] === "training") {
         if (data) {
           const datasLoss = data.map((d) => d.loss);
           const datasValLoss = data.map((d) => d.val_loss);
@@ -107,7 +107,7 @@ function DisplayTable({ result, data }) {
         ];
 
         Plotly.newPlot("displayTable", tablePlotly);
-      } else if (result[0] === "cnn evaluate") {
+      } else if (result[0] === "evaluate") {
         if (data) {
           const datasTrain = data.map((d) => d.x_train_prediction);
           const datasTest = data.map((d) => d.x_test_prediction);
@@ -135,7 +135,7 @@ function DisplayTable({ result, data }) {
         ];
 
         Plotly.newPlot("displayTable", tablePlotly);
-      } else if (result[0] === "cnn predict") {
+      } else if (result[0] === "predict") {
         const datasFuture = data.map((d) => d.future);
         const datasDisplay = [datasFuture];
 

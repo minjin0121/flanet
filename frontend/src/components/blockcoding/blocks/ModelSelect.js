@@ -30,7 +30,7 @@ Blockly.Blocks.model_select_field = {
     );
 
     this.appendDummyInput("user_model_set")
-      .appendField("이전 모델 선택")
+      .appendField("훈련된 모델 선택")
       .appendField(modelSelect, "SELECT");
     this.setNextStatement(true, null);
     this.setColour(225);

@@ -8,6 +8,7 @@ function DisplayTable({ result, data }) {
     // datas를 날짜와 값만 뽑아서 가공
     let dataDisplay = [];
     let tablePlotly = [];
+    let layout = {};
 
     // 데이터 수집 그래프 그리기
     if (result[0] === "crawling") {
@@ -37,8 +38,14 @@ function DisplayTable({ result, data }) {
         },
       ];
 
+      layout = {
+        title: {
+          text: "데이터 수집 결과",
+        },
+      };
+
       document.getElementById("displayTable").innerHTML = "";
-      Plotly.newPlot("displayTable", tablePlotly);
+      Plotly.newPlot("displayTable", tablePlotly, layout);
     }
     // Prophet 그래프 그리기
     else if (result[0] === "prophet") {
@@ -69,8 +76,14 @@ function DisplayTable({ result, data }) {
         },
       ];
 
+      layout = {
+        title: {
+          text: "PROPHET 결과",
+        },
+      };
+
       document.getElementById("displayTable").innerHTML = "";
-      Plotly.newPlot("displayTable", tablePlotly);
+      Plotly.newPlot("displayTable", tablePlotly, layout);
     }
 
     // TENSORFLOW (CNN, LSTM) 그래프 그리기
@@ -106,7 +119,13 @@ function DisplayTable({ result, data }) {
           },
         ];
 
-        Plotly.newPlot("displayTable", tablePlotly);
+        layout = {
+          title: {
+            text: "모델 훈련 결과",
+          },
+        };
+
+        Plotly.newPlot("displayTable", tablePlotly, layout);
       } else if (result[0] === "evaluate") {
         if (data) {
           const datasTrain = data.map((d) => d.x_train_prediction);
@@ -134,7 +153,13 @@ function DisplayTable({ result, data }) {
           },
         ];
 
-        Plotly.newPlot("displayTable", tablePlotly);
+        layout = {
+          title: {
+            text: "모델 평가 결과",
+          },
+        };
+
+        Plotly.newPlot("displayTable", tablePlotly, layout);
       } else if (result[0] === "predict") {
         const datasFuture = data.map((d) => d.future);
         const datasDisplay = [datasFuture];
@@ -158,7 +183,13 @@ function DisplayTable({ result, data }) {
           },
         ];
 
-        Plotly.newPlot("displayTable", tablePlotly);
+        layout = {
+          title: {
+            text: "모델 예측 결과",
+          },
+        };
+
+        Plotly.newPlot("displayTable", tablePlotly, layout);
       }
     }
   } else if (Object.values(data).length > 0) {

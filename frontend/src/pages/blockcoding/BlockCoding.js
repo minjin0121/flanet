@@ -76,8 +76,11 @@ function BlockCoding() {
     let url = "";
 
     // 이거 기점으로 다운로드 링크 설정해줄게요 !
-    if (store.getState().userDataSetId[0] === "crawling") {
-      url = `https://j4f002.p.ssafy.io/csv/download/userdataset/file/${dataId}`;
+    if (
+      store.getState().userDataSetId[0] === "crawling" ||
+      store.getState().userDataSetId[0] === "fileInput"
+    ) {
+      url = `https://j4f002.p.ssafy.io/api/easy/userdataset/file/${dataId}`;
       fetch(url, {
         method: "GET",
         headers: {

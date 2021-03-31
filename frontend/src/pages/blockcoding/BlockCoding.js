@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import Blockly from "blockly";
 import BlocklyJS from "blockly/javascript";
 import BlocklyWorkspace from "../../components/blockcoding/BlocklyWorkspace";
 import { Block, Category } from "../../components/blockcoding/BlocklyElement";
@@ -11,11 +12,16 @@ import "../../components/blockcoding/blocks/DataPreprocessing";
 import "../../components/blockcoding/blocks/AnalysisCNN";
 import "../../components/blockcoding/blocks/AnalysisLSTM";
 import "../../components/blockcoding/blocks/AnalysisProphet";
+import "../../components/blockcoding/blocks/ModelSelect";
 import DisplayTable from "../../components/blockcoding/DisplayTable";
 import DisplayChart from "../../components/blockcoding/DisplayChart";
 import DisplayCode from "../../components/blockcoding/DisplayCode";
 import store from "../../index.js";
-import { getDataList, getUserDataSet } from "../../actions/index";
+import {
+  getDataList,
+  getUserDataSet,
+  getUserModelSet,
+} from "../../actions/index";
 
 function BlockCoding() {
   const [simpleWorkspace] = useState(React.createRef());
@@ -29,21 +35,52 @@ function BlockCoding() {
 
   dispatch(getDataList());
   dispatch(getUserDataSet(user.uid));
+  dispatch(getUserModelSet(user.uid));
 
   // 실행 버튼
   function execute() {
     BlocklyJS.workspaceToCode(simpleWorkspace.current.workspace);
   }
 
+  // 저장 버튼
+  function workspaceStore() {
+    const dataId = store.getState().userDataSetId[1];
+    const workspaceXml = Blockly.Xml.workspaceToDom(
+      simpleWorkspace.current.workspace
+    );
+    const workspaceXmlText = Blockly.Xml.domToPrettyText(workspaceXml);
+
+    console.log(dataId, workspaceXmlText);
+    console.log(typeof workspaceXmlText);
+
+    const url = "https://j4f002.p.ssafy.io/api/data/userdataset/xml/update";
+
+    fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_data_set_id: dataId,
+        user_data_set_xml: workspaceXmlText,
+      }),
+    }).then((res) => {
+      console.log(res);
+    });
+  }
+
   // 데이터 다운 버튼
   const dataDownload = () => {
-    // 사용자가 지금 작업 중인 data랑 매칭 해줄 datanum
-    const datanum = store.getState().userDataSetId[1];
+    // 사용자가 지금 작업 중인 data랑 매칭 해줄 dataId
+    const dataId = store.getState().userDataSetId[1];
     let url = "";
 
     // 이거 기점으로 다운로드 링크 설정해줄게요 !
-    if (store.getState().userDataSetId[0] === "crawling") {
-      url = `https://j4f002.p.ssafy.io/csv/download/userdataset/file/${datanum}`;
+    if (
+      store.getState().userDataSetId[0] === "crawling" ||
+      store.getState().userDataSetId[0] === "fileInput"
+    ) {
+      url = `https://j4f002.p.ssafy.io/api/easy/userdataset/file/${dataId}`;
       fetch(url, {
         method: "GET",
         headers: {
@@ -57,7 +94,7 @@ function BlockCoding() {
         }
       });
     } else if (store.getState().userDataSetId[0] === "prophet") {
-      url = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/${datanum}`;
+      url = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/${dataId}`;
       fetch(url, {
         method: "GET",
         headers: {
@@ -81,7 +118,7 @@ function BlockCoding() {
   return (
     <div>
       <button onClick={execute}>실행</button>
-      <button>저장</button>
+      <button onClick={workspaceStore}>저장</button>
       <button onClick={dataDownload}>데이터 다운</button>
       <button onClick={reset}>블록 작업실 초기화</button>
       <BlocklyWorkspace
@@ -110,6 +147,7 @@ function BlockCoding() {
             <Block type="analysis_cnn_field" />
             <Block type="analysis_lstm_field" />
             <Block type="analysis_prophet_field" />
+            <Block type="model_select_field" />
           </Category>
         </React.Fragment>
       </BlocklyWorkspace>

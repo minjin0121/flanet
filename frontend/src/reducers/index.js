@@ -5,6 +5,7 @@ const initialState = {
   displayData: [],
   displayCode: [],
   cnnChartMark: 0,
+  userModelSets: {},
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -21,6 +22,8 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, displayCode: action.payload };
     case "SET_CNN_CHART_MARK":
       return { ...state, cnnChartMark: action.payload };
+    case "GET_USER_MODEL_SET":
+      return { ...state, userModelSets: action.payload };
     default:
       return state;
   }

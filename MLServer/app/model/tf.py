@@ -1,6 +1,6 @@
 # 표준 라이브러리
-from os import path, remove
-import json
+from os import remove
+from datetime import datetime, timedelta
 
 
 # 서드 파티 라이브러리
@@ -20,18 +20,17 @@ from database import crud
 
 
 def data_preprocess(input_data):
-    input_dataframe = csv_format_to_dataframe(input_data)
+    input_dataframe = pd.DataFrame(input_data["raw_data"])
     input_dataframe.dropna(inplace=True)
-
-    look_back = 14
-    processed_data = input_dataframe["Date"].loc[look_back : input_dataframe.shape[0] - 2]
-    processed_data.reset_index(drop=True, inplace=True)
 
     scaler = MinMaxScaler()
     scale_data = scaler.fit_transform(
-        input_dataframe["Close"].values.reshape(input_dataframe["Close"].shape[0], 1)
+        input_dataframe["analysis_value"].values.reshape(
+            input_dataframe["analysis_value"].shape[0], -1
+        )
     )
 
+    look_back = 14
     x_data, y_data = process_data(scale_data, look_back)
     train_pct = 0.80
 
@@ -44,31 +43,39 @@ def data_preprocess(input_data):
         y_data[int(y_data.shape[0] * train_pct) :],
     )
 
-    x_train = x_train.reshape((x_train.shape[0], x_train.shape[1], 1))
-    x_test = x_test.reshape((x_test.shape[0], x_test.shape[1], 1))
+    processed_data = []
+    for i in range(len(input_dataframe) - look_back - 1):
+        if i < x_train.shape[0]:
+            processed_data.append(
+                {
+                    "Date": input_dataframe["Date"][i + look_back + 1],
+                    "actual": float(input_dataframe["analysis_value"][i + look_back + 1]),
+                    "x_train": x_train[i].tolist(),
+                    "x_test": None,
+                    "y_train": y_train[i].tolist(),
+                    "y_test": None,
+                }
+            )
+        else:
+            processed_data.append(
+                {
+                    "Date": input_dataframe["Date"][i + look_back + 1],
+                    "actual": float(input_dataframe["analysis_value"][i + look_back + 1]),
+                    "x_train": None,
+                    "x_test": x_test[i - x_train.shape[0]].tolist(),
+                    "y_train": None,
+                    "y_test": y_test[i - x_train.shape[0]].tolist(),
+                }
+            )
 
-    x_train_columns = [f"x_train_{i}" for i in range(look_back)]
-    x_test_columns = [f"x_test_{i}" for i in range(look_back)]
-
-    actual_data = pd.DataFrame(y_data, columns=["actual"])
-    x_train = pd.DataFrame(x_train.reshape(-1, 14), columns=x_train_columns)
-    x_test = pd.DataFrame(x_test.reshape(-1, 14), columns=x_test_columns)
-    y_train = pd.DataFrame(y_train, columns=["y_train"])
-    y_test = pd.DataFrame(y_test, columns=["y_test"])
-    scale = pd.DataFrame(scaler.scale_, columns=["scale"])
-
-    processed_data = pd.concat([processed_data, actual_data], axis=1)
-    processed_data = pd.concat([processed_data, x_train], axis=1)
-    processed_data = pd.concat([processed_data, x_test], axis=1)
-    processed_data = pd.concat([processed_data, y_train], axis=1)
-    processed_data = pd.concat([processed_data, y_test], axis=1)
-    processed_data = pd.concat([processed_data, scale], axis=1)
-
-    return processed_data.to_csv(index=False)
+    return {
+        "processed_data": processed_data,
+        "scale": [{"min": scaler.data_min_[0], "max": scaler.data_max_[0]}],
+    }
 
 
 def cnn_model_training(input_data, user_id, db):
-    x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
+    date, actual, x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
 
     adam = Adam(lr=0.003)
 
@@ -124,19 +131,23 @@ def cnn_model_training(input_data, user_id, db):
         data=req_data,
     )
 
-    training_model_id = [training_model_id]
-    training_model_id = pd.DataFrame(training_model_id, columns=["training_model_id"])
-
-    result_data = pd.DataFrame(history.history)
-    result_data = pd.concat([result_data, training_model_id], axis=1)
+    result_training = []
+    for i in range(len(history.history["loss"])):
+        result_training.append(
+            {
+                "epoch": i,
+                "loss": history.history["loss"][i],
+                "val_loss": history.history["val_loss"][i],
+            }
+        )
 
     remove(f"./asset/models/{user_id}.h5")
 
-    return result_data.to_csv(index=False)
+    return {"result_training": result_training, "training_model_id": training_model_id}
 
 
 def lstm_model_training(input_data, user_id, db):
-    x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
+    date, actual, x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
 
     adam = Adam(lr=0.003)
 
@@ -183,19 +194,23 @@ def lstm_model_training(input_data, user_id, db):
         data=req_data,
     )
 
-    training_model_id = [training_model_id]
-    training_model_id = pd.DataFrame(training_model_id, columns=["training_model_id"])
-
-    result_data = pd.DataFrame(history.history)
-    result_data = pd.concat([result_data, training_model_id], axis=1)
+    result_training = []
+    for i in range(len(history.history["loss"])):
+        result_training.append(
+            {
+                "epoch": i,
+                "loss": history.history["loss"][i],
+                "val_loss": history.history["val_loss"][i],
+            }
+        )
 
     remove(f"./asset/models/{user_id}.h5")
 
-    return result_data.to_csv(index=False)
+    return {"result_training": result_training, "training_model_id": training_model_id}
 
 
 def model_evaluate(input_data, training_model_id):
-    x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
+    date, actual, x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
 
     model_file_path = f"./asset/models/{training_model_id}.h5"
     req = requests.get(f"https://j4f002.p.ssafy.io/csv/download/trainingmodel/{training_model_id}")
@@ -203,22 +218,36 @@ def model_evaluate(input_data, training_model_id):
     model_file.write(req.content)
     trained_model = load_model(model_file_path)
 
-    x_train_prediction = trained_model.predict(x_train) * scale
-    x_test_prediction = trained_model.predict(x_test) * scale
+    train_evaluate = trained_model.predict(x_train) * (scale["max"] - scale["min"]) + scale["min"]
+    test_evaluate = trained_model.predict(x_test) * (scale["max"] - scale["min"]) + scale["min"]
 
-    result_data = pd.DataFrame(x_train_prediction, columns=["x_train_prediction"])
-    x_test_prediction = pd.DataFrame(x_test_prediction, columns=["x_test_prediction"])
+    result_evaluate = []
+    for i in range(len(actual)):
+        if i < len(train_evaluate):
+            result_evaluate.append(
+                {
+                    "Date": date[i],
+                    "actual": actual[i],
+                    "train_evaluate": float(train_evaluate[i][0]),
+                    "test_evaluate": None,
+                }
+            )
+        else:
+            result_evaluate.append(
+                {
+                    "Date": date[i],
+                    "actual": actual[i],
+                    "train_evaluate": None,
+                    "test_evaluate": float(test_evaluate[i - len(train_evaluate)][0]),
+                }
+            )
 
-    result_data = pd.concat([result_data, x_test_prediction], axis=1)
-
-    remove(model_file_path)
-
-    return result_data.to_csv(index=False)
+    return {"result_evaluate": result_evaluate}
 
 
 def predict_future(user_data_set_id, input_data, training_model_id, user_id, period, db):
+    date, actual, x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
     look_back = 14
-    x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
 
     model_file_path = f"./asset/models/{training_model_id}.h5"
     req = requests.get(f"https://j4f002.p.ssafy.io/csv/download/trainingmodel/{training_model_id}")
@@ -262,10 +291,23 @@ def predict_future(user_data_set_id, input_data, training_model_id, user_id, per
         db=db,
     )
 
-    result_data = y_future[-period:].reshape(-1, 1) * scale
-    result_data = pd.DataFrame(result_data, columns=["future"]).to_csv(index=False)
+    date_start = datetime.strptime(date[-1], "%Y-%m-%d") + timedelta(days=1)
+    date_end = date_start + timedelta(days=period)
+    date_predict = [
+        date.strftime("%Y-%m-%d")
+        for date in pd.date_range(date_start, periods=(date_end - date_start).days + 1)
+    ]
 
-    req_upload = {"file": result_data.encode("utf-8")}
+    result_predict = []
+    for i in range(period):
+        result_predict.append(
+            {
+                "date": date_predict[i],
+                "future": y_future[-period + i] * (scale["max"] - scale["min"]) + scale["min"],
+            }
+        )
+
+    req_upload = {"file": pd.DataFrame(result_predict).to_csv(index=False).encode("utf-8")}
     req_data = {"user_data_predict_id": insert_user_data_predict.user_data_predict_id}
     req = requests.post(
         "https://j4f002.p.ssafy.io/csv/upload/userpredictdata",
@@ -275,27 +317,7 @@ def predict_future(user_data_set_id, input_data, training_model_id, user_id, per
 
     remove(model_file_path)
 
-    return result_data
-
-
-def csv_format_to_dataframe(data):
-    split_data = data.split("\n")
-    split_data.pop(-1)
-
-    ck = 1
-    row_num = 0
-    for data in split_data:
-        if ck:
-            ck = 0
-            len_columns = len(data.split(","))
-            data_columns = [data.split(",")[i] for i in range(len(data.split(",")))]
-            df = pd.DataFrame(columns=data_columns)
-        else:
-            len_columns = len(data.split(","))
-            df.loc[row_num] = [data.split(",")[i] for i in range(len(data.split(",")))]
-            row_num += 1
-
-    return df
+    return {"result_predict": result_predict}
 
 
 def process_data(data, look_back):
@@ -307,33 +329,19 @@ def process_data(data, look_back):
 
 
 def input_data_to_data_set(input_data):
-    look_back = 14
-    input_data = csv_format_to_dataframe(input_data)
+    input_dataframe = pd.DataFrame(input_data["processed_data"])
+    date = input_dataframe["Date"].tolist()
+    actual = input_dataframe["actual"].tolist()
+    x_train = np.array(
+        input_dataframe["x_train"].loc[: int(len(actual) * 0.8) - 1].tolist()
+    ).reshape(-1, 14, 1)
+    x_test = np.array(input_dataframe["x_test"].loc[int(len(actual) * 0.8) :].tolist()).reshape(
+        -1, 14, 1
+    )
+    y_train = np.array(
+        input_dataframe["y_train"].loc[: int(len(actual) * 0.8) - 1].tolist()
+    ).reshape(-1)
+    y_test = np.array(input_dataframe["y_test"].loc[int(len(actual) * 0.8) :].tolist()).reshape(-1)
+    scale = input_data["scale"][0]
 
-    input_data_cnt = input_data["actual"].to_numpy().shape[0]
-    train_data_cnt = int(input_data_cnt * 0.8)
-    test_data_cnt = input_data_cnt - train_data_cnt
-
-    x_train = input_data[[f"x_train_{i}" for i in range(look_back)]]
-    x_train = x_train.drop(index=[i for i in range(train_data_cnt, input_data_cnt)], axis=0)
-    x_train = x_train.to_numpy().reshape(-1, 14, 1)
-    x_train = x_train.astype(np.float64)
-
-    x_test = input_data[[f"x_test_{i}" for i in range(look_back)]]
-    x_test = x_test.drop(index=[i for i in range(test_data_cnt, input_data_cnt)], axis=0)
-    x_test = x_test.to_numpy().reshape(-1, 14, 1)
-    x_test = x_test.astype(np.float64)
-
-    y_train = input_data[["y_train"]]
-    y_train = y_train.drop(index=[i for i in range(train_data_cnt, input_data_cnt)], axis=0)
-    y_train = y_train.to_numpy().reshape(-1)
-    y_train = y_train.astype(np.float64)
-
-    y_test = input_data[["y_test"]]
-    y_test = y_test.drop(index=[i for i in range(test_data_cnt, input_data_cnt)], axis=0)
-    y_test = y_test.to_numpy().reshape(-1)
-    y_test = y_test.astype(np.float64)
-
-    scale = 1 / input_data[["scale"]].loc[0].to_numpy().astype(np.float64)[0]
-
-    return x_train, x_test, y_train, y_test, scale
+    return date, actual, x_train, x_test, y_train, y_test, scale

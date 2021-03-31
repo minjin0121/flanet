@@ -30,22 +30,22 @@ class TfInput(BaseModel):
 
 
 class TfPreprocess(BaseModel):
-    input_raw_data: str
+    input_raw_data: dict
 
 
 class TfTraining(BaseModel):
-    input_processed_data: str
+    input_processed_data: dict
     user_id: str
 
 
 class TfEvaluate(BaseModel):
-    input_processed_data: str
+    input_processed_data: dict
     training_model_id: int
 
 
 class TfPredict(BaseModel):
     user_data_set_id: int
-    input_processed_data: str
+    input_processed_data: dict
     training_model_id: int
     user_id: str
     period: int
@@ -117,7 +117,7 @@ def data_input(tf_input: TfInput, db: Session = Depends(get_db)):
 
     # csv
     if data.user_data_set_start == None:
-        original_df = csv_data_call(data)
+        original_df, analysis_value = csv_data_call(data)
         df = pd.read_csv(StringIO(original_df.to_csv()))
         df = df.drop(["Unnamed: 0"], axis=1)
     # 기간별
@@ -127,7 +127,11 @@ def data_input(tf_input: TfInput, db: Session = Depends(get_db)):
         df.sort_values(by=["Date"], axis=0, inplace=True)
         df = df.drop(["Unnamed: 0"], axis=1)
 
-    return df.to_csv(index=False)
+    raw_data = []
+    for i in range(len(df)):
+        raw_data.append({"Date": df["Date"][i], "analysis_value": df["Close"][i]})
+
+    return {"raw_data": raw_data}
 
 
 @router.post("/ml/tensorflow/preprocess", tags=["tensorflow"], description="데이터 전처리")

@@ -21,9 +21,19 @@ def prophet_stock(conv_df, item, period_value, cps, original_df):
 
     future = m.make_future_dataframe(periods=period_value)
 
+    # 주말 데이터 삭제
+    future["day"] = future["ds"].dt.weekday
+    future = future[future["day"] <= 4]
+
     forecast = m.predict(future)
 
-    result = forecast[["ds", "yhat", "yhat_lower", "yhat_upper"]]
+    s = set(["ds", "yhat", "trend", "weekly", "yearly"])
+
+    # 데이터가 1년 미만
+    if s.issubset(set(forecast.columns)):
+        result = forecast[["ds", "yhat", "trend", "weekly", "yearly"]]
+    else:  # 15일 이상 제약으로 weekly는 가능
+        result = forecast[["ds", "yhat", "trend", "weekly"]]
 
     # 기존 데이터와 예측 데이터 병합
     original_df = original_df.rename({"Date": "ds"}, axis="columns")

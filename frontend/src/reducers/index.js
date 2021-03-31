@@ -3,7 +3,7 @@ const initialState = {
   userDataSets: {},
   userDataSetId: [],
   displayData: [],
-  displayCode: [],
+  displayCode: "",
   cnnChartMark: 0,
   userModelSets: {},
 };

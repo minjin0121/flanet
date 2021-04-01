@@ -2,8 +2,6 @@ import React from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Plotly from "plotly.js";
-import store from "../../index.js";
-import { setCNNChartMark } from "../../actions/index";
 
 function DisplayChart({ result, data }) {
   if (Object.values(data).length > 1) {
@@ -41,34 +39,87 @@ function DisplayChart({ result, data }) {
     }
     // Prophet 그래프 그리기
     else if (result[0] === "prophet") {
+      let yhatDisplay = [];
+      let trendDisplay = [];
+      let weeklyDisplay = [];
+      let yearlyDisplay = [];
+
       if (data) {
         const datasDate = data.map((d) => d.ds);
         const datasYhat = data.map((d) => d.yhat);
         const datasClose = data.map((d) => d.Close);
+        const datasTrend = data.map((d) => d.trend);
+        const datasWeekly = data.map((d) => d.weekly);
+        const datasYearly = data.map((d) => d.yearly);
 
-        dataDisplay = [datasDate, datasYhat, datasClose];
+        yhatDisplay = [datasDate, datasYhat, datasClose];
+        trendDisplay = [datasDate, datasTrend];
+        weeklyDisplay = [datasDate, datasWeekly];
+        yearlyDisplay = [datasDate, datasYearly];
       }
 
+      const yhatPlotly = {
+        name: "yhat",
+        x: yhatDisplay[0],
+        y: yhatDisplay[1],
+        line: { color: "red" },
+        type: "scatter",
+      };
+
+      const closePlotly = {
+        name: "Close",
+        x: yhatDisplay[0],
+        y: yhatDisplay[2],
+        line: { color: "blue" },
+        type: "scatter",
+      };
+
+      const trendPlotly = {
+        name: "trend",
+        x: trendDisplay[0],
+        y: trendDisplay[1],
+        line: { color: "yellow" },
+        type: "scatter",
+        xaxis: "x2",
+        yaxis: "y2",
+      };
+
+      const weeklyPlotly = {
+        name: "weekly",
+        x: weeklyDisplay[0],
+        y: weeklyDisplay[1],
+        line: { color: "orange" },
+        type: "scatter",
+        xaxis: "x3",
+        yaxis: "y3",
+      };
+
+      const yearlyPlotly = {
+        name: "yearly",
+        x: yearlyDisplay[0],
+        y: yearlyDisplay[1],
+        line: { color: "green" },
+        type: "scatter",
+        xaxis: "x4",
+        yaxis: "y4",
+      };
+
       chartPlotly = [
-        {
-          name: "yhat",
-          x: dataDisplay[0],
-          y: dataDisplay[1],
-          line: { color: "red" },
-          type: "scatter",
-        },
-        {
-          name: "Close",
-          x: dataDisplay[0],
-          y: dataDisplay[2],
-          line: { color: "#17BECF" },
-          type: "scatter",
-        },
+        yhatPlotly,
+        closePlotly,
+        trendPlotly,
+        weeklyPlotly,
+        yearlyPlotly,
       ];
 
       layout = {
         title: {
           text: "PROPHET 결과",
+        },
+        grid: {
+          rows: 2,
+          columns: 2,
+          pattern: "independent",
         },
       };
 
@@ -83,22 +134,25 @@ function DisplayChart({ result, data }) {
     ) {
       if (result[0] === "training") {
         if (data) {
+          const datasEpoch = data.map((d) => d.epoch);
           const datasLoss = data.map((d) => d.loss);
           const datasValLoss = data.map((d) => d.val_loss);
 
-          dataDisplay = [datasLoss, datasValLoss];
+          dataDisplay = [datasEpoch, datasLoss, datasValLoss];
         }
 
         chartPlotly = [
           {
             name: "loss",
-            y: dataDisplay[0],
+            x: dataDisplay[0],
+            y: dataDisplay[1],
             line: { color: "red" },
             type: "scatter",
           },
           {
             name: "var_loss",
-            y: dataDisplay[1],
+            x: dataDisplay[0],
+            y: dataDisplay[2],
             line: { color: "#17BECF" },
             type: "scatter",
           },
@@ -113,48 +167,33 @@ function DisplayChart({ result, data }) {
         Plotly.newPlot("displayChart", chartPlotly, layout);
       } else if (result[0] === "evaluate") {
         if (data) {
-          const datasTrain = data.map((d) => d.x_train_prediction);
-          let datasTest = data.map((d) => d.x_test_prediction);
+          const datasDate = data.map((d) => d.Date);
+          const datasActual = data.map((d) => d.actual);
+          const datasTrain = data.map((d) => d.train_evaluate);
+          const datasTest = data.map((d) => d.test_evaluate);
 
-          datasTest = datasTest.filter(function (d) {
-            return d !== "";
-          });
-
-          dataDisplay = [datasTrain, datasTest];
+          dataDisplay = [datasDate, datasActual, datasTrain, datasTest];
         }
-
-        const datasTrainLength = dataDisplay[0].length;
-        const idxTrain = [];
-
-        for (let i = 1; i <= datasTrainLength + 2; i++) {
-          idxTrain.push(i);
-        }
-
-        const datasTestLength = dataDisplay[1].length;
-        const idxTest = [];
-
-        for (
-          let i = datasTrainLength;
-          i <= datasTrainLength + datasTestLength + 1;
-          i++
-        ) {
-          idxTest.push(i);
-        }
-
-        store.dispatch(setCNNChartMark(datasTrainLength + datasTestLength));
 
         chartPlotly = [
           {
-            name: "test prediction",
-            x: idxTrain,
-            y: dataDisplay[0],
-            line: { color: "red" },
+            name: "actual",
+            x: dataDisplay[0],
+            y: dataDisplay[1],
+            line: { color: "black" },
             type: "scatter",
           },
           {
             name: "train prediction",
-            x: idxTest,
-            y: dataDisplay[1],
+            x: dataDisplay[0],
+            y: dataDisplay[2],
+            line: { color: "red" },
+            type: "scatter",
+          },
+          {
+            name: "test prediction",
+            x: dataDisplay[0],
+            y: dataDisplay[3],
             line: { color: "#17BECF" },
             type: "scatter",
           },
@@ -168,19 +207,17 @@ function DisplayChart({ result, data }) {
 
         Plotly.newPlot("displayChart", chartPlotly, layout);
       } else if (result[0] === "predict") {
-        const datasFuture = data.map((d) => d.future);
-        const idx = [];
+        if (data) {
+          const datasDate = data.map((d) => d.date);
+          const datasFuture = data.map((d) => d.future);
 
-        const chart = store.getState().cnnChartMark;
-
-        for (let i = chart + 1; i <= chart + data.length; i++) {
-          idx.push(i);
+          dataDisplay = [datasDate, datasFuture];
         }
 
         Plotly.addTraces("displayChart", {
           name: "future",
-          x: idx,
-          y: datasFuture,
+          x: dataDisplay[0],
+          y: dataDisplay[1],
           line: { color: "blue" },
           type: "scatter",
         });

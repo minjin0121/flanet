@@ -25,7 +25,6 @@ import {
   getDataList,
   getUserDataSet,
   getUserModelSet,
-  setCNNChartMark,
   setDisplayCode,
   setDisplayData,
   setUserDataSetId,
@@ -123,7 +122,6 @@ function BlockCoding() {
     dispatch(setUserDataSetId(["initialize", 0]));
     dispatch(setDisplayData([]));
     dispatch(setDisplayCode(""));
-    dispatch(setCNNChartMark(0));
     simpleWorkspace.current.workspace.clear();
   };
 

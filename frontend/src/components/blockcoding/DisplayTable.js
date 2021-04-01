@@ -53,15 +53,32 @@ function DisplayTable({ result, data }) {
         const datasDate = data.map((d) => d.ds);
         const datasYhat = data.map((d) => d.yhat);
         const datasClose = data.map((d) => d.Close);
+        const datasTrend = data.map((d) => d.trend);
+        const datasWeekly = data.map((d) => d.weekly);
+        const datasYearly = data.map((d) => d.yearly);
 
-        dataDisplay = [datasDate, datasYhat, datasClose];
+        dataDisplay = [
+          datasDate,
+          datasYhat,
+          datasClose,
+          datasTrend,
+          datasWeekly,
+          datasYearly,
+        ];
       }
 
       tablePlotly = [
         {
           type: "table",
           header: {
-            values: [["<b>Date</b>"], ["<b>Yhat</b>"], ["<b>Close</b>"]],
+            values: [
+              ["<b>Date</b>"],
+              ["<b>Yhat</b>"],
+              ["<b>Close</b>"],
+              ["<b>Trend</b>"],
+              ["<b>Weekly</b>"],
+              ["<b>Yearly</b>"],
+            ],
             align: "center",
             line: { width: 1, color: "black" },
             fill: { color: "grey" },
@@ -94,17 +111,18 @@ function DisplayTable({ result, data }) {
     ) {
       if (result[0] === "training") {
         if (data) {
+          const datasEpoch = data.map((d) => d.epoch);
           const datasLoss = data.map((d) => d.loss);
           const datasValLoss = data.map((d) => d.val_loss);
 
-          dataDisplay = [datasLoss, datasValLoss];
+          dataDisplay = [datasEpoch, datasLoss, datasValLoss];
         }
 
         tablePlotly = [
           {
             type: "table",
             header: {
-              values: [["<b>Loss</b>"], ["<b>Var_Loss</b>"]],
+              values: [["<b>Epos</b>"], ["<b>Loss</b>"], ["<b>Var_Loss</b>"]],
               align: "center",
               line: { width: 1, color: "black" },
               fill: { color: "grey" },
@@ -128,17 +146,34 @@ function DisplayTable({ result, data }) {
         Plotly.newPlot("displayTable", tablePlotly, layout);
       } else if (result[0] === "evaluate") {
         if (data) {
-          const datasTrain = data.map((d) => d.x_train_prediction);
-          const datasTest = data.map((d) => d.x_test_prediction);
+          const datasDate = data.map((d) => d.Date);
+          const datasActual = data.map((d) => d.actual);
+          const datasTrain = data.map((d) => {
+            if (d.train_evaluate) {
+              return d.train_evaluate;
+            }
+            return "";
+          });
+          const datasTest = data.map((d) => {
+            if (d.test_evaluate) {
+              return d.test_evaluate;
+            }
+            return "";
+          });
 
-          dataDisplay = [datasTrain, datasTest];
+          dataDisplay = [datasDate, datasActual, datasTrain, datasTest];
         }
 
         tablePlotly = [
           {
             type: "table",
             header: {
-              values: [["<b>Table_Prediction</b>"], ["<b>Test_Prediction</b>"]],
+              values: [
+                ["<b>Date</b>"],
+                ["<b>Actual</b>"],
+                ["<b>Table_Prediction</b>"],
+                ["<b>Test_Prediction</b>"],
+              ],
               align: "center",
               line: { width: 1, color: "black" },
               fill: { color: "grey" },
@@ -161,21 +196,25 @@ function DisplayTable({ result, data }) {
 
         Plotly.newPlot("displayTable", tablePlotly, layout);
       } else if (result[0] === "predict") {
-        const datasFuture = data.map((d) => d.future);
-        const datasDisplay = [datasFuture];
+        if (data) {
+          const datasDate = data.map((d) => d.date);
+          const datasFuture = data.map((d) => d.future);
+
+          dataDisplay = [datasDate, datasFuture];
+        }
 
         tablePlotly = [
           {
             type: "table",
             header: {
-              values: [["<b>Future</b>"]],
+              values: [["<b>Date</b>"], ["<b>Future</b>"]],
               align: "center",
               line: { width: 1, color: "black" },
               fill: { color: "grey" },
               font: { family: "Arial", size: 12, color: "white" },
             },
             cells: {
-              values: datasDisplay,
+              values: dataDisplay,
               align: "center",
               line: { color: "black", width: 1 },
               font: { family: "Arial", size: 11, color: ["black"] },

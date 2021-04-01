@@ -235,7 +235,7 @@ def show_select_training_model(user_id: str, db: Session = Depends(get_db)):
     "/api/data/trainingmodel/name/update",
     tags=["trainingmodel"],
     description="training model xml name 변경",
-)  # 여기부터 다시 수정
+)
 def update_training_model_name(
     training_xml_name_input: TrainingXmlNameInput, db: Session = Depends(get_db)
 ):
@@ -260,7 +260,7 @@ def update_training_model_name(
     "/api/data/userdataset/name/update",
     tags=["userdataset"],
     description="user data set xml name 변경",
-)  # 여기부터 다시 수정
+)
 def update_user_data_model_name(
     user_data_xml_name_input: UserDataXmlNameInput, db: Session = Depends(get_db)
 ):

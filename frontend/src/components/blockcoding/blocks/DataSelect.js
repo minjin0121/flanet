@@ -57,9 +57,9 @@ Blockly.JavaScript.data_select = function (block) {
 
   let url = `https://j4f002.p.ssafy.io/api/easy/userdataset/${userDataSetId}`;
 
-  store.dispatch(initModelingStep(store.getState().modelingStep.length));
   store.dispatch(setUserDataSetId(["crawling", userDataSetId]));
   store.dispatch(setDisplayCode(""));
+  store.dispatch(initModelingStep(store.getState().modelingStep.length));
   store.dispatch(setModelingStep({ userDataSetId }));
 
   fetch(url, {

@@ -46,10 +46,6 @@ class UserDataSet(Base):
     user_data_set_xml = Column(String(10000))
     user_data_set_date = Column(DateTime, index=True, default=time.localtime())
 
-    # user_data_set_name: Optional[str] = None
-    # user_data_set_date: Optional[str] = None
-    # user_data_set_xml: Optional[str] = None
-
     data_list_own = relationship("DataList", back_populates="user_data_sets")
     user_data_predicts = relationship("UserDataPredict", back_populates="user_data_set_own")
 
@@ -62,6 +58,7 @@ class TrainingModel(Base):
     training_model_name = Column(String(20), index=True)
     training_model_xml = Column(String(10000))
     user_id = Column(String(100), index=True)
+    training_model_date = Column(DateTime, index=True, default=time.localtime())
 
     user_data_predicts = relationship("UserDataPredict", back_populates="training_model_own")
 
@@ -76,7 +73,7 @@ class UserDataPredict(Base):
     user_id = Column(String(100), index=True)
     user_data_predict_name = Column(String(20), index=True)
     user_data_predict_xml = Column(String(10000))
-    user_data_predict_date = Column(Date, index=True)
+    user_data_predict_date = Column(DateTime, index=True, default=time.localtime())
 
     user_data_set_own = relationship("UserDataSet", back_populates="user_data_predicts")
     training_model_own = relationship("TrainingModel", back_populates="user_data_predicts")

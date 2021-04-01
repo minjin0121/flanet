@@ -5,6 +5,7 @@ from os import path
 # 서드 파티 라이브러리
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 # 로컬
 pth.append(path.dirname(path.abspath(path.dirname(__file__))))
@@ -14,6 +15,11 @@ from routers.data import check_user
 
 
 router = APIRouter()
+
+
+class XmlNameInput(BaseModel):
+    user_data_predict_id: int
+    user_data_predict_name: str
 
 
 # 데이터 목록 확인
@@ -40,3 +46,26 @@ def show_select_user_data_predict(user_id: str, db: Session = Depends(get_db)):
         .filter(models.UserDataPredict.user_id == user_id)
         .all()
     }
+
+
+# XML name 변경
+@router.put(
+    "/api/data/userdatapredict/name/update",
+    tags=["userdatapredict"],
+    description="xml name 변경",
+)
+def update_user_data_predict_name(xml_name_unput: XmlNameInput, db: Session = Depends(get_db)):
+
+    db_data = (
+        db.query(models.UserDataPredict)
+        .filter(models.UserDataPredict.user_data_predict_id == xml_name_unput.user_data_predict_id)
+        .one()
+    )
+
+    db_data.user_data_predict_name = xml_name_unput.user_data_predict_name
+
+    db.commit()
+
+    db.refresh(db_data)
+
+    return

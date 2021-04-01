@@ -19,7 +19,21 @@ import requests
 from database import crud
 
 
-def data_preprocess(input_data):
+default_cnn_model = [
+    {"layer_name": "Conv1D", "filters": 64, "kernel_size": 2},
+    {"layer_name": "MaxPooling1D", "pool_size": 2},
+    {"layer_name": "Conv1D", "filters": 64, "kernel_size": 2},
+    {"layer_name": "AveragePooling1D", "pool_size": 2},
+]
+default_lstm_model = [
+    {"layer_name": "LSTM", "units": 64},
+    {"layer_name": "Dropout", "rate": 0.1},
+    {"layer_name": "LSTM", "units": 128},
+    {"layer_name": "Dropout", "rate": 0.1},
+]
+
+
+def data_preprocess(input_data, set_rate):
     input_dataframe = pd.DataFrame(input_data["raw_data"])
     input_dataframe.dropna(inplace=True)
 
@@ -32,7 +46,7 @@ def data_preprocess(input_data):
 
     look_back = 14
     x_data, y_data = process_data(scale_data, look_back)
-    train_pct = 0.80
+    train_pct = set_rate
 
     x_train, x_test = (
         x_data[: int(x_data.shape[0] * train_pct)],
@@ -71,6 +85,7 @@ def data_preprocess(input_data):
     return {
         "processed_data": processed_data,
         "scale": [{"min": scaler.data_min_[0], "max": scaler.data_max_[0]}],
+        "set_rate": set_rate,
     }
 
 
@@ -88,17 +103,7 @@ def cnn_model_training(input_data, user_id, db):
     callbacks = [early_stopping, callback_checkpoint, reduce_lr]
 
     model = Sequential()
-    model.add(
-        Conv1D(
-            filters=64,
-            kernel_size=2,
-            activation="relu",
-            input_shape=(x_train.shape[1], x_train.shape[2]),
-        )
-    )
-    model.add(MaxPooling1D(pool_size=2))
-    model.add(Conv1D(filters=64, kernel_size=2, activation="relu"))
-    model.add(AveragePooling1D(pool_size=2))
+    exec(custom_layer(default_cnn_model))
     model.add(Flatten())
     model.add(Dense(50, activation="relu"))
     model.add(Dense(1))
@@ -115,7 +120,71 @@ def cnn_model_training(input_data, user_id, db):
     )
 
     training_model = crud.insert_training_model(
-        training_model_name="ho",
+        user_id=user_id,
+        db=db,
+    )
+    training_model_id = training_model.training_model_id
+
+    model_file = open(f"./asset/models/{user_id}.h5", "rb")
+    req_upload = {"file": model_file}
+    req_data = {"training_model_id": training_model_id}
+
+    req = requests.post(
+        "https://j4f002.p.ssafy.io/csv/upload/trainingmodel",
+        files=req_upload,
+        data=req_data,
+    )
+
+    result_training = []
+    for i in range(len(history.history["loss"])):
+        result_training.append(
+            {
+                "epoch": i,
+                "loss": history.history["loss"][i],
+                "val_loss": history.history["val_loss"][i],
+            }
+        )
+
+    remove(f"./asset/models/{user_id}.h5")
+
+    return {"result_training": result_training, "training_model_id": training_model_id}
+
+
+def custom_cnn_model_training(input_data, input_layer, user_id, db):
+    date, actual, x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
+
+    adam = Adam(lr=0.003)
+
+    file_path = f"./asset/models/{user_id}.h5"
+    callback_checkpoint = ModelCheckpoint(
+        filepath=file_path, monitor="val_loss", save_best_only=True, save_weights_only=False
+    )
+    early_stopping = EarlyStopping(monitor="val_loss", patience=20, verbose=1)
+    reduce_lr = ReduceLROnPlateau(monitor="val_loss", factor=0.3, patience=5, min_lr=0.0009)
+    callbacks = [early_stopping, callback_checkpoint, reduce_lr]
+
+    model = Sequential()
+    if input_layer[0] != None:
+        exec(custom_layer(input_layer))
+    else:
+        exec(custom_layer(default_cnn_model))
+
+    model.add(Flatten())
+    model.add(Dense(14, activation="relu"))
+    model.add(Dense(1))
+    model.compile(optimizer="adam", loss="mse")
+
+    history = model.fit(
+        x_train,
+        y_train,
+        epochs=100,
+        batch_size=16,
+        validation_data=(x_test, y_test),
+        callbacks=callbacks,
+        shuffle=True,
+    )
+
+    training_model = crud.insert_training_model(
         user_id=user_id,
         db=db,
     )
@@ -160,10 +229,7 @@ def lstm_model_training(input_data, user_id, db):
     callbacks = [early_stopping, callback_checkpoint, reduce_lr]
 
     model = Sequential()
-    model.add(LSTM(32, input_shape=(x_train.shape[1], x_train.shape[2]), return_sequences=True))
-    model.add(Dropout(0.1))
-    model.add(LSTM(160))
-    model.add(Dropout(0.1))
+    exec(custom_layer(default_lstm_model))
     model.add(Dense(1))
     model.compile(loss="mse", optimizer=adam)
 
@@ -178,7 +244,68 @@ def lstm_model_training(input_data, user_id, db):
     )
 
     training_model = crud.insert_training_model(
-        training_model_name="ho",
+        user_id=user_id,
+        db=db,
+    )
+    training_model_id = training_model.training_model_id
+
+    model_file = open(f"./asset/models/{user_id}.h5", "rb")
+    req_upload = {"file": model_file}
+    req_data = {"training_model_id": training_model.training_model_id}
+
+    req = requests.post(
+        "https://j4f002.p.ssafy.io/csv/upload/trainingmodel",
+        files=req_upload,
+        data=req_data,
+    )
+
+    result_training = []
+    for i in range(len(history.history["loss"])):
+        result_training.append(
+            {
+                "epoch": i,
+                "loss": history.history["loss"][i],
+                "val_loss": history.history["val_loss"][i],
+            }
+        )
+
+    remove(f"./asset/models/{user_id}.h5")
+
+    return {"result_training": result_training, "training_model_id": training_model_id}
+
+
+def custom_lstm_model_training(input_data, input_layer, user_id, db):
+    date, actual, x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
+
+    adam = Adam(lr=0.003)
+
+    file_path = f"./asset/models/{user_id}.h5"
+    callback_checkpoint = ModelCheckpoint(
+        filepath=file_path, monitor="val_loss", save_best_only=True, save_weights_only=False
+    )
+    early_stopping = EarlyStopping(monitor="val_loss", patience=20, verbose=1)
+    reduce_lr = ReduceLROnPlateau(monitor="val_loss", factor=0.3, patience=5, min_lr=0.0009)
+    callbacks = [early_stopping, callback_checkpoint, reduce_lr]
+
+    model = Sequential()
+    if input_layer[0] != None:
+        exec(custom_layer(input_layer))
+    else:
+        exec(custom_layer(default_lstm_model))
+    model.add(Dense(1))
+    model.compile(loss="mse", optimizer=adam)
+
+    history = model.fit(
+        x_train,
+        y_train,
+        epochs=100,
+        batch_size=16,
+        validation_data=(x_test, y_test),
+        callbacks=callbacks,
+        shuffle=True,
+    )
+
+    training_model = crud.insert_training_model(
         user_id=user_id,
         db=db,
     )
@@ -287,7 +414,6 @@ def predict_future(user_data_set_id, input_data, training_model_id, user_id, per
         user_data_set_id=user_data_set_id,
         training_model_id=training_model_id,
         user_id=user_id,
-        user_data_predict_name="test",
         db=db,
     )
 
@@ -330,18 +456,51 @@ def process_data(data, look_back):
 
 def input_data_to_data_set(input_data):
     input_dataframe = pd.DataFrame(input_data["processed_data"])
+    set_rate = input_data["set_rate"]
+
     date = input_dataframe["Date"].tolist()
     actual = input_dataframe["actual"].tolist()
     x_train = np.array(
-        input_dataframe["x_train"].loc[: int(len(actual) * 0.8) - 1].tolist()
+        input_dataframe["x_train"].loc[: int(len(actual) * set_rate) - 1].tolist()
     ).reshape(-1, 14, 1)
-    x_test = np.array(input_dataframe["x_test"].loc[int(len(actual) * 0.8) :].tolist()).reshape(
-        -1, 14, 1
-    )
+    x_test = np.array(
+        input_dataframe["x_test"].loc[int(len(actual) * set_rate) :].tolist()
+    ).reshape(-1, 14, 1)
     y_train = np.array(
-        input_dataframe["y_train"].loc[: int(len(actual) * 0.8) - 1].tolist()
+        input_dataframe["y_train"].loc[: int(len(actual) * set_rate) - 1].tolist()
     ).reshape(-1)
-    y_test = np.array(input_dataframe["y_test"].loc[int(len(actual) * 0.8) :].tolist()).reshape(-1)
+    y_test = np.array(
+        input_dataframe["y_test"].loc[int(len(actual) * set_rate) :].tolist()
+    ).reshape(-1)
     scale = input_data["scale"][0]
 
     return date, actual, x_train, x_test, y_train, y_test, scale
+
+
+def custom_layer(input_layer):
+    for i in range(len(input_layer)):
+        if input_layer[i]["layer_name"] == "Conv1D":
+            filters = input_layer[i]["filters"]
+            kernel_size = input_layer[i]["kernel_size"]
+            layer_str = (
+                f"model.add(Conv1D(fitlers={filters}, kernel_size={kernel_size}, activation=relu))"
+            )
+        elif input_layer[i]["layer_name"] == "MaxPooling1D":
+            pool_size = input_layer[i]["pool_size"]
+            layer_str = f"model.add(MaxPooling1D(pool_size={pool_size}))"
+        elif input_layer[i]["layer_name"] == "AveragePooling1D":
+            pool_size = input_layer[i]["pool_size"]
+            layer_str = f"model.add(AveragePooling1D(pool_size={pool_size}))"
+        elif input_layer[i]["layer_name"] == "LSTM":
+            units = input_layer[i]["units"]
+            layer_str = f"model.add(LSTM(units={units}))"
+        elif input_layer[i]["layer_name"] == "Dropout":
+            rate = input_layer[i]["rate"]
+            layer_str = f"model.add(Dropout(rate={rate}))"
+        if i == 0:
+            layer_str = layer_str.rstrip(")")
+            if input_layer[i]["layer_name"] == "LSTM":
+                layer_str = layer_str + ", return_sequences=True"
+            layer_str = layer_str + ", input_shape=(x_train.shape[1], x_train.shape[2])))"
+
+    return layer_str

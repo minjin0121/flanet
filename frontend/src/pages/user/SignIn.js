@@ -17,13 +17,19 @@ function SignIn() {
           .auth()
           .signInWithEmailAndPassword(email, password)
           .then((result) => {
-            history.push("/");
+            history.push("*");
           })
           .catch((error) => {
-            console.log(error.code);
+            alert("잘못된 이메일과 비밀번호입니다.");
           });
       })
-      .catch(() => {});
+      .catch(() => {
+        alert("파이어베이스와 연결이 지연되고 있습니다.");
+      });
+  };
+
+  const gotoMain = (event) => {
+    history.push("/");
   };
 
   const signInWithGoogle = (event) => {
@@ -37,13 +43,13 @@ function SignIn() {
           .auth()
           .signInWithPopup(provider)
           .then((response) => {
-            history.push("/");
+            history.push("*");
           })
-          .catch((error) => {
-            console.log(error.code);
-          });
+          .catch((error) => {});
       })
-      .catch(() => {});
+      .catch(() => {
+        alert("파이어베이스와 연결이 지연되고 있습니다.");
+      });
   };
 
   return (
@@ -72,6 +78,11 @@ function SignIn() {
             onChange={(event) => {
               setPassword(event.target.value);
             }}
+            onKeyUp={(event) => {
+              if (event.key === "Enter") {
+                signInWithEmail(event);
+              }
+            }}
           />
         </div>
       </form>
@@ -98,6 +109,9 @@ function SignIn() {
           signInWithGoogle(event);
         }}
       />
+      <div className="returnMainPage">
+        <span onClick={gotoMain}>메인페이지 돌아가기</span>
+      </div>
     </div>
   );
 }

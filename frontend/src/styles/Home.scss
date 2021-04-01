@@ -143,24 +143,17 @@
     cursor: default;
     font-size: 70px;
   }
-}
 
-.startFlanetButton:hover {
-  position: fixed;
-  bottom: 50%;
-  right: 10%;
-  width: 35%;
-  height: 30%;
-  color: white;
-
-  .dubbleArrowIconStyle {
-    animation-delay: 0.1s;
-    animation-duration: 2s;
-    opacity: 1;
-    animation-name: translateLocationLeft1;
-    animation-iteration-count: infinite;
-    animation-direction: initial;
-    animation-fill-mode: forwards;
+  &:hover {
+    .dubbleArrowIconStyle {
+      animation-delay: 0.1s;
+      animation-duration: 2s;
+      opacity: 1;
+      animation-name: translateLocationLeft1;
+      animation-iteration-count: infinite;
+      animation-direction: initial;
+      animation-fill-mode: forwards;
+    }
   }
 }
 
@@ -188,23 +181,6 @@
   animation-iteration-count: inherit;
   animation-direction: alternate;
   animation-fill-mode: forwards;
-}
-
-.logoutButtonLocation {
-  margin-right: 30px;
-  margin-top: 20px;
-  padding-left: auto;
-  div {
-    display: flex;
-    justify-content: flex-end;
-    span {
-      z-index: 5;
-      color: white;
-      cursor: pointer;
-      font-size: 20px;
-      font-family: $flanet-font, Arial;
-    }
-  }
 }
 
 .fixAppBackgroundDuplicate {

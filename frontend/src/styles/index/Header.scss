@@ -1,24 +1,52 @@
 .header {
   align-items: center;
   display: flex;
-  padding: 0.5%;
   border-bottom: 0.3mm solid $flanet_black;
 
+
+  .defaultBackgroundNavColor {
+    position: fixed;
+    background-color: black;
+    height: 140px;
+    width: 110%;
+    left: -5%;
+    z-index: 80;
+  }
+
   .logo {
-    width: 50px;
-    height: 40px;
-    margin-left: 5%;
+    position: fixed;
+    width: 60px;
+    height: 48px;
+    left: 15px;
+    top: 13px;
+    z-index: 90;
   }
 
   .nav {
-    display: flex;
-    margin-left: auto;
-    margin-right: 5%;
+    font-family: $bgothic-font;
+    z-index: 81;
+
+    .nava1 {
+      position: fixed;
+      right: 370px;
+      top: 26.5px;
+    }
+
+    .nava2 {
+      position: fixed;
+      right: 210px;
+      top: 27px;
+    }
+
+    .nava3 {
+      position: fixed;
+      right: 80px;
+      top: 25.7px;
+    }
 
     a {
-      justify-content: space-between;
-      width: 150px;
-      color: $flanet_black;
+      color: white;
+      font-size: 20px;
       text-align: center;
       font-weight: 500;
       text-decoration: none;

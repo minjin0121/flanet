@@ -20,6 +20,10 @@ function SignUp() {
       });
   };
 
+  const gotoLogin = (event) => {
+    history.push("/signin");
+  };
+
   return (
     <div className="signUp userContainer">
       <h1>회원가입</h1>
@@ -61,6 +65,9 @@ function SignUp() {
       >
         회원가입
       </button>
+      <div className="returnLoginPage">
+        <span onClick={gotoLogin}>로그인페이지 돌아가기</span>
+      </div>
     </div>
   );
 }

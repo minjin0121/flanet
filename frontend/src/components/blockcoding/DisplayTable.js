@@ -11,7 +11,7 @@ function DisplayTable({ result, data }) {
     let layout = {};
 
     // 데이터 수집 그래프 그리기
-    if (result[0] === "crawling") {
+    if (result[0].slice(-8) === "crawling") {
       if (data) {
         const dataDate = data.map((d) => d.data_set_date);
         const dataValue = data.map((d) => d.data_set_value);
@@ -194,6 +194,8 @@ function DisplayTable({ result, data }) {
     }
   } else if (Object.values(data).length > 0) {
     document.getElementById("displayTable").innerHTML = `<h5>${data}</h5>`;
+  } else if (result[0] === "initialize") {
+    document.getElementById("displayTable").innerHTML = "";
   }
 
   return (

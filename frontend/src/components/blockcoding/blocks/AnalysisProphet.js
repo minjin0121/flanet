@@ -1,7 +1,11 @@
 import * as Blockly from "blockly/core";
 import "blockly/javascript";
 import store from "../../../index.js";
-import { setUserDataSetId, setDisplayData } from "../../../actions/index";
+import {
+  setUserDataSetId,
+  setDisplayData,
+  setDisplayCode,
+} from "../../../actions/index";
 
 Blockly.Blocks.analysis_prophet_field = {
   init() {
@@ -41,10 +45,12 @@ Blockly.JavaScript.analysis_prophet_field = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("block result is ", res.user_data_predict_id);
+        console.log("block result is ", res);
         const dataurl = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/json/${res.user_data_predict_id}`;
+        const code = store.getState().displayCode;
 
         store.dispatch(setUserDataSetId(["prophet", res.user_data_predict_id]));
+        store.dispatch(setDisplayCode(code + res.code));
 
         fetch(dataurl, {
           method: "GET",

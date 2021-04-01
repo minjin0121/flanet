@@ -62,11 +62,14 @@ Blockly.JavaScript.crawling_period_price_field = function (block) {
   );
 
   let url = "";
+  let userDataSetName = "";
 
   if (dataId <= 6) {
     url = "https://j4f002.p.ssafy.io/api/crawling/stocks/period";
+    userDataSetName = "stock period crawling";
   } else {
     url = "https://j4f002.p.ssafy.io/api/crawling/temperatures/period";
+    userDataSetName = "temperature period crawling";
   }
 
   fetch(url, {
@@ -83,15 +86,16 @@ Blockly.JavaScript.crawling_period_price_field = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
+      console.log("crawl", res);
       store.dispatch(
-        setUserDataSetId(["crawling", res.user_data_set.user_data_set_id])
+        setUserDataSetId([userDataSetName, res.user_data_set.user_data_set_id])
       );
       store.dispatch(setDisplayData(res.data_set));
     });
 
-  url = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}/period`;
+  const codeurl = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}/period`;
 
-  fetch(url, {
+  fetch(codeurl, {
     method: "GET",
   })
     .then((res) => res.json())

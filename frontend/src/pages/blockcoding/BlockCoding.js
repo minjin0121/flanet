@@ -21,6 +21,10 @@ import {
   getDataList,
   getUserDataSet,
   getUserModelSet,
+  setCNNChartMark,
+  setDisplayCode,
+  setDisplayData,
+  setUserDataSetId,
 } from "../../actions/index";
 
 function BlockCoding() {
@@ -112,6 +116,10 @@ function BlockCoding() {
 
   // 블록 작업실 초기화 버튼
   const reset = () => {
+    dispatch(setUserDataSetId(["initialize", 0]));
+    dispatch(setDisplayData([]));
+    dispatch(setDisplayCode(""));
+    dispatch(setCNNChartMark(0));
     simpleWorkspace.current.workspace.clear();
   };
 

@@ -1,17 +1,9 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-// import ExitToAppRoundedIcon from "@material-ui/icons/ExitToAppRounded";
 import DoubleArrowIcon from "@material-ui/icons/DoubleArrow";
 
 function Home() {
   const history = useHistory();
-
-  const signOut = (event) => {
-    sessionStorage.removeItem(
-      `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
-    );
-    history.push("*");
-  };
 
   const startFlanetButton = (event) => {
     if (
@@ -54,20 +46,6 @@ function Home() {
         className="homepageTransitionDesign4"
         alt="home_block"
       />
-      <div className="logoutButtonLocation">
-        <div>
-          <span
-            onClick={(event) => {
-              signOut(event);
-            }}
-          >
-            {(function () {
-              if (user) return <div>Logout</div>;
-              else return <div></div>;
-            })()}
-          </span>
-        </div>
-      </div>
       <div className="startFlanetButton">
         <h1>FlaNET</h1>
         <br />
@@ -78,7 +56,10 @@ function Home() {
             startFlanetButton(event);
           }}
         />
-        <div>블록코딩 Go!Go!</div>
+        {(function () {
+          if (user) return <div>블록코딩 Go!Go!</div>;
+          else return <div>로그인부터 Go!Go!</div>;
+        })()}
       </div>
       <div className="startFlanetButtonDefault"></div>
     </div>

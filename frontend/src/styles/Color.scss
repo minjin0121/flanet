@@ -1,6 +1,13 @@
-@import url(http://fonts.googleapis.com/earlyaccess/notosanskr.css);
+@font-face {
+  font-family: 'NanumBarunGothic';
+  font-style: normal;
+  font-weight: 350;
+  src: url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.eot');
+  src: url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.eot?#iefix') format('embedded-opentype'), url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.woff') format('woff'), url('//cdn.jsdelivr.net/font-nanumlight/1.0/NanumBarunGothicWeb.ttf') format('truetype');
+ }
 
-$flanet-font: "Noto Sans KR", sans-serif;
+$bgothic-font: "NanumBarunGothic", sans-serif;
+$flanet-font: sans-serif, Arial;
 $flanet-white: #ffffff;
 $flanet-light-gray: #eeeeee;
 $flanet-gray: #dfe1e2;

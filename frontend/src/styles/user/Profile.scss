@@ -1,3 +1,65 @@
 .profile {
-  color: $flanet-blue;
+  margin-top: 15px;
+  font-family: $bgothic-font;
+
+  .storage {
+    position: absolute;
+    width: 50%;
+    color: $flanet-green;
+    
+    h1 {
+      margin-left: 20px;
+    }
+
+    h2 {
+      margin-left: 30px;
+    }
+
+    .historyBox {
+      width: 90%;
+      margin: 10px;
+      margin-bottom: 30px;
+      padding: 10px;
+      font-size: 15px;
+      border: 3px solid;
+      border-color: $flanet-green;
+      border-radius: 15px;
+      height: 40px;
+      text-align: center;
+      justify-content: flex-start;
+      
+      span {
+        padding-right: 10%;
+      }
+    }
+  }
+
+  .history {
+    position: absolute;
+    left: 50%;
+    width: 50%;
+    color: $flanet-blue;
+
+    h1 {
+      margin-left: 20px;
+    }
+
+    .historyBox {
+      width: 90%;
+      margin: 10px;
+      margin-bottom: 30px;
+      padding: 10px;
+      font-size: 15px;
+      border: 3px solid;
+      border-color: $flanet-blue;
+      border-radius: 15px;
+      height: 40px;
+      text-align: center;
+      justify-content: flex-start;
+      
+      span {
+        padding-right: 10%;
+      }
+    }
+  }
 }

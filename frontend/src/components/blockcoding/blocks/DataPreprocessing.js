@@ -1,11 +1,10 @@
-import * as Blockly from "blockly/core";
-import "blockly/javascript";
+import Blockly from "blockly/core";
 import store from "../../../index.js";
 import { setDisplayCode } from "../../../actions/index";
 
 const dataPreprocessing = {
   type: "data_preprocessing",
-  message0: "데이터 전처리",
+  message0: "수집된 데이터 전처리",
   previousStatement: null,
   nextStatement: null,
   colour: 444,

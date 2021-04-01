@@ -8,10 +8,14 @@ import "../../components/blockcoding/blocks/CrawlingNowPrice";
 import "../../components/blockcoding/blocks/CrawlingPeriodPrice";
 import "../../components/blockcoding/blocks/DataFileInput";
 import "../../components/blockcoding/blocks/DataSelect";
+import "../../components/blockcoding/blocks/DataPreparation";
 import "../../components/blockcoding/blocks/DataPreprocessing";
 import "../../components/blockcoding/blocks/AnalysisCNN";
 import "../../components/blockcoding/blocks/AnalysisLSTM";
 import "../../components/blockcoding/blocks/AnalysisProphet";
+import "../../components/blockcoding/blocks/ModelCNNTraining";
+import "../../components/blockcoding/blocks/ModelEvaluate";
+import "../../components/blockcoding/blocks/ModelPredict";
 import "../../components/blockcoding/blocks/ModelSelect";
 import DisplayTable from "../../components/blockcoding/DisplayTable";
 import DisplayChart from "../../components/blockcoding/DisplayChart";
@@ -124,7 +128,7 @@ function BlockCoding() {
   };
 
   return (
-    <div>
+    <div className="blockCoding">
       <button onClick={execute}>실행</button>
       <button onClick={workspaceStore}>저장</button>
       <button onClick={dataDownload}>데이터 다운</button>
@@ -148,14 +152,20 @@ function BlockCoding() {
             <Block type="crawling_now_price_field" />
             <Block type="crawling_period_price_field" />
             <Block type="data_file_input" />
-            <Block type="data_select" />
             <Block type="data_preprocessing_field" />
           </Category>
           <Category name="데이터 분석">
             <Block type="analysis_cnn_field" />
             <Block type="analysis_lstm_field" />
             <Block type="analysis_prophet_field" />
+          </Category>
+          <Category name="Tensorflow 모델">
+            <Block type="data_select" />
+            <Block type="data_preparation" />
+            <Block type="model_cnn_training" />
             <Block type="model_select_field" />
+            <Block type="model_evaluate_field" />
+            <Block type="model_predict_field" />
           </Category>
         </React.Fragment>
       </BlocklyWorkspace>

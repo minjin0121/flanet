@@ -1,11 +1,12 @@
 const initialState = {
   dataLists: {},
   userDataSets: {},
+  userModelSets: {},
   userDataSetId: [],
   displayData: [],
   displayCode: "",
   cnnChartMark: 0,
-  userModelSets: {},
+  modelingStep: [],
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -14,6 +15,8 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, dataLists: action.payload };
     case "GET_USER_DATA_SET":
       return { ...state, userDataSets: action.payload };
+    case "GET_USER_MODEL_SET":
+      return { ...state, userModelSets: action.payload };
     case "SET_USER_DATA_SET_ID":
       return { ...state, userDataSetId: action.payload };
     case "SET_DISPLAY_DATA":
@@ -22,8 +25,16 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, displayCode: action.payload };
     case "SET_CNN_CHART_MARK":
       return { ...state, cnnChartMark: action.payload };
-    case "GET_USER_MODEL_SET":
-      return { ...state, userModelSets: action.payload };
+    case "SET_MODELING_STEP":
+      return {
+        ...state,
+        modelingStep: [...state.modelingStep, action.payload],
+      };
+    case "INIT_MODELING_STEP":
+      return {
+        ...state,
+        modelingStep: state.modelingStep.slice(action.payload + 1),
+      };
     default:
       return state;
   }

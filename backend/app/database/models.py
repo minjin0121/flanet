@@ -48,9 +48,7 @@ class UserDataSet(Base):
     user_data_set_date = Column(DateTime, index=True, default=time.localtime())
 
     data_list_own = relationship("DataList", back_populates="user_data_sets")
-    user_data_predicts = relationship(
-        "UserDataPredict", back_populates="user_data_set_own"
-    )
+    user_data_predicts = relationship("UserDataPredict", back_populates="user_data_set_own")
 
 
 # 모델
@@ -61,10 +59,9 @@ class TrainingModel(Base):
     training_model_name = Column(String(20), index=True)
     training_model_xml = Column(String(10000))
     user_id = Column(String(100), index=True)
+    training_model_date = Column(DateTime, index=True, default=time.localtime())
 
-    user_data_predicts = relationship(
-        "UserDataPredict", back_populates="training_model_own"
-    )
+    user_data_predicts = relationship("UserDataPredict", back_populates="training_model_own")
 
 
 # 사용자-데이터 분석
@@ -80,6 +77,4 @@ class UserDataPredict(Base):
     user_data_predict_date = Column(DateTime, index=True, default=time.localtime())
 
     user_data_set_own = relationship("UserDataSet", back_populates="user_data_predicts")
-    training_model_own = relationship(
-        "TrainingModel", back_populates="user_data_predicts"
-    )
+    training_model_own = relationship("TrainingModel", back_populates="user_data_predicts")

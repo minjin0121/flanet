@@ -7,6 +7,7 @@ import time, json
 from fastapi import APIRouter, Depends, HTTPException, Form
 from sqlalchemy.orm import Session
 import requests
+from pydantic import BaseModel
 
 # 로컬
 pth.append(path.dirname(path.abspath(path.dirname(__file__))))
@@ -15,6 +16,16 @@ from dependency import get_db
 
 
 router = APIRouter()
+
+
+class TrainingXmlNameInput(BaseModel):
+    training_model_id: int
+    training_model_name: str
+
+
+class UserDataXmlNameInput(BaseModel):
+    user_data_set_id: int
+    user_data_set_name: str
 
 
 # 데이터 목록 확인
@@ -72,9 +83,7 @@ def show_select_data_set(data_list_id: int, db: Session = Depends(get_db)):
 
 
 # 모든 유저 데이터 셋 확인
-@router.get(
-    "/api/data/userdataset/all", tags=["userdataset"], description="모든 유저 데이터 셋 확인"
-)
+@router.get("/api/data/userdataset/all", tags=["userdataset"], description="모든 유저 데이터 셋 확인")
 def show_all_user_data_set(db: Session = Depends(get_db)):
     return {"user_data_set": db.query(models.UserDataSet).all()}
 
@@ -200,9 +209,7 @@ def create_user_data_set(db: Session, data: schemas.UserDataSetBase):
 
 
 # 트레이닝 모델 데이터 확인
-@router.get(
-    "/api/data/trainingmodel/all", tags=["trainingmodel"], description="트레이닝 모델 데이터 확인"
-)
+@router.get("/api/data/trainingmodel/all", tags=["trainingmodel"], description="트레이닝 모델 데이터 확인")
 def show_all_training_model(db: Session = Depends(get_db)):
     return {"training_model": db.query(models.TrainingModel).all()}
 
@@ -221,6 +228,56 @@ def show_select_training_model(user_id: str, db: Session = Depends(get_db)):
         .filter(models.TrainingModel.user_id == user_id)
         .all()
     }
+
+
+# training model XML name 변경
+@router.put(
+    "/api/data/trainingmodel/name/update",
+    tags=["trainingmodel"],
+    description="training model xml name 변경",
+)  # 여기부터 다시 수정
+def update_training_model_name(
+    training_xml_name_input: TrainingXmlNameInput, db: Session = Depends(get_db)
+):
+
+    db_data = (
+        db.query(models.TrainingModel)
+        .filter(models.TrainingModel.training_model_id == training_xml_name_input.training_model_id)
+        .one()
+    )
+
+    db_data.training_model_name = training_xml_name_input.training_model_name
+
+    db.commit()
+
+    db.refresh(db_data)
+
+    return
+
+
+# user data set XML name 변경
+@router.put(
+    "/api/data/userdataset/name/update",
+    tags=["userdataset"],
+    description="user data set xml name 변경",
+)  # 여기부터 다시 수정
+def update_user_data_model_name(
+    user_data_xml_name_input: UserDataXmlNameInput, db: Session = Depends(get_db)
+):
+
+    db_data = (
+        db.query(models.UserDataSet)
+        .filter(models.UserDataSet.user_data_set_id == user_data_xml_name_input.user_data_set_id)
+        .one()
+    )
+
+    db_data.user_data_set_name = user_data_xml_name_input.user_data_set_name
+
+    db.commit()
+
+    db.refresh(db_data)
+
+    return
 
 
 # 유저 확인

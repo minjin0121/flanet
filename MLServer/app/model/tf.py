@@ -105,7 +105,7 @@ def cnn_model_training(input_data, user_id, db):
     model = Sequential()
     exec(custom_layer(default_cnn_model))
     model.add(Flatten())
-    model.add(Dense(50, activation="relu"))
+    model.add(Dense(14, activation="relu"))
     model.add(Dense(1))
     model.compile(optimizer="adam", loss="mse")
 
@@ -409,6 +409,7 @@ def predict_future(user_data_set_id, input_data, training_model_id, user_id, per
                 callbacks=callbacks,
                 shuffle=True,
             )
+            trained_model = load_model(model_file_path)
 
     insert_user_data_predict = crud.insert_user_data_predict(
         user_data_set_id=user_data_set_id,
@@ -478,29 +479,29 @@ def input_data_to_data_set(input_data):
 
 
 def custom_layer(input_layer):
+    layer_str = ""
     for i in range(len(input_layer)):
         if input_layer[i]["layer_name"] == "Conv1D":
             filters = input_layer[i]["filters"]
             kernel_size = input_layer[i]["kernel_size"]
-            layer_str = (
-                f"model.add(Conv1D(fitlers={filters}, kernel_size={kernel_size}, activation=relu))"
-            )
+            layer_str += f"model.add(Conv1D(filters={filters}, kernel_size={kernel_size}, activation='relu'))"
         elif input_layer[i]["layer_name"] == "MaxPooling1D":
             pool_size = input_layer[i]["pool_size"]
-            layer_str = f"model.add(MaxPooling1D(pool_size={pool_size}))"
+            layer_str += f"model.add(MaxPooling1D(pool_size={pool_size}))"
         elif input_layer[i]["layer_name"] == "AveragePooling1D":
             pool_size = input_layer[i]["pool_size"]
-            layer_str = f"model.add(AveragePooling1D(pool_size={pool_size}))"
+            layer_str += f"model.add(AveragePooling1D(pool_size={pool_size}))"
         elif input_layer[i]["layer_name"] == "LSTM":
             units = input_layer[i]["units"]
-            layer_str = f"model.add(LSTM(units={units}))"
+            layer_str += f"model.add(LSTM(units={units}))"
         elif input_layer[i]["layer_name"] == "Dropout":
             rate = input_layer[i]["rate"]
-            layer_str = f"model.add(Dropout(rate={rate}))"
+            layer_str += f"model.add(Dropout(rate={rate}))"
         if i == 0:
             layer_str = layer_str.rstrip(")")
             if input_layer[i]["layer_name"] == "LSTM":
-                layer_str = layer_str + ", return_sequences=True"
-            layer_str = layer_str + ", input_shape=(x_train.shape[1], x_train.shape[2])))"
+                layer_str += ", return_sequences=True"
+            layer_str += ", input_shape=(x_train.shape[1], x_train.shape[2])))"
+        layer_str += "\n"
 
     return layer_str

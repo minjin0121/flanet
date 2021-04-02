@@ -70,14 +70,11 @@ def get_user_data_set(user_data_set_id, db: Session):
 
 
 # predict 데이터 삽입
-def insert_user_data_predict(
-    user_data_set_id, training_model_id, user_id, user_data_predict_name, db: Session
-):
+def insert_user_data_predict(user_data_set_id, training_model_id, user_id, db: Session):
     db_user_data = models.UserDataPredict(
         user_data_set_id=user_data_set_id,
         training_model_id=training_model_id,
         user_id=user_id,
-        user_data_predict_name=user_data_predict_name,
     )
 
     db.add(db_user_data)
@@ -88,10 +85,8 @@ def insert_user_data_predict(
 
 
 # model 데이터 삽입
-def insert_training_model(training_model_name, user_id, db: Session):
-    db_training_model = models.TrainingModel(
-        training_model_name=training_model_name, user_id=user_id
-    )
+def insert_training_model(user_id, db: Session):
+    db_training_model = models.TrainingModel(user_id=user_id)
 
     db.add(db_training_model)
     db.commit()

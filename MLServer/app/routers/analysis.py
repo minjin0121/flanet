@@ -31,10 +31,17 @@ class TfInput(BaseModel):
 
 class TfPreprocess(BaseModel):
     input_raw_data: dict
+    set_rate: float
 
 
 class TfTraining(BaseModel):
     input_processed_data: dict
+    user_id: str
+
+
+class TfCustomTraining(BaseModel):
+    input_processed_data: dict
+    input_layer: list
     user_id: str
 
 
@@ -90,7 +97,6 @@ def analysis_prophet(
         user_data_set_id=data.user_data_set_id,
         training_model_id=1,
         user_id=data.user_id,
-        user_data_predict_name="test",
         db=db,
     )
 
@@ -111,7 +117,7 @@ def analysis_prophet(
     return {"code": s, "user_data_predict_id": predict_data.user_data_predict_id}
 
 
-@router.post("/ml/tensorflow/input", tags=["tensorflow"], description="데이터 입력")
+@router.post("/ml/tensorflow/input", tags=["tensorflow"], description="Data Input")
 def data_input(tf_input: TfInput, db: Session = Depends(get_db)):
     data = crud.get_user_data_set(user_data_set_id=tf_input.user_data_set_id, db=db)
 
@@ -134,13 +140,13 @@ def data_input(tf_input: TfInput, db: Session = Depends(get_db)):
     return {"raw_data": raw_data}
 
 
-@router.post("/ml/tensorflow/preprocess", tags=["tensorflow"], description="데이터 전처리")
+@router.post("/ml/tensorflow/preprocess", tags=["tensorflow"], description="Data Preprocess")
 def data_preprocess(tf_preprocess: TfPreprocess):
-    return tf.data_preprocess(tf_preprocess.input_raw_data)
+    return tf.data_preprocess(tf_preprocess.input_raw_data, tf_preprocess.set_rate)
 
 
 @router.post("/ml/tensorflow/cnn/training", tags=["tensorflow"], description="CNN Model Training")
-def model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
+def cnn_model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
     return tf.cnn_model_training(
         tf_training.input_processed_data,
         tf_training.user_id,
@@ -148,11 +154,39 @@ def model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
     )
 
 
+@router.post(
+    "/ml/tensorflow/custom/cnn/training",
+    tags=["tensorflow"],
+    description="Custom CNN Model Training",
+)
+def custom_cnn_model_training(tf_custom_training: TfCustomTraining, db: Session = Depends(get_db)):
+    return tf.custom_cnn_model_training(
+        tf_custom_training.input_processed_data,
+        tf_custom_training.input_layer,
+        tf_custom_training.user_id,
+        db,
+    )
+
+
 @router.post("/ml/tensorflow/lstm/training", tags=["tensorflow"], description="LSTM Model Training")
-def model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
+def lstm_model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
     return tf.lstm_model_training(
         tf_training.input_processed_data,
         tf_training.user_id,
+        db,
+    )
+
+
+@router.post(
+    "/ml/tensorflow/custom/lstm/training",
+    tags=["tensorflow"],
+    description="Custom LSTM Model Training",
+)
+def custom_lstm_model_training(tf_custom_training: TfCustomTraining, db: Session = Depends(get_db)):
+    return tf.custom_lstm_model_training(
+        tf_custom_training.input_processed_data,
+        tf_custom_training.input_layer,
+        tf_custom_training.user_id,
         db,
     )
 

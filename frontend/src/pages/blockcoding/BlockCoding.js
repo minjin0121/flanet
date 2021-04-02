@@ -17,6 +17,12 @@ import "../../components/blockcoding/blocks/ModelCNNTraining";
 import "../../components/blockcoding/blocks/ModelEvaluate";
 import "../../components/blockcoding/blocks/ModelPredict";
 import "../../components/blockcoding/blocks/ModelSelect";
+import "../../components/blockcoding/blocks/CNNTraining";
+import "../../components/blockcoding/blocks/CNNTrainingConv1D";
+import "../../components/blockcoding/blocks/CNNTrainingMaxPooling1D";
+import "../../components/blockcoding/blocks/CNNTrainingMinPooling1D";
+import "../../components/blockcoding/blocks/TrainingDropout";
+import "../../components/blockcoding/blocks/LSTMTraining";
 import DisplayTable from "../../components/blockcoding/DisplayTable";
 import DisplayChart from "../../components/blockcoding/DisplayChart";
 import DisplayCode from "../../components/blockcoding/DisplayCode";
@@ -164,6 +170,14 @@ function BlockCoding() {
             <Block type="model_select_field" />
             <Block type="model_evaluate_field" />
             <Block type="model_predict_field" />
+          </Category>
+          <Category name="2.5단계">
+            <Block type="cnn_training_field" />
+            <Block type="cnn_training_conv1D_field" />
+            <Block type="cnn_training_maxpooling1D_field" />
+            <Block type="cnn_training_minpooling1D_field" />
+            <Block type="training_dropout_field" />
+            <Block type="lstm_training_field" />
           </Category>
         </React.Fragment>
       </BlocklyWorkspace>

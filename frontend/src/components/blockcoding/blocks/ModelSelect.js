@@ -6,11 +6,17 @@ const makeOptionsArray = function (userModelSets) {
   const options = [];
 
   for (let index = 0; index < userModelSets.length; index++) {
-    const temp = [];
+    if (userModelSets[index].training_model_xml !== null) {
+      const temp = [];
 
-    temp.push(userModelSets[index].training_model_name);
-    temp.push(String(userModelSets[index].training_model_id));
-    options.push(temp);
+      if (userModelSets[index].training_model_name === null) {
+        temp.push(`모델 (${userModelSets[index].training_model_date})`);
+      } else {
+        temp.push(userModelSets[index].training_model_name);
+      }
+      temp.push(String(userModelSets[index].training_model_id));
+      options.push(temp);
+    }
   }
 
   if (options.length === 0) {

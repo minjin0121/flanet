@@ -5,7 +5,6 @@ const signOut = (event) => {
   sessionStorage.removeItem(
     `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
   );
-  history.push("*");
 };
 
 function Header() {
@@ -23,28 +22,29 @@ function Header() {
         />
       </a>
       <nav className="nav">
-        <a className="nava1" href="/">
+        <Link className="nava1" to="/">
           튜토리얼
-        </a>
+        </Link>
         {(function () {
           if (window.location.pathname === "/profile")
             return (
               <Link className="nava2" to="/blockcoding">
-                블록코딩
+                블록 코딩
               </Link>
             );
           else
             return (
               <Link className="nava2" to="/profile">
-                나의페이지
+                마이페이지
               </Link>
             );
         })()}
 
-        <a className="nava3" href="/login" onClick={signOut}>
+        <Link className="nava3" to="/" onClick={signOut}>
           Logout
-        </a>
+        </Link>
       </nav>
+      <div className="defaultBackgroundNavHeight"></div>
     </header>
   );
 }

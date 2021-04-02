@@ -1,13 +1,15 @@
 .header {
-  align-items: center;
   display: flex;
-  border-bottom: 0.3mm solid $flanet_black;
 
+  .defaultBackgroundNavHeight {
+    height: 90px;
+  }
 
   .defaultBackgroundNavColor {
     position: fixed;
+    top: 0%;
     background-color: black;
-    height: 140px;
+    height: 80px;
     width: 110%;
     left: -5%;
     z-index: 80;

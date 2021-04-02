@@ -22,8 +22,9 @@ def prophet_stock(conv_df, item, period_value, cps, original_df):
     future = m.make_future_dataframe(periods=period_value)
 
     # 주말 데이터 삭제
-    future["day"] = future["ds"].dt.weekday
-    future = future[future["day"] <= 4]
+    if item == "Close":
+        future["day"] = future["ds"].dt.weekday
+        future = future[future["day"] <= 4]
 
     forecast = m.predict(future)
 

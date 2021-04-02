@@ -83,7 +83,7 @@ def analysis_prophet(
         df = df.drop(["Unnamed: 0"], axis=1)
     # 기간별
     else:
-        original_df = db_data_call(data, db=db)
+        original_df, analysis_value = db_data_call(data, db=db)
         df = pd.read_csv(StringIO(original_df.to_csv()), index_col="Date")  # 기본 인덱스는 날짜기준.
         df.sort_values(by=["Date"], axis=0, inplace=True)  # date 기준 내림차순 정렬
         df = df.drop(["Unnamed: 0"], axis=1)
@@ -244,12 +244,23 @@ def db_data_call(data, db: Session):
         code=data.data_list_id,
     )
 
-    df = pd.DataFrame(columns=["Date", "Close"])  # date -> ds 변경
+    analysis_value = "Close"
 
-    for sk in stock_list:
-        df = df.append(
-            {"Date": sk.data_set_date, "Close": str(sk.data_set_value)},
-            ignore_index=True,
-        )
+    if stock_list[0].data_list_id < 7:
+        df = pd.DataFrame(columns=["Date", "Close"])  # date -> ds 변경
+        for sk in stock_list:
+            df = df.append(
+                {"Date": sk.data_set_date, "Close": str(sk.data_set_value)},
+                ignore_index=True,
+            )
+            analysis_value = "Close"
+    else:
+        df = pd.DataFrame(columns=["Date", "Temp"])  # date -> ds 변경
+        for sk in stock_list:
+            df = df.append(
+                {"Date": sk.data_set_date, "Temp": str(sk.data_set_value)},
+                ignore_index=True,
+            )
+            analysis_value = "Temp"
 
-    return df
+    return df, analysis_value

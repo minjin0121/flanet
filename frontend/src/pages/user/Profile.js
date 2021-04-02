@@ -1,9 +1,9 @@
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { connect, useDispatch } from "react-redux";
 import { getUserDataSet } from "../../actions/index";
-// import store from "../../index.js";
 
-function Profile() {
+function Profile({ userDataSets }) {
   const dispatch = useDispatch();
   const user = JSON.parse(
     sessionStorage.getItem(
@@ -11,8 +11,9 @@ function Profile() {
     )
   );
 
-  dispatch(getUserDataSet(user.uid));
-  const userDataSets = useSelector((state) => state.userDataSets);
+  useEffect(() => {
+    dispatch(getUserDataSet(user.uid));
+  }, [dispatch, user.uid]);
 
   return (
     <div className="profile">
@@ -82,4 +83,10 @@ function Profile() {
   );
 }
 
-export default Profile;
+Profile.propTypes = {
+  userDataSets: PropTypes.object,
+};
+
+export default connect((state) => ({ userDataSets: state.userDataSets }))(
+  Profile
+);

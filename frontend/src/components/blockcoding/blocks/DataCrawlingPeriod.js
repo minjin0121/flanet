@@ -1,9 +1,12 @@
 import Blockly from "blockly";
+import "@blockly/field-date";
 import store from "../../../index.js";
 import {
-  setUserDataSetId,
-  setDisplayData,
+  initModelingStep,
   setDisplayCode,
+  setDisplayData,
+  setModelingStep,
+  setUserDataSetId,
 } from "../../../actions/index";
 
 const makeOptionsArray = function (dataLists) {
@@ -26,7 +29,7 @@ const makeOptionsArray = function (dataLists) {
   return options.sort();
 };
 
-Blockly.Blocks.crawling_now_price_field = {
+Blockly.Blocks.data_crawling_period_field = {
   init() {
     const dataLists = store.getState().dataLists;
 
@@ -35,15 +38,24 @@ Blockly.Blocks.crawling_now_price_field = {
     );
 
     this.appendDummyInput()
-      .appendField("실시간 데이터 수집")
+      .appendField("기간별 데이터 수집")
       .appendField(dataSelect, "DATA");
-    this.setTooltip("원하는 데이터 값을 실시간으로 확인할 수 있습니다.");
+    this.appendDummyInput()
+      .appendField("    기간 : ")
+      .appendField(new Blockly.FieldDate("2016-03-17"), "STARTDATE")
+      .appendField("부터")
+      .appendField(new Blockly.FieldDate("2021-03-27"), "ENDDATE")
+      .appendField("까지");
     this.setColour("#47A644");
+    this.setNextStatement(true, null);
+    this.setTooltip("원하는 데이터 값을 기간을 설정해 수집할 수 있습니다.");
   },
 };
 
-Blockly.JavaScript.crawling_now_price_field = function (block) {
+Blockly.JavaScript.data_crawling_period_field = function (block) {
   const dataId = block.getFieldValue("DATA");
+  const startDate = block.getFieldValue("STARTDATE");
+  const endDate = block.getFieldValue("ENDDATE");
 
   const user = JSON.parse(
     sessionStorage.getItem(
@@ -55,11 +67,11 @@ Blockly.JavaScript.crawling_now_price_field = function (block) {
   let userDataSetName = "";
 
   if (dataId <= 6) {
-    url = "https://j4f002.p.ssafy.io/api/crawling/stocks";
-    userDataSetName = "stock crawling";
+    url = "https://j4f002.p.ssafy.io/api/crawling/stocks/period";
+    userDataSetName = "stock period crawling";
   } else {
-    url = "https://j4f002.p.ssafy.io/api/crawling/temperatures";
-    userDataSetName = "temperature crawling";
+    url = "https://j4f002.p.ssafy.io/api/crawling/temperatures/period";
+    userDataSetName = "temperature period crawling";
   }
 
   fetch(url, {
@@ -70,31 +82,39 @@ Blockly.JavaScript.crawling_now_price_field = function (block) {
     body: JSON.stringify({
       data_list_id: dataId,
       user_id: user.uid,
+      user_data_set_start: startDate,
+      user_data_set_end: endDate,
     }),
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
+      console.log("crawl", res);
       store.dispatch(
         setUserDataSetId([userDataSetName, res.user_data_set.user_data_set_id])
       );
+      store.dispatch(setDisplayData(res.data_set));
+      store.dispatch(initModelingStep(store.getState().modelingStep.length));
       store.dispatch(
-        setDisplayData([
-          `실시간 데이터 수집 결과는 ${res.data_set_value} 입니다.`,
-        ])
+        setModelingStep({ userDataSetId: res.user_data_set.user_data_set_id })
       );
+
+      const inputRawData = res.data_set.map((data) => ({
+        Date: data.data_set_date,
+        analysis_value: data.data_set_value,
+      }));
+
+      store.dispatch(setModelingStep({ raw_data: inputRawData }));
     });
 
-  const codeurl = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}`;
+  url = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}/period`;
 
-  fetch(codeurl, {
+  fetch(url, {
     method: "GET",
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log("crawl", res);
       store.dispatch(setDisplayCode(res.code));
     });
 
-  return "실시간 데이터 수집";
+  return "기간별 데이터 수집";
 };

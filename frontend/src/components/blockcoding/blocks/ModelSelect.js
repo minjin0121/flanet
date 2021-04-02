@@ -1,5 +1,6 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
+import { setModelingStep } from "../../../actions/index";
 
 const makeOptionsArray = function (userModelSets) {
   const options = [];
@@ -29,18 +30,21 @@ Blockly.Blocks.model_select_field = {
       makeOptionsArray(Object.values(userModelSets)[0])
     );
 
-    this.appendDummyInput("user_model_set")
-      .appendField("훈련된 모델 선택")
+    this.appendDummyInput()
+      .appendField("3. 학습 모델 선택")
       .appendField(modelSelect, "SELECT");
+    this.setColour(70);
+    this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(225);
   },
 };
 
 Blockly.JavaScript.model_select_field = function (block) {
-  const selectId = block.getFieldValue("SELECT");
+  setTimeout(function () {
+    const trainingModelId = block.getFieldValue("SELECT");
 
-  console.log(selectId);
+    store.dispatch(setModelingStep({ training_model_id: trainingModelId }));
+  }, 1000);
 
   return "Model Select";
 };

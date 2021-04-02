@@ -4,13 +4,16 @@ import { setUserDataSetId, setDisplayData } from "../../../actions/index";
 
 Blockly.Blocks.analysis_cnn_field = {
   init() {
-    this.appendDummyInput().appendField("CNN 모델 - 훈련, 평가, 추론");
+    this.appendDummyInput().appendField("CNN 모델 - 학습, 평가, 추론");
     this.appendDummyInput()
-      .appendField("기간")
-      .appendField(new Blockly.FieldTextInput("기간을 입력해주세요"), "PERIOD");
-    this.setTooltip("CNN 모델을 통해 분석을 진행할 수 있습니다.");
+      .appendField("    추론 기간")
+      .appendField(new Blockly.FieldTextInput("ex. 10, 20, 30"), "PERIOD")
+      .appendField("일");
     this.setColour("#0DB3D9");
     this.setPreviousStatement(true, null);
+    this.setTooltip(
+      "CNN 모델을 통해 모델 학습, 평가, 데이터 추론까지 할 수 있습니다."
+    );
   },
 };
 

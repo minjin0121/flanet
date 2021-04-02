@@ -12,11 +12,10 @@ Blockly.Blocks.data_file_input = {
   init() {
     const fileInput = new Blockly.FieldTextInput(".csv 파일을 선택해주세요");
 
-    this.appendDummyInput("file_name")
-      .appendField("데이터 입력 : ")
-      .appendField(fileInput);
+    this.appendDummyInput().appendField("데이터 입력").appendField(fileInput);
+    this.setColour("#47A644");
     this.setNextStatement(true, null);
-    this.setColour(444);
+    this.setTooltip("CSV 파일을 업로드해서 데이터를 입력할 수 있습니다.");
 
     fileInput.showEditor_ = () => {
       const input = document.createElement("input");
@@ -39,25 +38,32 @@ Blockly.JavaScript.data_file_input = function (block) {
     )
   );
 
+  let url = "https://j4f002.p.ssafy.io/api/csv/upload/userdataset";
   const formData = new FormData();
 
   formData.append("file", file);
   formData.append("user_id", user.uid);
 
-  fetch(`https://j4f002.p.ssafy.io/api/csv/upload/userdataset`, {
+  fetch(url, {
     method: "POST",
     body: formData,
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
-      store.dispatch(
-        setUserDataSetId(["fileInput", res.user_data_set.user_data_set_id])
-      );
-      store.dispatch(
-        setDisplayData(["파일이 정상적으로 업로드 완료되었습니다."])
-      );
-      store.dispatch(setDisplayCode([]));
+      store.dispatch(setDisplayCode(""));
+
+      url = `https://j4f002.p.ssafy.io/api/easy/userdataset/${res.user_data_set.user_data_set_id}`;
+
+      fetch(url, {
+        method: "GET",
+      })
+        .then((res1) => res1.json())
+        .then((res1) => {
+          store.dispatch(
+            setUserDataSetId(["crawling", res.user_data_set.user_data_set_id])
+          );
+          store.dispatch(setDisplayData(res1.data_set));
+        });
     });
 
   return "CSV 파일 데이터 입력";

@@ -1,9 +1,11 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
 import {
-  setUserDataSetId,
-  setDisplayData,
+  initModelingStep,
   setDisplayCode,
+  setDisplayData,
+  setModelingStep,
+  setUserDataSetId,
 } from "../../../actions/index";
 
 const makeOptionsArray = function (userDataSets) {
@@ -43,39 +45,51 @@ Blockly.Blocks.data_select = {
     );
 
     this.appendDummyInput("user_data_set")
-      .appendField("입력 데이터")
+      .appendField("1. 모델링 데이터 입력")
       .appendField(dataSelect, "SELECT");
     this.setNextStatement(true, null);
-    this.setColour(225);
+    this.setColour(70);
   },
 };
 
 Blockly.JavaScript.data_select = function (block) {
-  const selectId = block.getFieldValue("SELECT");
+  const userDataSetId = block.getFieldValue("SELECT");
 
-  // 이거 링크 합쳐준다구 했음! 합쳐진 링크 넣으면 csv 파일도 긁어오기 가능!! => 벗 csv 데이터 시각화가 가능할까?
-  const dataurl = `https://j4f002.p.ssafy.io/api/data/userdataset/${selectId}`;
+  let url = `https://j4f002.p.ssafy.io/api/easy/userdataset/${userDataSetId}`;
 
-  store.dispatch(setUserDataSetId(["crawling", selectId]));
-  store.dispatch(setDisplayCode([]));
+  store.dispatch(setUserDataSetId(["crawling", userDataSetId]));
+  store.dispatch(setDisplayCode(""));
+  store.dispatch(initModelingStep(store.getState().modelingStep.length));
+  store.dispatch(setModelingStep({ userDataSetId }));
 
-  fetch(dataurl, {
+  fetch(url, {
     method: "GET",
   })
     .then((res) => res.json())
     .then((res) => {
+      store.dispatch(setDisplayData(res.data_set));
+    })
+    .catch();
+
+  url = "https://j4f002.p.ssafy.io/ml/tensorflow/input";
+
+  fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      user_data_set_id: userDataSetId,
+    }),
+  })
+    .then((res) => res.json())
+    .then((res) => {
+      console.log("*** TENSORFLOW DATA INPUT DONE ***");
       console.log(res);
-      console.log(res.data_set);
-      if (res.data_set.length > 1) {
-        store.dispatch(setDisplayData(res.data_set));
-      } else if (res.data_set.length > 0) {
-        store.dispatch(
-          setDisplayData([
-            `실시간 데이터 수집 결과는 ${res.data_set[0].data_set_value} 입니다.`,
-          ])
-        );
-      }
-    });
+
+      store.dispatch(setModelingStep(res));
+    })
+    .catch();
 
   return "Data Select";
 };

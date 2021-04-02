@@ -122,7 +122,7 @@ function DisplayTable({ result, data }) {
           {
             type: "table",
             header: {
-              values: [["<b>Epos</b>"], ["<b>Loss</b>"], ["<b>Var_Loss</b>"]],
+              values: [["<b>Epos</b>"], ["<b>Loss</b>"], ["<b>Val_Loss</b>"]],
               align: "center",
               line: { width: 1, color: "black" },
               fill: { color: "grey" },

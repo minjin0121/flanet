@@ -4,12 +4,12 @@ import { setDisplayData, setUserDataSetId } from "../../../actions/index";
 
 Blockly.Blocks.model_predict_field = {
   init() {
-    this.appendDummyInput().appendField("5. 데이터 추론");
+    this.appendDummyInput().appendField("STEP 5. 데이터 추론");
     this.appendDummyInput()
-      .appendField("    추론 기간")
+      .appendField("     추론 기간")
       .appendField(new Blockly.FieldTextInput("ex. 10, 20, 30"), "PERIOD")
       .appendField("일");
-    this.setColour(70);
+    this.setColour("#F2B90C");
     this.setPreviousStatement(true, null);
     this.setTooltip(
       "학습이 완료된 모델을 통해 원하는 기간의 데이터를 추론할 수 있습니다."
@@ -53,7 +53,7 @@ Blockly.JavaScript.model_predict_field = function (block) {
         store.dispatch(setUserDataSetId(["predict", res.result_predict]));
         store.dispatch(setDisplayData(res.result_predict));
       });
-  }, 5000);
+  }, 25000);
 
   return "Model Predict";
 };

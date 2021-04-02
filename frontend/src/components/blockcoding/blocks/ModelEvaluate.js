@@ -8,8 +8,8 @@ import {
 
 Blockly.Blocks.model_evaluate_field = {
   init() {
-    this.appendDummyInput().appendField("4. 학습 모델 평가");
-    this.setColour(70);
+    this.appendDummyInput().appendField("STEP 4. 학습 모델 평가");
+    this.setColour("#F2B90C");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
   },
@@ -43,7 +43,7 @@ Blockly.JavaScript.model_evaluate_field = function (block) {
         store.dispatch(setDisplayData(res.result_evaluate));
         store.dispatch(setModelingStep(res));
       });
-  }, 3500);
+  }, 15000);
 
   return "Model Evaluate";
 };

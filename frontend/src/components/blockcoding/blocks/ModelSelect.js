@@ -37,9 +37,9 @@ Blockly.Blocks.model_select_field = {
     );
 
     this.appendDummyInput()
-      .appendField("3. 학습 모델 선택")
+      .appendField("STEP 3. 학습 모델 선택")
       .appendField(modelSelect, "SELECT");
-    this.setColour(70);
+    this.setColour("#F2B90C");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
   },

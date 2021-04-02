@@ -51,10 +51,10 @@ Blockly.Blocks.data_select = {
     );
 
     this.appendDummyInput("user_data_set")
-      .appendField("1. 모델링 데이터 입력")
+      .appendField("STEP 1. 데이터 조회")
       .appendField(dataSelect, "SELECT");
     this.setNextStatement(true, null);
-    this.setColour(70);
+    this.setColour("#F2B90C");
   },
 };
 

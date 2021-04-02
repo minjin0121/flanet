@@ -150,7 +150,7 @@ function DisplayChart({ result, data }) {
             type: "scatter",
           },
           {
-            name: "var_loss",
+            name: "val_loss",
             x: dataDisplay[0],
             y: dataDisplay[2],
             line: { color: "#17BECF" },

@@ -120,6 +120,7 @@ def analysis_prophet(
 @router.post("/ml/tensorflow/input", tags=["tensorflow"], description="Data Input")
 def data_input(tf_input: TfInput, db: Session = Depends(get_db)):
     data = crud.get_user_data_set(user_data_set_id=tf_input.user_data_set_id, db=db)
+    analysis_value = "Close"
 
     # csv
     if data.user_data_set_start == None:
@@ -137,21 +138,21 @@ def data_input(tf_input: TfInput, db: Session = Depends(get_db)):
     for i in range(len(df)):
         raw_data.append({"Date": df["Date"][i], "analysis_value": df["Close"][i]})
 
-    return {"raw_data": raw_data}
+    return {"raw_data": raw_data, "code": codes.tf_data_input_code(analysis_value)}
 
 
 @router.post("/ml/tensorflow/preprocess", tags=["tensorflow"], description="Data Preprocess")
 def data_preprocess(tf_preprocess: TfPreprocess):
-    return tf.data_preprocess(tf_preprocess.input_raw_data, tf_preprocess.set_rate)
+    processed_data = tf.data_preprocess(tf_preprocess.input_raw_data, tf_preprocess.set_rate)
+    processed_data["code"] = codes.tf_data_preprocess_code(tf_preprocess.set_rate)
+    return processed_data
 
 
 @router.post("/ml/tensorflow/cnn/training", tags=["tensorflow"], description="CNN Model Training")
 def cnn_model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
-    return tf.cnn_model_training(
-        tf_training.input_processed_data,
-        tf_training.user_id,
-        db,
-    )
+    trained_data = tf.cnn_model_training(tf_training.input_processed_data, tf_training.user_id, db)
+    trained_data["code"] = codes.tf_cnn_model_training_code()
+    return trained_data
 
 
 @router.post(
@@ -160,21 +161,21 @@ def cnn_model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
     description="Custom CNN Model Training",
 )
 def custom_cnn_model_training(tf_custom_training: TfCustomTraining, db: Session = Depends(get_db)):
-    return tf.custom_cnn_model_training(
+    trained_data = tf.custom_cnn_model_training(
         tf_custom_training.input_processed_data,
         tf_custom_training.input_layer,
         tf_custom_training.user_id,
         db,
     )
+    trained_data["code"] = codes.tf_custom_cnn_model_training_code(tf_custom_training.input_layer)
+    return trained_data
 
 
 @router.post("/ml/tensorflow/lstm/training", tags=["tensorflow"], description="LSTM Model Training")
 def lstm_model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
-    return tf.lstm_model_training(
-        tf_training.input_processed_data,
-        tf_training.user_id,
-        db,
-    )
+    trained_data = tf.lstm_model_training(tf_training.input_processed_data, tf_training.user_id, db)
+    trained_data["code"] = codes.tf_lstm_model_training_code()
+    return trained_data
 
 
 @router.post(
@@ -183,25 +184,28 @@ def lstm_model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
     description="Custom LSTM Model Training",
 )
 def custom_lstm_model_training(tf_custom_training: TfCustomTraining, db: Session = Depends(get_db)):
-    return tf.custom_lstm_model_training(
+    trained_data = tf.custom_lstm_model_training(
         tf_custom_training.input_processed_data,
         tf_custom_training.input_layer,
         tf_custom_training.user_id,
         db,
     )
+    trained_data["code"] = codes.tf_custom_lstm_model_training_code(tf_custom_training.input_layer)
+    return trained_data
 
 
 @router.post("/ml/tensorflow/evaluate", tags=["tensorflow"], description="Model Evaluate")
 def model_evaluate(tf_evaluate: TfEvaluate):
-    return tf.model_evaluate(
-        tf_evaluate.input_processed_data,
-        tf_evaluate.training_model_id,
+    evaluated_data = tf.model_evaluate(
+        tf_evaluate.input_processed_data, tf_evaluate.training_model_id
     )
+    evaluated_data["code"] = codes.tf_model_evaluate_code()
+    return evaluated_data
 
 
 @router.post("/ml/tensorflow/predict", tags=["tensorflow"], description="Model Predict")
 def model_predict(tf_predict: TfPredict, db: Session = Depends(get_db)):
-    return tf.predict_future(
+    predicted_data = tf.predict_future(
         tf_predict.user_data_set_id,
         tf_predict.input_processed_data,
         tf_predict.training_model_id,
@@ -209,6 +213,8 @@ def model_predict(tf_predict: TfPredict, db: Session = Depends(get_db)):
         tf_predict.period,
         db,
     )
+    predicted_data["code"] = codes.tf_model_predict_code(tf_predict.period)
+    return predicted_data
 
 
 # 파일 받아오기

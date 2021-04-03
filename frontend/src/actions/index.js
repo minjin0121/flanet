@@ -13,6 +13,21 @@ export const getDataList = function () {
   };
 };
 
+export const getModelList = function () {
+  return function (dispatch) {
+    fetch(`https://j4f002.p.ssafy.io/api/data/trainingmodel/all`, {
+      method: "GET",
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        dispatch({
+          type: "GET_MODEL_LIST",
+          payload: res,
+        });
+      });
+  };
+};
+
 export const getUserDataSet = function (userId) {
   return function (dispatch) {
     fetch(`https://j4f002.p.ssafy.io/api/data/userdataset/select/${userId}`, {
@@ -37,6 +52,24 @@ export const getUserModelSet = function (userId) {
       .then((res) => {
         dispatch({
           type: "GET_USER_MODEL_SET",
+          payload: res,
+        });
+      });
+  };
+};
+
+export const getUserPredictDataSet = function (userId) {
+  return function (dispatch) {
+    fetch(
+      `https://j4f002.p.ssafy.io/api/data/userdatapredict/select/${userId}`,
+      {
+        method: "GET",
+      }
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        dispatch({
+          type: "GET_USER_PREDICT_DATA_SET",
           payload: res,
         });
       });

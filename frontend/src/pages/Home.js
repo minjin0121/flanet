@@ -25,7 +25,9 @@ function Home() {
 
   return (
     <div className="Home">
-      <div className="fixAppBackgroundDuplicate"></div>
+      <div className="fixAppBackgroundDuplicate">
+        <img src={`${process.env.PUBLIC_URL}/img/star.png`} className="first" />
+      </div>
       <img
         src={`${process.env.PUBLIC_URL}/img/home_block_1.png`}
         className="homepageTransitionDesign1"

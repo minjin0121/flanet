@@ -1,7 +1,9 @@
 const initialState = {
   dataLists: {},
+  modelLists: {},
   userDataSets: {},
   userModelSets: {},
+  userPredictData: {},
   userDataSetId: [],
   displayData: [],
   displayCode: "",
@@ -12,10 +14,14 @@ const rootReducer = (state = initialState, action) => {
   switch (action.type) {
     case "GET_DATA_LIST":
       return { ...state, dataLists: action.payload };
+    case "GET_MODEL_LIST":
+      return { ...state, modelLists: action.payload };
     case "GET_USER_DATA_SET":
       return { ...state, userDataSets: action.payload };
     case "GET_USER_MODEL_SET":
       return { ...state, userModelSets: action.payload };
+    case "GET_USER_PREDICT_DATA_SET":
+      return { ...state, userPredictData: action.payload };
     case "SET_USER_DATA_SET_ID":
       return { ...state, userDataSetId: action.payload };
     case "SET_DISPLAY_DATA":

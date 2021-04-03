@@ -64,13 +64,6 @@ export const setDisplayCode = function (code) {
   };
 };
 
-export const setCNNChartMark = function (chart) {
-  return {
-    type: "SET_CNN_CHART_MARK",
-    payload: chart,
-  };
-};
-
 export const setModelingStep = function (step) {
   return {
     type: "SET_MODELING_STEP",

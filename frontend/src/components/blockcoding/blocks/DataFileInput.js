@@ -1,9 +1,11 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
 import {
-  setUserDataSetId,
-  setDisplayData,
+  initModelingStep,
   setDisplayCode,
+  setDisplayData,
+  setModelingStep,
+  setUserDataSetId,
 } from "../../../actions/index";
 
 let file = "";
@@ -51,6 +53,13 @@ Blockly.JavaScript.data_file_input = function (block) {
     .then((res) => res.json())
     .then((res) => {
       store.dispatch(setDisplayCode(""));
+      store.dispatch(
+        setUserDataSetId(["crawling", res.user_data_set.user_data_set_id])
+      );
+      store.dispatch(initModelingStep(store.getState().modelingStep.length));
+      store.dispatch(
+        setModelingStep({ userDataSetId: res.user_data_set.user_data_set_id })
+      );
 
       url = `https://j4f002.p.ssafy.io/api/easy/userdataset/${res.user_data_set.user_data_set_id}`;
 
@@ -59,9 +68,12 @@ Blockly.JavaScript.data_file_input = function (block) {
       })
         .then((res1) => res1.json())
         .then((res1) => {
-          store.dispatch(
-            setUserDataSetId(["crawling", res.user_data_set.user_data_set_id])
-          );
+          const inputRawData = res1.data_set.map((data) => ({
+            Date: data.data_set_date,
+            analysis_value: data.data_set_value,
+          }));
+
+          store.dispatch(setModelingStep({ raw_data: inputRawData }));
           store.dispatch(setDisplayData(res1.data_set));
         });
     });

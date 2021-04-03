@@ -9,15 +9,16 @@ import {
 
 Blockly.Blocks.analysis_prophet_field = {
   init() {
-    this.appendDummyInput().appendField("Prophet");
+    this.appendDummyInput().appendField("PROPHET - 분석, 추론");
     this.appendDummyInput()
-      .appendField("기간")
-      .appendField(new Blockly.FieldTextInput("기간을 입력해주세요"), "PERIOD");
+      .appendField("     추론 기간")
+      .appendField(new Blockly.FieldTextInput("ex. 10, 20, 30"), "PERIOD")
+      .appendField("일");
     this.appendDummyInput()
-      .appendField("CPS")
-      .appendField(new Blockly.FieldTextInput("민감도을 입력해주세요"), "CPS");
-    this.setTooltip("Prophet을 통해 분석을 진행할 수 있습니다.");
-    this.setColour(225);
+      .appendField("     민감도")
+      .appendField(new Blockly.FieldTextInput("ex. 0.1 (0 ~ 1)"), "CPS");
+    this.setTooltip("PROPHET을 통해 분석을 진행할 수 있습니다.");
+    this.setColour("#0DB3D9");
     this.setPreviousStatement(true, null);
   },
 };

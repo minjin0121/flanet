@@ -6,17 +6,19 @@ Blockly.Blocks.analysis_lstm_field = {
   init() {
     this.appendDummyInput().appendField("LSTM 모델 - 훈련, 평가, 추론");
     this.appendDummyInput()
-      .appendField("기간")
-      .appendField(new Blockly.FieldTextInput("기간을 입력해주세요"), "PERIOD");
-    this.setTooltip("LSTM 모델을 통해 분석을 진행할 수 있습니다.");
+      .appendField("     추론 기간")
+      .appendField(new Blockly.FieldTextInput("ex. 10, 20, 30"), "PERIOD")
+      .appendField("일");
     this.setColour("#0DB3D9");
     this.setPreviousStatement(true, null);
+    this.setTooltip("LSTM 모델을 통해 분석을 진행할 수 있습니다.");
   },
 };
 
 Blockly.JavaScript.analysis_lstm_field = function (block) {
   setTimeout(function () {
     const dataId = store.getState().userDataSetId[1];
+    const modelingStep = store.getState().modelingStep;
     const periods = block.getFieldValue("PERIOD");
 
     const user = JSON.parse(
@@ -27,7 +29,7 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
 
     console.log("LSTM Block input is", dataId, periods);
 
-    let url = "https://j4f002.p.ssafy.io/ml/tensorflow/input";
+    let url = "https://j4f002.p.ssafy.io/ml/tensorflow/lstm/training";
 
     fetch(url, {
       method: "POST",
@@ -35,15 +37,19 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_data_set_id: dataId,
+        input_processed_data: modelingStep[2],
+        user_id: user.uid,
       }),
     })
       .then((res1) => res1.json())
       .then((res1) => {
-        console.log("*** TENSORFLOW DATA INPUT DONE ***");
-        console.log(res1);
+        console.log("*** TENSORFLOW LSTM TRAINING DONE ***");
+        console.log(res1.result_training);
 
-        url = "https://j4f002.p.ssafy.io/ml/tensorflow/preprocess";
+        store.dispatch(setUserDataSetId(["training", res1.result_training]));
+        store.dispatch(setDisplayData(res1.result_training));
+
+        url = "https://j4f002.p.ssafy.io/ml/tensorflow/evaluate";
 
         fetch(url, {
           method: "POST",
@@ -51,15 +57,21 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            input_raw_data: res1,
+            input_processed_data: modelingStep[2],
+            training_model_id: res1.training_model_id,
           }),
         })
           .then((res2) => res2.json())
           .then((res2) => {
-            console.log("*** TENSORFLOW DATA PREPROCESSING DONE ***");
-            console.log(res2);
+            console.log("*** TENSORFLOW LSTM EVALUATE DONE ***");
+            console.log(res2.result_evaluate);
 
-            url = "https://j4f002.p.ssafy.io/ml/tensorflow/lstm/training";
+            store.dispatch(
+              setUserDataSetId(["evaluate", res2.result_evaluate])
+            );
+            store.dispatch(setDisplayData(res2.result_evaluate));
+
+            url = "https://j4f002.p.ssafy.io/ml/tensorflow/predict";
 
             fetch(url, {
               method: "POST",
@@ -67,72 +79,26 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                input_processed_data: res2,
+                user_data_set_id: dataId,
+                input_processed_data: modelingStep[2],
+                training_model_id: res1.training_model_id,
                 user_id: user.uid,
+                period: periods,
               }),
             })
               .then((res3) => res3.json())
               .then((res3) => {
-                console.log("*** TENSORFLOW LSTM TRAINING DONE ***");
-                console.log(res3.result_training);
+                console.log("*** TENSORFLOW LSTM PREDICT DONE ***");
+                console.log(res3.result_predict);
 
                 store.dispatch(
-                  setUserDataSetId(["training", res3.result_training])
+                  setUserDataSetId(["predict", res3.result_predict])
                 );
-                store.dispatch(setDisplayData(res3.result_training));
-
-                url = "https://j4f002.p.ssafy.io/ml/tensorflow/evaluate";
-
-                fetch(url, {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    input_processed_data: res2,
-                    training_model_id: res3.training_model_id,
-                  }),
-                })
-                  .then((res4) => res4.json())
-                  .then((res4) => {
-                    console.log("*** TENSORFLOW LSTM EVALUATE DONE ***");
-                    console.log(res4.result_evaluate);
-
-                    store.dispatch(
-                      setUserDataSetId(["evaluate", res4.result_evaluate])
-                    );
-                    store.dispatch(setDisplayData(res4.result_evaluate));
-
-                    url = "https://j4f002.p.ssafy.io/ml/tensorflow/predict";
-
-                    fetch(url, {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                      },
-                      body: JSON.stringify({
-                        user_data_set_id: dataId,
-                        input_processed_data: res2,
-                        training_model_id: res3.training_model_id,
-                        user_id: user.uid,
-                        period: periods,
-                      }),
-                    })
-                      .then((res5) => res5.json())
-                      .then((res5) => {
-                        console.log("*** TENSORFLOW LSTM PREDICT DONE ***");
-                        console.log(res5.result_predict);
-
-                        store.dispatch(
-                          setUserDataSetId(["predict", res5.result_predict])
-                        );
-                        store.dispatch(setDisplayData(res5.result_predict));
-                      });
-                  });
+                store.dispatch(setDisplayData(res3.result_predict));
               });
           });
       });
-  }, 500);
+  }, 2000);
 
   return "return문 : LSTM 분석 \n";
 };

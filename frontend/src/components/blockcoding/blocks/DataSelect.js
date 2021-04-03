@@ -12,18 +12,24 @@ const makeOptionsArray = function (userDataSets) {
   const options = [];
 
   for (let index = 0; index < userDataSets.length; index++) {
-    const dateStart = new Date(userDataSets[index].user_data_set_start);
-    const dateEnd = new Date(userDataSets[index].user_data_set_end);
+    if (userDataSets[index].user_data_set_xml !== null) {
+      const dateStart = new Date(userDataSets[index].user_data_set_start);
+      const dateEnd = new Date(userDataSets[index].user_data_set_end);
 
-    const dateDiff =
-      (dateEnd.getTime() - dateStart.getTime()) / (1000 * 60 * 60 * 24);
+      const dateDiff =
+        (dateEnd.getTime() - dateStart.getTime()) / (1000 * 60 * 60 * 24);
 
-    if (dateDiff > 300 || userDataSets[index].user_data_set_start === null) {
-      const temp = [];
+      if (dateDiff > 30 || userDataSets[index].user_data_set_start === null) {
+        const temp = [];
 
-      temp.push(userDataSets[index].user_data_set_date);
-      temp.push(String(userDataSets[index].user_data_set_id));
-      options.push(temp);
+        if (userDataSets[index].user_data_set_name === null) {
+          temp.push(`데이터 (${userDataSets[index].user_data_set_date})`);
+        } else {
+          temp.push(userDataSets[index].user_data_set_name);
+        }
+        temp.push(String(userDataSets[index].user_data_set_id));
+        options.push(temp);
+      }
     }
   }
 
@@ -45,10 +51,10 @@ Blockly.Blocks.data_select = {
     );
 
     this.appendDummyInput("user_data_set")
-      .appendField("1. 모델링 데이터 입력")
+      .appendField("STEP 1. 데이터 조회")
       .appendField(dataSelect, "SELECT");
     this.setNextStatement(true, null);
-    this.setColour(70);
+    this.setColour("#F2B90C");
   },
 };
 

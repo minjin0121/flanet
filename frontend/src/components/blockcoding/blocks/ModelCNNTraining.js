@@ -6,7 +6,7 @@ import {
   setUserDataSetId,
 } from "../../../actions/index";
 
-Blockly.Blocks.model_cnn_training = {
+Blockly.Blocks.ModelCNNTraining = {
   init() {
     this.appendDummyInput().appendField("STEP 3. CNN 모델 학습");
     this.setPreviousStatement(true, null);
@@ -15,7 +15,7 @@ Blockly.Blocks.model_cnn_training = {
   },
 };
 
-Blockly.JavaScript.model_cnn_training = function (block) {
+Blockly.JavaScript.ModelCNNTraining = function (block) {
   setTimeout(function () {
     const user = JSON.parse(
       sessionStorage.getItem(
@@ -48,7 +48,7 @@ Blockly.JavaScript.model_cnn_training = function (block) {
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));
       });
-  }, 1000);
+  }, 7000);
 
-  return "Model CNN Training";
+  return "ModelCNNTraining";
 };

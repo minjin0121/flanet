@@ -2,7 +2,7 @@ import Blockly from "blockly/core";
 import store from "../../../index.js";
 import { setUserDataSetId, setDisplayData } from "../../../actions/index";
 
-Blockly.Blocks.analysis_lstm_field = {
+Blockly.Blocks.AnalysisLSTM = {
   init() {
     this.appendDummyInput().appendField("LSTM 모델 - 훈련, 평가, 추론");
     this.appendDummyInput()
@@ -15,7 +15,7 @@ Blockly.Blocks.analysis_lstm_field = {
   },
 };
 
-Blockly.JavaScript.analysis_lstm_field = function (block) {
+Blockly.JavaScript.AnalysisLSTM = function (block) {
   setTimeout(function () {
     const dataId = store.getState().userDataSetId[1];
     const modelingStep = store.getState().modelingStep;
@@ -26,8 +26,6 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
         `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
       )
     );
-
-    console.log("LSTM Block input is", dataId, periods);
 
     let url = "https://j4f002.p.ssafy.io/ml/tensorflow/lstm/training";
 
@@ -43,9 +41,6 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
     })
       .then((res1) => res1.json())
       .then((res1) => {
-        console.log("*** TENSORFLOW LSTM TRAINING DONE ***");
-        console.log(res1.result_training);
-
         store.dispatch(setUserDataSetId(["training", res1.result_training]));
         store.dispatch(setDisplayData(res1.result_training));
 
@@ -63,9 +58,6 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
         })
           .then((res2) => res2.json())
           .then((res2) => {
-            console.log("*** TENSORFLOW LSTM EVALUATE DONE ***");
-            console.log(res2.result_evaluate);
-
             store.dispatch(
               setUserDataSetId(["evaluate", res2.result_evaluate])
             );
@@ -88,9 +80,6 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
             })
               .then((res3) => res3.json())
               .then((res3) => {
-                console.log("*** TENSORFLOW LSTM PREDICT DONE ***");
-                console.log(res3.result_predict);
-
                 store.dispatch(
                   setUserDataSetId(["predict", res3.result_predict])
                 );
@@ -98,7 +87,7 @@ Blockly.JavaScript.analysis_lstm_field = function (block) {
               });
           });
       });
-  }, 2000);
+  }, 7000);
 
-  return "return문 : LSTM 분석 \n";
+  return "AnalysisLSTM";
 };

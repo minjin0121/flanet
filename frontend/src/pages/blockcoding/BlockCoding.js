@@ -14,15 +14,16 @@ import "../../components/blockcoding/blocks/DataPreparation";
 import "../../components/blockcoding/blocks/DataPreprocessing";
 import "../../components/blockcoding/blocks/DataSelect";
 import "../../components/blockcoding/blocks/ModelCNNTraining";
+import "../../components/blockcoding/blocks/ModelCustomTraining";
+import "../../components/blockcoding/blocks/ModelLSTMTraining";
 import "../../components/blockcoding/blocks/ModelEvaluate";
 import "../../components/blockcoding/blocks/ModelPredict";
 import "../../components/blockcoding/blocks/ModelSelect";
-import "../../components/blockcoding/blocks/CNNTraining";
-import "../../components/blockcoding/blocks/CNNTrainingConv1D";
-import "../../components/blockcoding/blocks/CNNTrainingMaxPooling1D";
-import "../../components/blockcoding/blocks/CNNTrainingMinPooling1D";
-import "../../components/blockcoding/blocks/TrainingDropout";
-import "../../components/blockcoding/blocks/LSTMTraining";
+import "../../components/blockcoding/blocks/LayerConvolution";
+import "../../components/blockcoding/blocks/LayerMaxPooling";
+import "../../components/blockcoding/blocks/LayerAveragePooling";
+import "../../components/blockcoding/blocks/LayerDropout";
+import "../../components/blockcoding/blocks/LayerLSTM";
 import DisplayTable from "../../components/blockcoding/DisplayTable";
 import DisplayChart from "../../components/blockcoding/DisplayChart";
 import DisplayCode from "../../components/blockcoding/DisplayCode";
@@ -153,31 +154,32 @@ function BlockCoding() {
       >
         <React.Fragment>
           <Category name="데이터 수집">
-            <Block type="data_crawling_realtime_field" />
-            <Block type="data_crawling_period_field" />
-            <Block type="data_file_input" />
-            <Block type="data_preprocessing_field" />
+            <Block type="DataCrawlingRealTime" />
+            <Block type="DataCrawlingPeriod" />
+            <Block type="DataFileInput" />
+            <Block type="DataPreprocessing" />
           </Category>
           <Category name="데이터 분석">
-            <Block type="analysis_cnn_field" />
-            <Block type="analysis_lstm_field" />
-            <Block type="analysis_prophet_field" />
+            <Block type="AnalysisCNN" />
+            <Block type="AnalysisLSTM" />
+            <Block type="AnalysisProphet" />
           </Category>
-          <Category name="Tensorflow 모델">
-            <Block type="data_select" />
-            <Block type="data_preparation" />
-            <Block type="model_cnn_training" />
-            <Block type="model_select_field" />
-            <Block type="model_evaluate_field" />
-            <Block type="model_predict_field" />
+          <Category name="단계별 딥러닝 학습">
+            <Block type="DataSelect" />
+            <Block type="DataPreparation" />
+            <Block type="ModelCNNTraining" />
+            <Block type="ModelLSTMTraining" />
+            <Block type="ModelSelect" />
+            <Block type="ModelEvaluate" />
+            <Block type="ModelPredict" />
           </Category>
-          <Category name="2.5단계">
-            <Block type="cnn_training_field" />
-            <Block type="cnn_training_conv1D_field" />
-            <Block type="cnn_training_maxpooling1D_field" />
-            <Block type="cnn_training_minpooling1D_field" />
-            <Block type="training_dropout_field" />
-            <Block type="lstm_training_field" />
+          <Category name="딥러닝 모델 커스텀">
+            <Block type="ModelCustomTraining" />
+            <Block type="Conv1D" />
+            <Block type="MaxPooling1D" />
+            <Block type="AveragePooling1D" />
+            <Block type="Dropout" />
+            <Block type="LSTM" />
           </Category>
         </React.Fragment>
       </BlocklyWorkspace>

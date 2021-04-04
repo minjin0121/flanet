@@ -2,7 +2,7 @@ import Blockly from "blockly";
 import store from "../../../index.js";
 import { setModelingStep } from "../../../actions/index";
 
-Blockly.Blocks.data_preparation = {
+Blockly.Blocks.DataPreparation = {
   init() {
     const options = [
       ["8 : 2", "0.8"],
@@ -21,7 +21,7 @@ Blockly.Blocks.data_preparation = {
   },
 };
 
-Blockly.JavaScript.data_preparation = function (block) {
+Blockly.JavaScript.DataPreparation = function (block) {
   setTimeout(function () {
     const rate = block.getFieldValue("SELECT");
     const modelingStep = store.getState().modelingStep;
@@ -47,7 +47,7 @@ Blockly.JavaScript.data_preparation = function (block) {
         console.log(res);
         store.dispatch(setModelingStep(res));
       });
-  }, 500);
+  }, 5000);
 
-  return "Data Preparation";
+  return "DataPreparation";
 };

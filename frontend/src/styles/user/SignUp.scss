@@ -7,6 +7,55 @@
     color: $flanet-green;
   }
 
+  .modalComponentForSignup {
+    z-index: 95;
+
+    .modalComponentText {
+      position: fixed;
+      width: 80%;
+      height: 80%;
+      top: 10%;
+      left: 10%;
+      font-size: 13px;
+      color: white;
+    }
+
+    .modalComponentBackground {
+      position: fixed;
+      width: 90%;
+      height: 90%;
+      top: 5%;
+      left: 5%;
+      background-color: #000215;
+      border-radius: 60px;
+      opacity: 0.9;
+    }
+
+    .exitModalComponent {
+      position: fixed;
+      bottom: 10%;
+      left: 40%;
+      width: 20%;
+      text-align: center;
+      cursor: pointer;
+      font-size: 24px;
+      color: white;
+    }
+  }
+
+  .readSignUpTerm {
+    cursor: pointer;
+    font-weight: 550;
+    color: $flanet-green;
+    padding-top: 10px;
+    font-size: 18px;
+
+    &:hover {
+      transition-duration: 0.5s;
+      opacity: 0.5;
+    }
+  }
+
   .signUpTerm {
     input {
       cursor: pointer;

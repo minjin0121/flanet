@@ -1,5 +1,6 @@
 import ScheduleIcon from "@material-ui/icons/Schedule";
 import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
+import BorderColorIcon from "@material-ui/icons/BorderColor";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,6 +21,103 @@ function Profile() {
   const noDataContext = "이름없음";
   const dataList = useSelector((state) => state.dataLists.data_list);
   const modelLists = useSelector((state) => state.modelLists.training_model);
+  const [editDataName, setEditDataName] = useState([]);
+  const [editDataNameFix, setEditDataNameFix] = useState("");
+  const [editPredictName, setEditPredictName] = useState([]);
+  const [editPredictNameFix, setEditPredictNameFix] = useState("");
+  const [editModelName, setEditModelName] = useState([]);
+  const [editModelNameFix, setEditModelNameFix] = useState("");
+
+  const setEditModelList = function (idx) {
+    const a = [];
+
+    if (modelXmlSets.modelXmlList[idx].training_model_id < 4) {
+      alert("기본 모델은 이름을 지정할 수 없습니다.");
+      return;
+    }
+    setEditModelNameFix(modelXmlSets.modelXmlList[idx].training_model_name);
+    for (let i = 0; i < xmlModelSelectIndex * 4; i++) {
+      a.push(false);
+    }
+    a[idx] = true;
+    setEditModelName(a);
+  };
+  const unsetEditModelList = function (idx) {
+    fetch("https://j4f002.p.ssafy.io/api/data/trainingmodel/name/update", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        training_model_id: modelXmlSets.modelXmlList[idx].training_model_id,
+        training_model_name: editModelNameFix,
+      }),
+    }).then(() => {
+      dispatch(getUserModelSet(user.uid));
+      editModelName[idx] = false;
+      setEditModelName([...editModelName]);
+    });
+  };
+
+  const setEditPredictList = function (idx) {
+    const a = [];
+
+    setEditPredictNameFix(
+      predictXmlSets.predictXmlList[idx].user_data_predict_name
+    );
+    for (let i = 0; i < xmlPredictSelectIndex * 4; i++) {
+      a.push(false);
+    }
+    a[idx] = true;
+    setEditPredictName(a);
+  };
+  const unsetEditPredictList = function (idx) {
+    fetch("https://j4f002.p.ssafy.io/api/data/userdatapredict/name/update", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_data_predict_id:
+          predictXmlSets.predictXmlList[idx].user_data_predict_id,
+        user_data_predict_name: editPredictNameFix,
+      }),
+    }).then(() => {
+      dispatch(getUserPredictDataSet(user.uid));
+      editPredictName[idx] = false;
+      setEditPredictName([...editPredictName]);
+    });
+  };
+
+  const setEditDataList = function (idx) {
+    const a = [];
+
+    setEditDataNameFix(userDataXmlSets.userDataXmlList[idx].user_data_set_name);
+    for (let i = 0; i < xmlSetSelectIndex * 4; i++) {
+      a.push(false);
+    }
+    a[idx] = true;
+    setEditDataName(a);
+  };
+  const unsetEditDataList = function (idx) {
+    fetch("https://j4f002.p.ssafy.io/api/data/userdataset/xml/update", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user_data_set_id: userDataXmlSets.userDataXmlList[idx].user_data_set_id,
+        user_data_set_xml:
+          userDataXmlSets.userDataXmlList[idx].user_data_set_xml,
+        user_data_set_name: editDataNameFix,
+      }),
+    }).then(() => {
+      console.log(predictXmlSets.predictXmlList);
+      dispatch(getUserDataSet(user.uid));
+      editDataName[idx] = false;
+      setEditDataName([...editDataName]);
+    });
+  };
 
   // History 크롤링
   const [userSetSelectIndex, setUserSetSelectIndex] = useState(1);
@@ -269,9 +367,41 @@ function Profile() {
                       })()}
                       <span className="xmlName">
                         {(function () {
-                          if (item.user_data_set_name)
-                            return item.user_data_set_name;
-                          else return noDataContext;
+                          if (editDataName[idx])
+                            return (
+                              <div>
+                                <input
+                                  value={editDataNameFix}
+                                  onKeyUp={(e) => {
+                                    if (e.key === "Enter") {
+                                      unsetEditDataList(idx);
+                                    }
+                                  }}
+                                  onChange={(e) =>
+                                    setEditDataNameFix(e.target.value)
+                                  }
+                                  className="inputTag"
+                                />
+                                <BorderColorIcon
+                                  className="buttonStyle"
+                                  onClick={() => unsetEditDataList(idx)}
+                                />
+                              </div>
+                            );
+                          else
+                            return (
+                              <div>
+                                {(function () {
+                                  if (item.user_data_set_name)
+                                    return item.user_data_set_name;
+                                  else return noDataContext;
+                                })()}
+                                <BorderColorIcon
+                                  className="buttonStyle"
+                                  onClick={() => setEditDataList(idx)}
+                                />
+                              </div>
+                            );
                         })()}
                       </span>
                       <span className="typeName">
@@ -327,9 +457,41 @@ function Profile() {
                       </span>
                       <span className="modelName">
                         {(function () {
-                          if (item.user_data_predict_name)
-                            return item.user_data_predict_name;
-                          else return noDataContext;
+                          if (editPredictName[idx])
+                            return (
+                              <div>
+                                <input
+                                  value={editPredictNameFix}
+                                  onKeyUp={(e) => {
+                                    if (e.key === "Enter") {
+                                      unsetEditPredictList(idx);
+                                    }
+                                  }}
+                                  onChange={(e) =>
+                                    setEditPredictNameFix(e.target.value)
+                                  }
+                                  className="inputTag"
+                                />
+                                <BorderColorIcon
+                                  className="buttonStyle"
+                                  onClick={() => unsetEditPredictList(idx)}
+                                />
+                              </div>
+                            );
+                          else
+                            return (
+                              <div>
+                                {(function () {
+                                  if (item.user_data_predict_name)
+                                    return item.user_data_predict_name;
+                                  else return noDataContext;
+                                })()}
+                                <BorderColorIcon
+                                  className="buttonStyle"
+                                  onClick={() => setEditPredictList(idx)}
+                                />
+                              </div>
+                            );
                         })()}
                       </span>
                       <span className="learningModelName">
@@ -382,9 +544,41 @@ function Profile() {
                       </span>
                       <span className="modelName">
                         {(function () {
-                          if (item.training_model_name)
-                            return item.training_model_name;
-                          else return noDataContext;
+                          if (editModelName[idx])
+                            return (
+                              <div>
+                                <input
+                                  value={editModelNameFix}
+                                  onKeyUp={(e) => {
+                                    if (e.key === "Enter") {
+                                      unsetEditModelList(idx);
+                                    }
+                                  }}
+                                  onChange={(e) =>
+                                    setEditModelNameFix(e.target.value)
+                                  }
+                                  className="inputTag"
+                                />
+                                <BorderColorIcon
+                                  className="buttonStyle"
+                                  onClick={() => unsetEditModelList(idx)}
+                                />
+                              </div>
+                            );
+                          else
+                            return (
+                              <div>
+                                {(function () {
+                                  if (item.training_model_name)
+                                    return item.training_model_name;
+                                  else return noDataContext;
+                                })()}
+                                <BorderColorIcon
+                                  className="buttonStyle"
+                                  onClick={() => setEditModelList(idx)}
+                                />
+                              </div>
+                            );
                         })()}
                       </span>
                       <span className="typeName">{item.training_model_id}</span>

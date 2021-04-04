@@ -41,7 +41,7 @@ function Header() {
         })()}
 
         <Link className="nava3" to="/" onClick={signOut}>
-          Logout
+          로그아웃
         </Link>
       </nav>
       <div className="defaultBackgroundNavHeight"></div>

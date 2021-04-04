@@ -129,14 +129,14 @@ def data_input(tf_input: TfInput, db: Session = Depends(get_db)):
         df = df.drop(["Unnamed: 0"], axis=1)
     # 기간별
     else:
-        original_df = db_data_call(data, db=db)
+        original_df, analysis_value = db_data_call(data, db=db)
         df = pd.read_csv(StringIO(original_df.to_csv()))
         df.sort_values(by=["Date"], axis=0, inplace=True)
         df = df.drop(["Unnamed: 0"], axis=1)
 
     raw_data = []
     for i in range(len(df)):
-        raw_data.append({"Date": df["Date"][i], "analysis_value": df["Close"][i]})
+        raw_data.append({"Date": df["Date"][i], "analysis_value": df[analysis_value][i]})
 
     return {"raw_data": raw_data, "code": codes.tf_data_input_code(analysis_value)}
 

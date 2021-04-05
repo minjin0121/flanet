@@ -1,5 +1,7 @@
 body {
-  background-image: url("https://cdn.pixabay.com/photo/2017/06/14/17/46/stars-2402821_1280.png");
+  background-color: $flanet-background-color;
+  background-image:url("../../assets/star3.png");
+  background-repeat: no-repeat;
 }
 
 .blockCoding {

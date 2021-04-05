@@ -173,7 +173,7 @@
   right: 5%;
   width: 35%;
   height: 80%;
-  background-color: #000212;
+  background-color: $flanet-background-color;
   z-index: 1;
   animation-delay: 2.3s;
   animation-duration: 2s;
@@ -194,7 +194,7 @@
 
 .fixAppBackgroundDuplicate {
   position: fixed;
-  background-color: #000212;
+  background-color: $flanet-background-color;
   width: 100%;
   height: 120%;
   transform: scale(1.3);

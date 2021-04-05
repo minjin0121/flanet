@@ -165,83 +165,6 @@ plt.show()"""
     return code_str
 
 
-def tf_custom_cnn_model_training_code(input_layer):
-    code_str = f"""default_cnn_model = [
-    {{"layer_name": "Conv1D", "filters": 64, "kernel_size": 2}},
-    {{"layer_name": "MaxPooling1D", "pool_size": 2}},
-    {{"layer_name": "Conv1D", "filters": 64, "kernel_size": 2}},
-    {{"layer_name": "AveragePooling1D", "pool_size": 2}},
-]
-
-
-def custom_layer(input_layer):
-    layer_str = ""
-    for i in range(len(input_layer)):
-        if input_layer[i]["layer_name"] == "Conv1D":
-            filters = input_layer[i]["filters"]
-            kernel_size = input_layer[i]["kernel_size"]
-            layer_str += f"model.add(Conv1D(filters={{filters}}, kernel_size={{kernel_size}}, activation='relu'))"
-        elif input_layer[i]["layer_name"] == "MaxPooling1D":
-            pool_size = input_layer[i]["pool_size"]
-            layer_str += f"model.add(MaxPooling1D(pool_size={{pool_size}}))"
-        elif input_layer[i]["layer_name"] == "AveragePooling1D":
-            pool_size = input_layer[i]["pool_size"]
-            layer_str += f"model.add(AveragePooling1D(pool_size={{pool_size}}))"
-        elif input_layer[i]["layer_name"] == "LSTM":
-            units = input_layer[i]["units"]
-            layer_str += f"model.add(LSTM(units={{units}}))"
-        elif input_layer[i]["layer_name"] == "Dropout":
-            rate = input_layer[i]["rate"]
-            layer_str += f"model.add(Dropout(rate={{rate}}))"
-        if i == 0:
-            layer_str = layer_str.rstrip(")")
-            if input_layer[i]["layer_name"] == "LSTM":
-                layer_str += ", return_sequences=True"
-            layer_str += ", input_shape=(x_train.shape[1], x_train.shape[2])))"
-        layer_str += "\\n"
-
-    return layer_str
-
-
-input_layer = {input_layer}
-adam = Adam(lr=0.003)
-
-file_path = f"./tf_model.h5"
-callback_checkpoint = ModelCheckpoint(
-    filepath=file_path, monitor="val_loss", save_best_only=True, save_weights_only=False
-)
-early_stopping = EarlyStopping(monitor="val_loss", patience=20, verbose=1)
-reduce_lr = ReduceLROnPlateau(monitor="val_loss", factor=0.3, patience=5, min_lr=0.0009)
-callbacks = [early_stopping, callback_checkpoint, reduce_lr]
-
-model = Sequential()
-if input_layer[0] != None:
-    exec(custom_layer(input_layer))
-else:
-    exec(custom_layer(default_cnn_model))
-model.add(Flatten())
-model.add(Dense(14, activation="relu"))
-model.add(Dense(1))
-model.compile(optimizer="adam", loss="mse")
-
-history = model.fit(
-    x_train,
-    y_train,
-    epochs=100,
-    batch_size=16,
-    validation_data=(x_test, y_test),
-    callbacks=callbacks,
-    shuffle=True,
-)
-
-plt.plot(history.history['loss'], label='train')
-plt.plot(history.history['val_loss'], label='test')
-plt.legend()
-plt.show()"""
-
-    return code_str
-
-
 def tf_lstm_model_training_code():
     code_str = f"""default_lstm_model = [
     {{"layer_name": "LSTM", "units": 64}},
@@ -313,12 +236,12 @@ plt.show()"""
     return code_str
 
 
-def tf_custom_lstm_model_training_code(input_layer):
-    code_str = f"""default_lstm_model = [
-    {{"layer_name": "LSTM", "units": 64}},
-    {{"layer_name": "Dropout", "rate": 0.1}},
-    {{"layer_name": "LSTM", "units": 128}},
-    {{"layer_name": "Dropout", "rate": 0.1}},
+def tf_custom_model_training_code(input_layer):
+    code_str = f"""default_cnn_model = [
+    {{"layer_name": "Conv1D", "filters": 64, "kernel_size": 2}},
+    {{"layer_name": "MaxPooling1D", "pool_size": 2}},
+    {{"layer_name": "Conv1D", "filters": 64, "kernel_size": 2}},
+    {{"layer_name": "AveragePooling1D", "pool_size": 2}},
 ]
 
 
@@ -366,9 +289,11 @@ model = Sequential()
 if input_layer[0] != None:
     exec(custom_layer(input_layer))
 else:
-    exec(custom_layer(default_lstm_model))
+    exec(custom_layer(default_cnn_model))
+model.add(Flatten())
+model.add(Dense(14, activation="relu"))
 model.add(Dense(1))
-model.compile(loss="mse", optimizer=adam)
+model.compile(optimizer="adam", loss="mse")
 
 history = model.fit(
     x_train,

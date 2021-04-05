@@ -52,19 +52,12 @@ function DisplayTable({ result, data }) {
       if (data) {
         const datasDate = data.map((d) => d.ds);
         const datasYhat = data.map((d) => d.yhat);
-        const datasClose = data.map((d) => d.Close);
         const datasTrend = data.map((d) => d.trend);
-        const datasWeekly = data.map((d) => d.weekly);
-        const datasYearly = data.map((d) => d.yearly);
+        const datasCloseTemp = data[0].Close
+          ? data.map((d) => d.Close)
+          : data.map((d) => d.Temp);
 
-        dataDisplay = [
-          datasDate,
-          datasYhat,
-          datasClose,
-          datasTrend,
-          datasWeekly,
-          datasYearly,
-        ];
+        dataDisplay = [datasDate, datasYhat, datasCloseTemp, datasTrend];
       }
 
       tablePlotly = [
@@ -74,10 +67,8 @@ function DisplayTable({ result, data }) {
             values: [
               ["<b>Date</b>"],
               ["<b>Yhat</b>"],
-              ["<b>Close</b>"],
+              data[0].Close ? ["<b>Close</b>"] : ["<b>Temp</b>"],
               ["<b>Trend</b>"],
-              ["<b>Weekly</b>"],
-              ["<b>Yearly</b>"],
             ],
             align: "center",
             line: { width: 1, color: "black" },

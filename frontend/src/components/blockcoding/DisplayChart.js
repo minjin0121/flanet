@@ -45,17 +45,31 @@ function DisplayChart({ result, data }) {
       let yearlyDisplay = [];
 
       if (data) {
+        console.log("itis", data[0].Close);
         const datasDate = data.map((d) => d.ds);
         const datasYhat = data.map((d) => d.yhat);
-        const datasClose = data.map((d) => d.Close);
         const datasTrend = data.map((d) => d.trend);
         const datasWeekly = data.map((d) => d.weekly);
-        const datasYearly = data.map((d) => d.yearly);
+        let datasYearly = data.map((d) => {
+          return d.yearly ? d.yearly : "";
+        });
 
-        yhatDisplay = [datasDate, datasYhat, datasClose];
+        datasYearly = datasYearly.filter(Boolean);
+        const datasCloseTemp = data[0].Close
+          ? data.map((d) => d.Close)
+          : data.map((d) => d.Temp);
+
+        console.log(datasYearly);
+
+        yhatDisplay = [datasDate, datasYhat, datasCloseTemp];
         trendDisplay = [datasDate, datasTrend];
-        weeklyDisplay = [datasDate, datasWeekly];
-        yearlyDisplay = [datasDate, datasYearly];
+        weeklyDisplay = [
+          data[0].Close
+            ? ["월", "화", "수", "목", "금"]
+            : ["월", "화", "수", "목", "금", "토", "일"],
+          datasWeekly,
+        ];
+        yearlyDisplay = datasYearly;
       }
 
       const yhatPlotly = {
@@ -67,7 +81,7 @@ function DisplayChart({ result, data }) {
       };
 
       const closePlotly = {
-        name: "Close",
+        name: data[0].Close ? "Close" : "Temp",
         x: yhatDisplay[0],
         y: yhatDisplay[2],
         line: { color: "blue" },
@@ -96,8 +110,7 @@ function DisplayChart({ result, data }) {
 
       const yearlyPlotly = {
         name: "yearly",
-        x: yearlyDisplay[0],
-        y: yearlyDisplay[1],
+        y: yearlyDisplay,
         line: { color: "green" },
         type: "scatter",
         xaxis: "x4",

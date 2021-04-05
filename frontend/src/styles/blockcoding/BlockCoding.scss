@@ -23,6 +23,9 @@ body {
   margin-right: 1%;
 
   .button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     border: none;
     color: $flanet-white;
     text-align: center;

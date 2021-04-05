@@ -324,11 +324,22 @@ function Profile() {
 
   return (
     <div className="profile">
+      <div className="backgroundDefaultColor"></div>
+      <div className="backgroundDefaultTop"></div>
+      <div className="backgroundDefaultBottom"></div>
       <div className="profileBox">
         <h1> Profile </h1>
-        <img src={user.photoURL} />
+        {(() => {
+          if (user.photoURL) return <img src={user.photoURL} />;
+          else
+            return <img src={`${process.env.PUBLIC_URL}/img/ananymus.png`} />;
+        })()}
         <span className="userEmail">{user.email}</span>
-        <span className="userDisplayName">{user.displayName}</span>
+        {(() => {
+          if (user.displayName)
+            return <span className="userDisplayName">{user.displayName}</span>;
+          else return <span className="userDisplayName"> 익명 사용자 </span>;
+        })()}
       </div>
       <div className="storage">
         <h1> Storage </h1>

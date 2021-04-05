@@ -2,6 +2,38 @@
   margin-top: 15px;
   font-family: $spoqa-font;
 
+  .backgroundDefaultColor {
+    position: fixed;
+    background-color: $flanet-light-gray;
+    border-radius: 30px;
+    height: 900px;
+    top: 120px;
+    left: 15px;
+    right: 15px;
+
+  }
+
+  .backgroundDefaultTop {
+    position: fixed;
+    background-color: white;
+    height: 40px;
+    left: 0px;
+    right: 0px;
+    top: 80px;
+    z-index: 20;
+  }
+
+  .backgroundDefaultBottom {
+    position: fixed;
+    background-color: white;
+    height: 3%;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 20;
+  }
+
+
   .profileBox {
     position: absolute;
     width: 90%;
@@ -76,6 +108,7 @@
     top: 330px;
     width: 50%;
     color: $flanet-green;
+    padding-bottom: 2%;
     
     h1 {
       margin-left: 20px;
@@ -140,6 +173,7 @@
     left: 50%;
     width: 50%;
     color: $flanet-blue;
+    padding-bottom: 2%;
 
     h1 {
       margin-left: 20px;

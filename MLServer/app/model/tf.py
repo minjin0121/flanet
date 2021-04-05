@@ -20,13 +20,13 @@ from database import crud
 
 
 default_cnn_model = [
-    {"layer_name": "Conv1D", "filters": 64, "kernel_size": 2},
+    {"layer_name": "Conv1D", "filters": 128, "kernel_size": 3},
     {"layer_name": "MaxPooling1D", "pool_size": 2},
-    {"layer_name": "Conv1D", "filters": 64, "kernel_size": 2},
+    {"layer_name": "Conv1D", "filters": 256, "kernel_size": 3},
     {"layer_name": "AveragePooling1D", "pool_size": 2},
 ]
 default_lstm_model = [
-    {"layer_name": "LSTM", "units": 64},
+    {"layer_name": "LSTM", "units": 32},
     {"layer_name": "Dropout", "rate": 0.1},
     {"layer_name": "LSTM", "units": 128},
     {"layer_name": "Dropout", "rate": 0.1},
@@ -150,71 +150,6 @@ def cnn_model_training(input_data, user_id, db):
     return {"result_training": result_training, "training_model_id": training_model_id}
 
 
-def custom_cnn_model_training(input_data, input_layer, user_id, db):
-    date, actual, x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
-
-    adam = Adam(lr=0.003)
-
-    file_path = f"./asset/models/{user_id}.h5"
-    callback_checkpoint = ModelCheckpoint(
-        filepath=file_path, monitor="val_loss", save_best_only=True, save_weights_only=False
-    )
-    early_stopping = EarlyStopping(monitor="val_loss", patience=20, verbose=1)
-    reduce_lr = ReduceLROnPlateau(monitor="val_loss", factor=0.3, patience=5, min_lr=0.0009)
-    callbacks = [early_stopping, callback_checkpoint, reduce_lr]
-
-    model = Sequential()
-    if input_layer[0] != None:
-        exec(custom_layer(input_layer))
-    else:
-        exec(custom_layer(default_cnn_model))
-
-    model.add(Flatten())
-    model.add(Dense(14, activation="relu"))
-    model.add(Dense(1))
-    model.compile(optimizer="adam", loss="mse")
-
-    history = model.fit(
-        x_train,
-        y_train,
-        epochs=100,
-        batch_size=16,
-        validation_data=(x_test, y_test),
-        callbacks=callbacks,
-        shuffle=True,
-    )
-
-    training_model = crud.insert_training_model(
-        user_id=user_id,
-        db=db,
-    )
-    training_model_id = training_model.training_model_id
-
-    model_file = open(f"./asset/models/{user_id}.h5", "rb")
-    req_upload = {"file": model_file}
-    req_data = {"training_model_id": training_model_id}
-
-    req = requests.post(
-        "https://j4f002.p.ssafy.io/csv/upload/trainingmodel",
-        files=req_upload,
-        data=req_data,
-    )
-
-    result_training = []
-    for i in range(len(history.history["loss"])):
-        result_training.append(
-            {
-                "epoch": i,
-                "loss": history.history["loss"][i],
-                "val_loss": history.history["val_loss"][i],
-            }
-        )
-
-    remove(f"./asset/models/{user_id}.h5")
-
-    return {"result_training": result_training, "training_model_id": training_model_id}
-
-
 def lstm_model_training(input_data, user_id, db):
     date, actual, x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
 
@@ -274,7 +209,7 @@ def lstm_model_training(input_data, user_id, db):
     return {"result_training": result_training, "training_model_id": training_model_id}
 
 
-def custom_lstm_model_training(input_data, input_layer, user_id, db):
+def custom_model_training(input_data, input_layer, user_id, db):
     date, actual, x_train, x_test, y_train, y_test, scale = input_data_to_data_set(input_data)
 
     adam = Adam(lr=0.003)
@@ -291,9 +226,11 @@ def custom_lstm_model_training(input_data, input_layer, user_id, db):
     if input_layer[0] != None:
         exec(custom_layer(input_layer))
     else:
-        exec(custom_layer(default_lstm_model))
+        exec(custom_layer(default_cnn_model))
+    model.add(Flatten())
+    model.add(Dense(14, activation="relu"))
     model.add(Dense(1))
-    model.compile(loss="mse", optimizer=adam)
+    model.compile(optimizer="adam", loss="mse")
 
     history = model.fit(
         x_train,
@@ -313,7 +250,7 @@ def custom_lstm_model_training(input_data, input_layer, user_id, db):
 
     model_file = open(f"./asset/models/{user_id}.h5", "rb")
     req_upload = {"file": model_file}
-    req_data = {"training_model_id": training_model.training_model_id}
+    req_data = {"training_model_id": training_model_id}
 
     req = requests.post(
         "https://j4f002.p.ssafy.io/csv/upload/trainingmodel",

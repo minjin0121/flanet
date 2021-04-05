@@ -155,22 +155,6 @@ def cnn_model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
     return trained_data
 
 
-@router.post(
-    "/ml/tensorflow/custom/cnn/training",
-    tags=["tensorflow"],
-    description="Custom CNN Model Training",
-)
-def custom_cnn_model_training(tf_custom_training: TfCustomTraining, db: Session = Depends(get_db)):
-    trained_data = tf.custom_cnn_model_training(
-        tf_custom_training.input_processed_data,
-        tf_custom_training.input_layer,
-        tf_custom_training.user_id,
-        db,
-    )
-    trained_data["code"] = codes.tf_custom_cnn_model_training_code(tf_custom_training.input_layer)
-    return trained_data
-
-
 @router.post("/ml/tensorflow/lstm/training", tags=["tensorflow"], description="LSTM Model Training")
 def lstm_model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
     trained_data = tf.lstm_model_training(tf_training.input_processed_data, tf_training.user_id, db)
@@ -179,18 +163,18 @@ def lstm_model_training(tf_training: TfTraining, db: Session = Depends(get_db)):
 
 
 @router.post(
-    "/ml/tensorflow/custom/lstm/training",
+    "/ml/tensorflow/custom/training",
     tags=["tensorflow"],
-    description="Custom LSTM Model Training",
+    description="Custom Model Training",
 )
-def custom_lstm_model_training(tf_custom_training: TfCustomTraining, db: Session = Depends(get_db)):
-    trained_data = tf.custom_lstm_model_training(
+def custom_model_training(tf_custom_training: TfCustomTraining, db: Session = Depends(get_db)):
+    trained_data = tf.custom_model_training(
         tf_custom_training.input_processed_data,
         tf_custom_training.input_layer,
         tf_custom_training.user_id,
         db,
     )
-    trained_data["code"] = codes.tf_custom_lstm_model_training_code(tf_custom_training.input_layer)
+    trained_data["code"] = codes.tf_custom_model_training_code(tf_custom_training.input_layer)
     return trained_data
 
 

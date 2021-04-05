@@ -10,13 +10,10 @@ const signOut = (event) => {
 function Header() {
   return (
     <header className="header">
-      <img
-        src={`${process.env.PUBLIC_URL}/img/flanet_header.png`}
-        className="defaultBackgroundNavColor"
-      />
+      <div className="defaultBackgroundNavColor" />
       <a href="/" className="logo">
         <img
-          src={`${process.env.PUBLIC_URL}/img/flanet_logo.png`}
+          src={`${process.env.PUBLIC_URL}/img/flanet_gray_logo.png`}
           className="logo"
           alt="logo"
         />

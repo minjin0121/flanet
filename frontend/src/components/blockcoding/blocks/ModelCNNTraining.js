@@ -1,6 +1,7 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
 import {
+  setDisplayCode,
   setDisplayData,
   setModelingStep,
   setUserDataSetId,
@@ -25,6 +26,7 @@ Blockly.JavaScript.ModelCNNTraining = function (block) {
       )
     );
     const modelingStep = store.getState().modelingStep;
+    const code = store.getState().displayCode;
 
     console.log("*** CNN TRAINING ***");
     console.log(modelingStep);
@@ -47,6 +49,7 @@ Blockly.JavaScript.ModelCNNTraining = function (block) {
         console.log(res);
 
         store.dispatch(setUserDataSetId(["training", res.result_training]));
+        store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));
         store.dispatch(setSpinner(false));

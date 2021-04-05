@@ -3,6 +3,7 @@ import createTrainingPlus from "./TrainingPlus";
 import createTrainingMinus from "./TrainingMinus";
 import store from "../../../index.js";
 import {
+  setDisplayCode,
   setDisplayData,
   setModelingStep,
   setUserDataSetId,
@@ -38,6 +39,7 @@ Blockly.JavaScript.ModelCustomTraining = function (block) {
       )
     );
     const modelingStep = store.getState().modelingStep;
+    const code = store.getState().displayCode;
 
     const childBlocks = block.getChildren();
     const layerList = [];
@@ -72,6 +74,7 @@ Blockly.JavaScript.ModelCustomTraining = function (block) {
         console.log(res);
 
         store.dispatch(setUserDataSetId(["training", res.result_training]));
+        store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));
       });

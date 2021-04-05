@@ -237,7 +237,7 @@ function DisplayTable({ result, data }) {
         defaultChecked="checked"
         id="table"
       />
-      <div className="page table-page">
+      <div className="page">
         <div className="page-contents">
           <div className="displayContent" id="displayTable"></div>
         </div>

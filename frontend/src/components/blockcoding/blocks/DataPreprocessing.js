@@ -40,7 +40,7 @@ Blockly.JavaScript.DataPreprocessing = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        store.dispatch(setDisplayCode(code + res.code));
+        store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setSpinner(false));
       });
   }, 500);

@@ -1,6 +1,7 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
 import {
+  setDisplayCode,
   setDisplayData,
   setUserDataSetId,
   setSpinner,
@@ -31,6 +32,7 @@ Blockly.JavaScript.ModelPredict = function (block) {
       )
     );
     const modelingStep = store.getState().modelingStep;
+    const code = store.getState().displayCode;
 
     console.log("*** MODEL PREDICT ***");
     console.log(modelingStep);
@@ -56,6 +58,7 @@ Blockly.JavaScript.ModelPredict = function (block) {
         console.log(res.result_predict);
 
         store.dispatch(setUserDataSetId(["predict", res.result_predict]));
+        store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_predict));
         store.dispatch(setSpinner(false));
       });

@@ -52,7 +52,7 @@ Blockly.JavaScript.AnalysisProphet = function (block) {
         store.dispatch(
           setUserDataSetId(["prophet", res1.user_data_predict_id])
         );
-        store.dispatch(setDisplayCode(code + res1.code));
+        store.dispatch(setDisplayCode(`${code}\n\n${res1.code}`));
 
         fetch(dataurl, {
           method: "GET",

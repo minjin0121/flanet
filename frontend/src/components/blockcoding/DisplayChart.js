@@ -246,7 +246,7 @@ function DisplayChart({ result, data }) {
   return (
     <React.Fragment>
       <input name="nav" type="radio" className="nav" id="chart" />
-      <div className="page chart-page">
+      <div className="page">
         <div className="page-contents">
           <div className="displayContent" id="displayChart"></div>
         </div>

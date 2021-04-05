@@ -96,6 +96,7 @@ Blockly.JavaScript.DataSelect = function (block) {
       console.log("*** TENSORFLOW DATA INPUT DONE ***");
       console.log(res);
 
+      store.dispatch(setDisplayCode(res.code));
       store.dispatch(setModelingStep(res));
       store.dispatch(setSpinner(false));
     })

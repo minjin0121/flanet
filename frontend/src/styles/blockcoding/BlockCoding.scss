@@ -356,11 +356,16 @@ body {
     align-items: center;
     text-align: center;
 
+    .page-contents {
+      width: 100%;
+      height: 100%;
+    }
+
     .displayCode {
       padding-right: 15px;
       height: 710px;
       max-height: 100%;
-      overflow-y: scroll;
+      overflow-y: auto;
       background-color: $flanet-white;
       color: $flanet-black;
       font-size: 15px;

@@ -1,6 +1,10 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
-import { setModelingStep, setSpinner } from "../../../actions/index";
+import {
+  setDisplayCode,
+  setModelingStep,
+  setSpinner,
+} from "../../../actions/index";
 
 Blockly.Blocks.DataPreparation = {
   init() {
@@ -26,6 +30,7 @@ Blockly.JavaScript.DataPreparation = function (block) {
     store.dispatch(setSpinner(true));
     const rate = block.getFieldValue("SELECT");
     const modelingStep = store.getState().modelingStep;
+    const code = store.getState().displayCode;
 
     console.log("*** DATA PREPARATION ***");
     console.log(modelingStep);
@@ -46,6 +51,7 @@ Blockly.JavaScript.DataPreparation = function (block) {
       .then((res) => {
         console.log("*** TENSORFLOW DATA PREPROCESSING DONE ***");
         console.log(res);
+        store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setModelingStep(res));
         store.dispatch(setSpinner(false));
       });

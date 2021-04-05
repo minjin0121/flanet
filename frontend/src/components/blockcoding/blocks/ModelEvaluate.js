@@ -1,6 +1,7 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
 import {
+  setDisplayCode,
   setDisplayData,
   setModelingStep,
   setUserDataSetId,
@@ -20,6 +21,7 @@ Blockly.JavaScript.ModelEvaluate = function (block) {
   setTimeout(function () {
     store.dispatch(setSpinner(true));
     const modelingStep = store.getState().modelingStep;
+    const code = store.getState().displayCode;
 
     console.log("*** MODEL EVALUATE *** ");
     console.log(modelingStep);
@@ -42,6 +44,7 @@ Blockly.JavaScript.ModelEvaluate = function (block) {
         console.log(res.result_evaluate);
 
         store.dispatch(setUserDataSetId(["evaluate", res.result_evaluate]));
+        store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_evaluate));
         store.dispatch(setModelingStep(res));
         store.dispatch(setSpinner(false));

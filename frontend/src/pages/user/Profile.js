@@ -31,7 +31,7 @@ function Profile() {
   const setEditModelList = function (idx) {
     const a = [];
 
-    if (modelXmlSets.modelXmlList[idx].training_model_id < 4) {
+    if (modelXmlSets.modelXmlList[idx].training_model_user_id === "MANAGER") {
       alert("기본 모델은 이름을 지정할 수 없습니다.");
       return;
     }
@@ -458,13 +458,12 @@ function Profile() {
                     <div className="storageBox">
                       <span className="time">
                         <ScheduleIcon className="iconStyle" />
-                        {item.user_data_predict_date}
-                        {/* {item.user_data_predict_date
+                        {item.user_data_predict_date
                           .split("T")[0]
                           .concat(
                             " ",
                             item.user_data_predict_date.split("T")[1]
-                          )} */}
+                          )}
                       </span>
                       <span className="modelName">
                         {(function () {
@@ -548,10 +547,9 @@ function Profile() {
                     <div className="storageBox">
                       <span className="time">
                         <ScheduleIcon className="iconStyle" />
-                        {item.training_model_date}
-                        {/* {item.training_model_date
+                        {item.training_model_date
                           .split("T")[0]
-                          .concat(" ", item.training_model_date.split("T")[1])} */}
+                          .concat(" ", item.training_model_date.split("T")[1])}
                       </span>
                       <span className="modelName">
                         {(function () {
@@ -694,13 +692,12 @@ function Profile() {
                     <div className="historyBox">
                       <span className="time">
                         <ScheduleIcon className="iconStyle" />
-                        {item.user_data_predict_date}
-                        {/* {item.user_data_predict_date
+                        {item.user_data_predict_date
                           .split("T")[0]
                           .concat(
                             " ",
                             item.user_data_predict_date.split("T")[1]
-                          )} */}
+                          )}
                       </span>
                       <span className="period">
                         {(function () {
@@ -752,10 +749,9 @@ function Profile() {
                     <div className="historyBox">
                       <span className="time">
                         <ScheduleIcon className="iconStyle" />
-                        {item.training_model_date}
-                        {/* {item.training_model_date
+                        {item.training_model_date
                           .split("T")[0]
-                          .concat(" ", item.training_model_date.split("T")[1])} */}
+                          .concat(" ", item.training_model_date.split("T")[1])}
                       </span>
                       <span className="period">
                         {(function () {

@@ -8,8 +8,10 @@
   transform: scale(1.05);
   padding-bottom: 0.5%;
   margin-top: auto;
-  color: $flanet_black;
-  background-color: $flanet-gray;
+  color: $flanet-white;
+  background-color: $flanet-background-color;
+  border-top: 2px solid;
+  border-color: $flanet-deep-gray;
 
   .logo {
     width: 50px;

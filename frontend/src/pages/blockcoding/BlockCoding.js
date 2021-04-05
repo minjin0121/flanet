@@ -149,16 +149,16 @@ function BlockCoding(spinner) {
     <div className="container blockCoding">
       <div className="buttonArea">
         <button className="button executeButton" onClick={execute}>
-          <PlayCircleFilledWhiteOutlinedIcon /> <span>실행</span>
+          <PlayCircleFilledWhiteOutlinedIcon /> &nbsp; 실행
         </button>
         <button className="button storeButton" onClick={workspaceStore}>
-          <SaveOutlinedIcon /> 저장
+          <SaveOutlinedIcon /> &nbsp; 저장
         </button>
         <button className="button downloadButton" onClick={dataDownload}>
-          <GetAppOutlinedIcon /> 데이터 다운
+          <GetAppOutlinedIcon /> &nbsp; 데이터 다운
         </button>
         <button className="button resetButton" onClick={reset}>
-          <DeleteSweepOutlinedIcon /> 작업실 초기화
+          <DeleteSweepOutlinedIcon /> &nbsp; 작업실 초기화
         </button>
       </div>
 

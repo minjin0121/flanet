@@ -1,6 +1,3 @@
-# 표준 라이브러리
-import time
-
 # 서드 파티 라이브러리
 from pydantic import BaseModel
 from typing import Optional
@@ -64,3 +61,13 @@ class UserDataSet(UserDataSetBase):
 
     class Config:
         orm_mode = True
+
+
+class UserDataPredictXML(BaseModel):
+    user_data_predict_id: int
+    user_data_predict_xml: str
+
+
+class TrainingModelXML(BaseModel):
+    training_model_id: int
+    training_model_xml: str

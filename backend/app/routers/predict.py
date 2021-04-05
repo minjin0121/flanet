@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 # 로컬
 pth.append(path.dirname(path.abspath(path.dirname(__file__))))
-from database import models
+from database import models, schemas
 from dependency import get_db
 from routers.data import check_user
 
@@ -46,6 +46,28 @@ def show_select_user_data_predict(user_id: str, db: Session = Depends(get_db)):
         .filter(models.UserDataPredict.user_id == user_id)
         .all()
     }
+
+
+# 해당 데이터의 현재 상태 xml 저장
+@router.put(
+    "/api/data/userdatapredict/xml/update",
+    tags=["userdatapredict"],
+    description="해당 데이터의 현재 상태 xml 저장",
+)
+def update_user_data_predict_xml(
+    data: schemas.UserDataPredictXML,
+    db: Session = Depends(get_db),
+):
+    db_data = (
+        db.query(models.UserDataPredict)
+        .filter(models.UserDataPredict.user_data_predict_id == data.user_data_predict_id)
+        .first()
+    )
+    db_data.user_data_predict_xml = data.user_data_predict_xml
+    db.commit()
+    db.refresh(db_data)
+
+    return {"user_data_predict": db_data}
 
 
 # XML name 변경

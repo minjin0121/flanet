@@ -1,9 +1,11 @@
 # 서드 파티 라이브러리
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
+from sqlalchemy.sql.functions import now
 
 # 로컬
 from . import models
+import datetime
 
 
 # 스톡 목록 확인
@@ -43,13 +45,16 @@ def insert_user_data_set(
     data_list_id, user_id, user_data_set_start, user_data_set_end, db: Session
 ):
     if user_data_set_start == None:
-        db_user_data = models.UserDataSet(data_list_id=data_list_id, user_id=user_id)
+        db_user_data = models.UserDataSet(
+            data_list_id=data_list_id, user_id=user_id, user_data_set_date=datetime.datetime.now()
+        )
     else:
         db_user_data = models.UserDataSet(
             data_list_id=data_list_id,
             user_id=user_id,
             user_data_set_start=user_data_set_start,
             user_data_set_end=user_data_set_end,
+            user_data_set_date=datetime.datetime.now(),
         )
 
     db.add(db_user_data)
@@ -75,6 +80,7 @@ def insert_user_data_predict(user_data_set_id, training_model_id, user_id, db: S
         user_data_set_id=user_data_set_id,
         training_model_id=training_model_id,
         user_id=user_id,
+        user_data_predict_date=datetime.datetime.now(),
     )
 
     db.add(db_user_data)
@@ -86,7 +92,9 @@ def insert_user_data_predict(user_data_set_id, training_model_id, user_id, db: S
 
 # model 데이터 삽입
 def insert_training_model(user_id, db: Session):
-    db_training_model = models.TrainingModel(user_id=user_id)
+    db_training_model = models.TrainingModel(
+        user_id=user_id, training_model_date=datetime.datetime.now()
+    )
 
     db.add(db_training_model)
     db.commit()

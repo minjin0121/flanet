@@ -225,8 +225,9 @@ def show_select_training_model(user_id: str, db: Session = Depends(get_db)):
         raise HTTPException(status_code=400, detail="유저가 유효하지 않습니다.")
     return {
         "training_model": db.query(models.TrainingModel)
-        .filter(models.TrainingModel.user_id == user_id)
+        .filter(models.TrainingModel.user_id == "MANAGER")
         .all()
+        + db.query(models.TrainingModel).filter(models.TrainingModel.user_id == user_id).all()
     }
 
 
@@ -278,6 +279,28 @@ def update_user_data_model_name(
     db.refresh(db_data)
 
     return
+
+
+# 해당 데이터의 현재 상태 xml 저장
+@router.put(
+    "/api/data/trainingmodel/xml/update",
+    tags=["trainingmodel"],
+    description="해당 데이터의 현재 상태 xml 저장",
+)
+def update_training_model_xml(
+    data: schemas.TrainingModelXML,
+    db: Session = Depends(get_db),
+):
+    db_data = (
+        db.query(models.TrainingModel)
+        .filter(models.TrainingModel.training_model_id == data.training_model_id)
+        .first()
+    )
+    db_data.training_model_xml = data.training_model_xml
+    db.commit()
+    db.refresh(db_data)
+
+    return {"training_model": db_data}
 
 
 # 유저 확인

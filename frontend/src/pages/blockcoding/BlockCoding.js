@@ -1,7 +1,12 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useState, useEffect } from "react";
+import { useDispatch, connect } from "react-redux";
+import PropTypes from "prop-types";
 import Blockly from "blockly";
 import BlocklyJS from "blockly/javascript";
+import SaveOutlinedIcon from "@material-ui/icons/SaveOutlined";
+import PlayCircleFilledWhiteOutlinedIcon from "@material-ui/icons/PlayCircleFilledWhiteOutlined";
+import GetAppOutlinedIcon from "@material-ui/icons/GetAppOutlined";
+import DeleteSweepOutlinedIcon from "@material-ui/icons/DeleteSweepOutlined";
 import BlocklyWorkspace from "../../components/blockcoding/BlocklyWorkspace";
 import { Block, Category } from "../../components/blockcoding/BlocklyElement";
 import "../../components/blockcoding/blocks/AnalysisCNN";
@@ -37,7 +42,7 @@ import {
   setUserDataSetId,
 } from "../../actions/index";
 
-function BlockCoding() {
+function BlockCoding(spinner) {
   const [simpleWorkspace] = useState(React.createRef());
   const dispatch = useDispatch();
 
@@ -50,6 +55,13 @@ function BlockCoding() {
   dispatch(getDataList());
   dispatch(getUserDataSet(user.uid));
   dispatch(getUserModelSet(user.uid));
+  dispatch(setDisplayData([]));
+
+  useEffect(() => {
+    dispatch(setDisplayCode(""));
+  }, []);
+
+  console.log("spinner", spinner.spinner);
 
   // 실행 버튼
   function execute() {
@@ -91,9 +103,10 @@ function BlockCoding() {
 
     // 이거 기점으로 다운로드 링크 설정해줄게요 !
     if (
-      store.getState().userDataSetId[0] === "crawling" ||
+      store.getState().userDataSetId[0].slice(-8) === "crawling" ||
       store.getState().userDataSetId[0] === "fileInput"
     ) {
+      console.log("IN");
       url = `https://j4f002.p.ssafy.io/api/easy/userdataset/file/${dataId}`;
       fetch(url, {
         method: "GET",
@@ -133,11 +146,46 @@ function BlockCoding() {
   };
 
   return (
-    <div className="blockCoding">
-      <button onClick={execute}>실행</button>
-      <button onClick={workspaceStore}>저장</button>
-      <button onClick={dataDownload}>데이터 다운</button>
-      <button onClick={reset}>블록 작업실 초기화</button>
+    <div className="container blockCoding">
+      <div className="buttonArea">
+        <button className="button executeButton" onClick={execute}>
+          <PlayCircleFilledWhiteOutlinedIcon /> <span>실행</span>
+        </button>
+        <button className="button storeButton" onClick={workspaceStore}>
+          <SaveOutlinedIcon /> 저장
+        </button>
+        <button className="button downloadButton" onClick={dataDownload}>
+          <GetAppOutlinedIcon /> 데이터 다운
+        </button>
+        <button className="button resetButton" onClick={reset}>
+          <DeleteSweepOutlinedIcon /> 작업실 초기화
+        </button>
+      </div>
+
+      {spinner.spinner ? (
+        <div className="loading">
+          <p className="blinking"> 블 록 &nbsp; 작 업 중 &nbsp;&nbsp; </p>
+          <div className="sk-fading-circle">
+            <div className="sk-circle1 sk-circle"></div>
+            <div className="sk-circle2 sk-circle"></div>
+            <div className="sk-circle3 sk-circle"></div>
+            <div className="sk-circle4 sk-circle"></div>
+            <div className="sk-circle5 sk-circle"></div>
+            <div className="sk-circle6 sk-circle"></div>
+            <div className="sk-circle7 sk-circle"></div>
+            <div className="sk-circle8 sk-circle"></div>
+            <div className="sk-circle9 sk-circle"></div>
+            <div className="sk-circle10 sk-circle"></div>
+            <div className="sk-circle11 sk-circle"></div>
+            <div className="sk-circle12 sk-circle"></div>
+          </div>
+        </div>
+      ) : (
+        <div className="welcome">
+          <p> Welcom FlaNET World! </p>
+        </div>
+      )}
+
       <BlocklyWorkspace
         ref={simpleWorkspace}
         readOnly={false}
@@ -183,7 +231,8 @@ function BlockCoding() {
           </Category>
         </React.Fragment>
       </BlocklyWorkspace>
-      <div>
+
+      <div className="visualizationArea">
         <DisplayTable />
         <DisplayChart />
         <DisplayCode />
@@ -192,4 +241,10 @@ function BlockCoding() {
   );
 }
 
-export default BlockCoding;
+BlockCoding.propTypes = {
+  spinner: PropTypes.bool,
+};
+
+export default connect((state) => ({
+  spinner: state.spinner,
+}))(BlockCoding);

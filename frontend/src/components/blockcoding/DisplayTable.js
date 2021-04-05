@@ -238,12 +238,23 @@ function DisplayTable({ result, data }) {
   }
 
   return (
-    <div className="displayTable">
-      <div className="displayTitle">
-        <span>데이터</span>
+    <React.Fragment>
+      <input
+        name="nav"
+        type="radio"
+        className="nav"
+        defaultChecked="checked"
+        id="table"
+      />
+      <div className="page table-page">
+        <div className="page-contents">
+          <div className="displayContent" id="displayTable"></div>
+        </div>
       </div>
-      <div className="displayContent" id="displayTable"></div>
-    </div>
+      <label className="nav" htmlFor="table">
+        <span>표</span>
+      </label>
+    </React.Fragment>
   );
 }
 

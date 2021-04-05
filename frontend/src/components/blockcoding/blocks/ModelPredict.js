@@ -1,6 +1,10 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
-import { setDisplayData, setUserDataSetId } from "../../../actions/index";
+import {
+  setDisplayData,
+  setUserDataSetId,
+  setSpinner,
+} from "../../../actions/index";
 
 Blockly.Blocks.ModelPredict = {
   init() {
@@ -9,7 +13,7 @@ Blockly.Blocks.ModelPredict = {
       .appendField("     추론 기간")
       .appendField(new Blockly.FieldTextInput("ex. 10, 20, 30"), "PERIOD")
       .appendField("일");
-    this.setColour("#F2B90C");
+    this.setColour("#d92525");
     this.setPreviousStatement(true, null);
     this.setTooltip(
       "학습이 완료된 모델을 통해 원하는 기간의 데이터를 추론할 수 있습니다."
@@ -19,6 +23,7 @@ Blockly.Blocks.ModelPredict = {
 
 Blockly.JavaScript.ModelPredict = function (block) {
   setTimeout(function () {
+    store.dispatch(setSpinner(true));
     const periods = block.getFieldValue("PERIOD");
     const user = JSON.parse(
       sessionStorage.getItem(
@@ -52,6 +57,7 @@ Blockly.JavaScript.ModelPredict = function (block) {
 
         store.dispatch(setUserDataSetId(["predict", res.result_predict]));
         store.dispatch(setDisplayData(res.result_predict));
+        store.dispatch(setSpinner(false));
       });
   }, 40000);
 

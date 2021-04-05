@@ -1,6 +1,10 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
-import { setUserDataSetId, setDisplayData } from "../../../actions/index";
+import {
+  setUserDataSetId,
+  setDisplayData,
+  setSpinner,
+} from "../../../actions/index";
 
 Blockly.Blocks.AnalysisCNN = {
   init() {
@@ -9,7 +13,7 @@ Blockly.Blocks.AnalysisCNN = {
       .appendField("     추론 기간")
       .appendField(new Blockly.FieldTextInput("ex. 10, 20, 30"), "PERIOD")
       .appendField("일");
-    this.setColour("#0DB3D9");
+    this.setColour("#0db3d9");
     this.setPreviousStatement(true, null);
     this.setTooltip(
       "CNN 모델을 통해 모델 학습, 평가, 데이터 추론까지 할 수 있습니다."
@@ -19,6 +23,7 @@ Blockly.Blocks.AnalysisCNN = {
 
 Blockly.JavaScript.AnalysisCNN = function (block) {
   setTimeout(function () {
+    store.dispatch(setSpinner(true));
     const dataId = store.getState().userDataSetId[1];
     const modelingStep = store.getState().modelingStep;
     const periods = block.getFieldValue("PERIOD");
@@ -86,6 +91,7 @@ Blockly.JavaScript.AnalysisCNN = function (block) {
                   setUserDataSetId(["predict", res3.result_predict])
                 );
                 store.dispatch(setDisplayData(res3.result_predict));
+                store.dispatch(setSpinner(false));
               });
           });
       });

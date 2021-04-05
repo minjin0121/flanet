@@ -7,6 +7,7 @@ import {
   setDisplayData,
   setModelingStep,
   setUserDataSetId,
+  setSpinner,
 } from "../../../actions/index";
 
 const makeOptionsArray = function (dataLists) {
@@ -48,13 +49,15 @@ Blockly.Blocks.DataCrawlingPeriod = {
       .appendField("부터")
       .appendField(new Blockly.FieldDate(today), "ENDDATE")
       .appendField("까지");
-    this.setColour("#47A644");
+    this.setColour("#47a644");
     this.setNextStatement(true, null);
     this.setTooltip("원하는 데이터 값을 기간을 설정해 수집할 수 있습니다.");
   },
 };
 
 Blockly.JavaScript.DataCrawlingPeriod = function (block) {
+  store.dispatch(setSpinner(true));
+
   const dataId = block.getFieldValue("DATA");
   const startDate = block.getFieldValue("STARTDATE");
   const endDate = block.getFieldValue("ENDDATE");
@@ -106,6 +109,7 @@ Blockly.JavaScript.DataCrawlingPeriod = function (block) {
       }));
 
       store.dispatch(setModelingStep({ raw_data: inputRawData }));
+      store.dispatch(setSpinner(false));
     });
 
   url = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}/period`;

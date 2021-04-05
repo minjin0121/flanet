@@ -1,6 +1,10 @@
 import Blockly from "blockly/core";
 import store from "../../../index.js";
-import { setUserDataSetId, setDisplayData } from "../../../actions/index";
+import {
+  setUserDataSetId,
+  setDisplayData,
+  setSpinner,
+} from "../../../actions/index";
 
 Blockly.Blocks.AnalysisLSTM = {
   init() {
@@ -9,7 +13,7 @@ Blockly.Blocks.AnalysisLSTM = {
       .appendField("     추론 기간")
       .appendField(new Blockly.FieldTextInput("ex. 10, 20, 30"), "PERIOD")
       .appendField("일");
-    this.setColour("#0DB3D9");
+    this.setColour("#0db3d9");
     this.setPreviousStatement(true, null);
     this.setTooltip("LSTM 모델을 통해 분석을 진행할 수 있습니다.");
   },
@@ -17,6 +21,7 @@ Blockly.Blocks.AnalysisLSTM = {
 
 Blockly.JavaScript.AnalysisLSTM = function (block) {
   setTimeout(function () {
+    store.dispatch(setSpinner(true));
     const dataId = store.getState().userDataSetId[1];
     const modelingStep = store.getState().modelingStep;
     const periods = block.getFieldValue("PERIOD");
@@ -84,6 +89,7 @@ Blockly.JavaScript.AnalysisLSTM = function (block) {
                   setUserDataSetId(["predict", res3.result_predict])
                 );
                 store.dispatch(setDisplayData(res3.result_predict));
+                store.dispatch(setSpinner(false));
               });
           });
       });

@@ -4,6 +4,7 @@ import {
   setUserDataSetId,
   setDisplayData,
   setDisplayCode,
+  setSpinner,
 } from "../../../actions/index";
 
 const makeOptionsArray = function (dataLists) {
@@ -37,12 +38,14 @@ Blockly.Blocks.DataCrawlingRealTime = {
     this.appendDummyInput()
       .appendField("실시간 데이터 수집")
       .appendField(dataSelect, "DATA");
-    this.setColour("#47A644");
+    this.setColour("#47a644");
     this.setTooltip("원하는 데이터 값을 실시간으로 확인할 수 있습니다.");
   },
 };
 
 Blockly.JavaScript.DataCrawlingRealTime = function (block) {
+  store.dispatch(setSpinner(true));
+
   const dataId = block.getFieldValue("DATA");
 
   const user = JSON.parse(
@@ -83,6 +86,7 @@ Blockly.JavaScript.DataCrawlingRealTime = function (block) {
           `실시간 데이터 수집 결과는 ${res.data_set_value} 입니다.`,
         ])
       );
+      store.dispatch(setSpinner(false));
     });
 
   const codeurl = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}`;

@@ -6,6 +6,7 @@ import {
   setDisplayData,
   setModelingStep,
   setUserDataSetId,
+  setSpinner,
 } from "../../../actions/index";
 
 let file = "";
@@ -15,7 +16,7 @@ Blockly.Blocks.DataFileInput = {
     const fileInput = new Blockly.FieldTextInput(".csv 파일을 선택해주세요");
 
     this.appendDummyInput().appendField("데이터 입력").appendField(fileInput);
-    this.setColour("#47A644");
+    this.setColour("#47a644");
     this.setNextStatement(true, null);
     this.setTooltip("CSV 파일을 업로드해서 데이터를 입력할 수 있습니다.");
 
@@ -34,6 +35,8 @@ Blockly.Blocks.DataFileInput = {
 };
 
 Blockly.JavaScript.DataFileInput = function (block) {
+  store.dispatch(setSpinner(true));
+
   const user = JSON.parse(
     sessionStorage.getItem(
       `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
@@ -75,6 +78,7 @@ Blockly.JavaScript.DataFileInput = function (block) {
 
           store.dispatch(setModelingStep({ raw_data: inputRawData }));
           store.dispatch(setDisplayData(res1.data_set));
+          store.dispatch(setSpinner(false));
         });
     });
 

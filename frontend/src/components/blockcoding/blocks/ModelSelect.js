@@ -28,7 +28,7 @@ const makeOptionsArray = function (userModelSets) {
   return options;
 };
 
-Blockly.Blocks.model_select_field = {
+Blockly.Blocks.ModelSelect = {
   init() {
     const userModelSets = store.getState().userModelSets;
 
@@ -45,12 +45,12 @@ Blockly.Blocks.model_select_field = {
   },
 };
 
-Blockly.JavaScript.model_select_field = function (block) {
+Blockly.JavaScript.ModelSelect = function (block) {
   setTimeout(function () {
     const trainingModelId = block.getFieldValue("SELECT");
 
     store.dispatch(setModelingStep({ training_model_id: trainingModelId }));
-  }, 1000);
+  }, 7000);
 
-  return "Model Select";
+  return "ModelSelect";
 };

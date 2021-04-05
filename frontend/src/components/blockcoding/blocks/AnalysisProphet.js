@@ -7,7 +7,7 @@ import {
   setDisplayCode,
 } from "../../../actions/index";
 
-Blockly.Blocks.analysis_prophet_field = {
+Blockly.Blocks.AnalysisProphet = {
   init() {
     this.appendDummyInput().appendField("PROPHET - 분석, 추론");
     this.appendDummyInput()
@@ -23,13 +23,11 @@ Blockly.Blocks.analysis_prophet_field = {
   },
 };
 
-Blockly.JavaScript.analysis_prophet_field = function (block) {
+Blockly.JavaScript.AnalysisProphet = function (block) {
   setTimeout(function () {
     const dataId = store.getState().userDataSetId[1];
     const periods = block.getFieldValue("PERIOD");
     const cps = block.getFieldValue("CPS");
-
-    console.log("block input is", dataId, periods, cps);
 
     const url = "https://j4f002.p.ssafy.io/ml/prophet/stock/";
 
@@ -44,25 +42,25 @@ Blockly.JavaScript.analysis_prophet_field = function (block) {
         cps,
       }),
     })
-      .then((res) => res.json())
-      .then((res) => {
-        console.log("block result is ", res);
-        const dataurl = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/json/${res.user_data_predict_id}`;
+      .then((res1) => res1.json())
+      .then((res1) => {
+        const dataurl = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/json/${res1.user_data_predict_id}`;
         const code = store.getState().displayCode;
 
-        store.dispatch(setUserDataSetId(["prophet", res.user_data_predict_id]));
-        store.dispatch(setDisplayCode(code + res.code));
+        store.dispatch(
+          setUserDataSetId(["prophet", res1.user_data_predict_id])
+        );
+        store.dispatch(setDisplayCode(code + res1.code));
 
         fetch(dataurl, {
           method: "GET",
         })
-          .then((data) => data.json())
-          .then((data) => {
-            console.log("block result data is", data);
-            store.dispatch(setDisplayData(data));
+          .then((res2) => res2.json())
+          .then((res2) => {
+            store.dispatch(setDisplayData(res2));
           });
       });
   }, 500);
 
-  return "return문 : Prophet 분석 \n";
+  return "AnalysisProphet";
 };

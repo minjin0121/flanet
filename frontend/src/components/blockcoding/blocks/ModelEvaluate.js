@@ -6,7 +6,7 @@ import {
   setUserDataSetId,
 } from "../../../actions/index";
 
-Blockly.Blocks.model_evaluate_field = {
+Blockly.Blocks.ModelEvaluate = {
   init() {
     this.appendDummyInput().appendField("STEP 4. 학습 모델 평가");
     this.setColour("#F2B90C");
@@ -15,7 +15,7 @@ Blockly.Blocks.model_evaluate_field = {
   },
 };
 
-Blockly.JavaScript.model_evaluate_field = function (block) {
+Blockly.JavaScript.ModelEvaluate = function (block) {
   setTimeout(function () {
     const modelingStep = store.getState().modelingStep;
 
@@ -43,7 +43,7 @@ Blockly.JavaScript.model_evaluate_field = function (block) {
         store.dispatch(setDisplayData(res.result_evaluate));
         store.dispatch(setModelingStep(res));
       });
-  }, 15000);
+  }, 30000);
 
-  return "Model Evaluate";
+  return "ModelEvaluate";
 };

@@ -10,7 +10,7 @@ import {
 
 let file = "";
 
-Blockly.Blocks.data_file_input = {
+Blockly.Blocks.DataFileInput = {
   init() {
     const fileInput = new Blockly.FieldTextInput(".csv 파일을 선택해주세요");
 
@@ -33,7 +33,7 @@ Blockly.Blocks.data_file_input = {
   },
 };
 
-Blockly.JavaScript.data_file_input = function (block) {
+Blockly.JavaScript.DataFileInput = function (block) {
   const user = JSON.parse(
     sessionStorage.getItem(
       `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
@@ -78,5 +78,5 @@ Blockly.JavaScript.data_file_input = function (block) {
         });
     });
 
-  return "CSV 파일 데이터 입력";
+  return "DataFileInput";
 };

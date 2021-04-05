@@ -26,7 +26,7 @@ const makeOptionsArray = function (dataLists) {
   return options.sort();
 };
 
-Blockly.Blocks.data_crawling_realtime_field = {
+Blockly.Blocks.DataCrawlingRealTime = {
   init() {
     const dataLists = store.getState().dataLists;
 
@@ -42,7 +42,7 @@ Blockly.Blocks.data_crawling_realtime_field = {
   },
 };
 
-Blockly.JavaScript.data_crawling_realtime_field = function (block) {
+Blockly.JavaScript.DataCrawlingRealTime = function (block) {
   const dataId = block.getFieldValue("DATA");
 
   const user = JSON.parse(

@@ -29,7 +29,7 @@ const makeOptionsArray = function (dataLists) {
   return options.sort();
 };
 
-Blockly.Blocks.data_crawling_period_field = {
+Blockly.Blocks.DataCrawlingPeriod = {
   init() {
     const dataLists = store.getState().dataLists;
 
@@ -37,14 +37,16 @@ Blockly.Blocks.data_crawling_period_field = {
       makeOptionsArray(Object.values(dataLists)[0])
     );
 
+    const today = new Date().toISOString().substring(0, 10);
+
     this.appendDummyInput()
       .appendField("기간별 데이터 수집")
       .appendField(dataSelect, "DATA");
     this.appendDummyInput()
       .appendField("    기간 : ")
-      .appendField(new Blockly.FieldDate("2016-03-17"), "STARTDATE")
+      .appendField(new Blockly.FieldDate("2020-01-01"), "STARTDATE")
       .appendField("부터")
-      .appendField(new Blockly.FieldDate("2021-03-27"), "ENDDATE")
+      .appendField(new Blockly.FieldDate(today), "ENDDATE")
       .appendField("까지");
     this.setColour("#47A644");
     this.setNextStatement(true, null);
@@ -52,7 +54,7 @@ Blockly.Blocks.data_crawling_period_field = {
   },
 };
 
-Blockly.JavaScript.data_crawling_period_field = function (block) {
+Blockly.JavaScript.DataCrawlingPeriod = function (block) {
   const dataId = block.getFieldValue("DATA");
   const startDate = block.getFieldValue("STARTDATE");
   const endDate = block.getFieldValue("ENDDATE");
@@ -116,5 +118,5 @@ Blockly.JavaScript.data_crawling_period_field = function (block) {
       store.dispatch(setDisplayCode(res.code));
     });
 
-  return "기간별 데이터 수집";
+  return "DataCrawlingPeriod";
 };

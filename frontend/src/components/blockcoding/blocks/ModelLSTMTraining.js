@@ -6,16 +6,16 @@ import {
   setUserDataSetId,
 } from "../../../actions/index";
 
-Blockly.Blocks.model_lstm_training = {
+Blockly.Blocks.ModelLSTMTraining = {
   init() {
-    this.appendDummyInput().appendField("3. LSTM 모델 학습");
+    this.appendDummyInput().appendField("STEP 3. LSTM 모델 학습");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour(70);
+    this.setColour("#F2B90C");
   },
 };
 
-Blockly.JavaScript.model_lstm_training = function (block) {
+Blockly.JavaScript.ModelLSTMTraining = function (block) {
   setTimeout(function () {
     const user = JSON.parse(
       sessionStorage.getItem(
@@ -48,7 +48,7 @@ Blockly.JavaScript.model_lstm_training = function (block) {
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));
       });
-  }, 1000);
+  }, 7000);
 
-  return "Model LSTM Training";
+  return "ModelLSTMTraining";
 };

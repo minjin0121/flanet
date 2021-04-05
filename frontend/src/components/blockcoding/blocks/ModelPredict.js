@@ -2,7 +2,7 @@ import Blockly from "blockly";
 import store from "../../../index.js";
 import { setDisplayData, setUserDataSetId } from "../../../actions/index";
 
-Blockly.Blocks.model_predict_field = {
+Blockly.Blocks.ModelPredict = {
   init() {
     this.appendDummyInput().appendField("STEP 5. 데이터 추론");
     this.appendDummyInput()
@@ -17,7 +17,7 @@ Blockly.Blocks.model_predict_field = {
   },
 };
 
-Blockly.JavaScript.model_predict_field = function (block) {
+Blockly.JavaScript.ModelPredict = function (block) {
   setTimeout(function () {
     const periods = block.getFieldValue("PERIOD");
     const user = JSON.parse(
@@ -53,7 +53,7 @@ Blockly.JavaScript.model_predict_field = function (block) {
         store.dispatch(setUserDataSetId(["predict", res.result_predict]));
         store.dispatch(setDisplayData(res.result_predict));
       });
-  }, 25000);
+  }, 40000);
 
-  return "Model Predict";
+  return "ModelPredict";
 };

@@ -42,7 +42,7 @@ const makeOptionsArray = function (userDataSets) {
   return options;
 };
 
-Blockly.Blocks.data_select = {
+Blockly.Blocks.DataSelect = {
   init() {
     const userDataSets = store.getState().userDataSets;
 
@@ -58,7 +58,7 @@ Blockly.Blocks.data_select = {
   },
 };
 
-Blockly.JavaScript.data_select = function (block) {
+Blockly.JavaScript.DataSelect = function (block) {
   const userDataSetId = block.getFieldValue("SELECT");
 
   let url = `https://j4f002.p.ssafy.io/api/easy/userdataset/${userDataSetId}`;
@@ -97,5 +97,5 @@ Blockly.JavaScript.data_select = function (block) {
     })
     .catch();
 
-  return "Data Select";
+  return "DataSelect";
 };

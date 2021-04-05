@@ -43,7 +43,7 @@ Blockly.Blocks.DataCrawlingRealTime = {
   },
 };
 
-Blockly.JavaScript.data_crawling_realtime_field = function (block) {
+Blockly.JavaScript.DataCrawlingRealTime = function (block) {
   store.dispatch(setSpinner(true));
 
   const dataId = block.getFieldValue("DATA");

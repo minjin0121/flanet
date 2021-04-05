@@ -64,7 +64,7 @@ Blockly.JavaScript.AnalysisProphet = function (block) {
             store.dispatch(setSpinner(false));
           });
       });
-  }, 500);z
+  }, 500);
 
   return "AnalysisProphet";
 };

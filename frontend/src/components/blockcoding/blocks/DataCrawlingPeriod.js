@@ -55,7 +55,7 @@ Blockly.Blocks.DataCrawlingPeriod = {
   },
 };
 
-Blockly.JavaScript.data_crawling_period_field = function (block) {
+Blockly.JavaScript.DataCrawlingPeriod = function (block) {
   store.dispatch(setSpinner(true));
 
   const dataId = block.getFieldValue("DATA");

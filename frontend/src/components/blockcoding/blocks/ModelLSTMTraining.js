@@ -12,7 +12,7 @@ Blockly.Blocks.ModelLSTMTraining = {
     this.appendDummyInput().appendField("STEP 3. LSTM 모델 학습");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour("#F2B90C");
+    this.setColour("#0db3d9");
   },
 };
 

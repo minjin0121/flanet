@@ -34,7 +34,7 @@ Blockly.Blocks.DataFileInput = {
   },
 };
 
-Blockly.JavaScript.data_file_input = function (block) {
+Blockly.JavaScript.DataFileInput = function (block) {
   store.dispatch(setSpinner(true));
 
   const user = JSON.parse(

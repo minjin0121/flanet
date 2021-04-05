@@ -56,7 +56,6 @@ function BlockCoding(spinner) {
   dispatch(getUserDataSet(user.uid));
   dispatch(getUserModelSet(user.uid));
   dispatch(setDisplayData([]));
-  // dispatch(setDisplayCode(""));
 
   useEffect(() => {
     dispatch(setDisplayCode(""));

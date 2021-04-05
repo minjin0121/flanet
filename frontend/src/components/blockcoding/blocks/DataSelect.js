@@ -59,7 +59,7 @@ Blockly.Blocks.DataSelect = {
   },
 };
 
-Blockly.JavaScript.data_select = function (block) {
+Blockly.JavaScript.DataSelect = function (block) {
   store.dispatch(setSpinner(true));
 
   const userDataSetId = block.getFieldValue("SELECT");

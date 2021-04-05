@@ -6,6 +6,7 @@ import {
   setDisplayData,
   setModelingStep,
   setUserDataSetId,
+  setSpinner,
 } from "../../../actions/index";
 
 const makeOptionsArray = function (userDataSets) {
@@ -54,11 +55,13 @@ Blockly.Blocks.DataSelect = {
       .appendField("STEP 1. 데이터 조회")
       .appendField(dataSelect, "SELECT");
     this.setNextStatement(true, null);
-    this.setColour("#F2B90C");
+    this.setColour("#47a644");
   },
 };
 
-Blockly.JavaScript.DataSelect = function (block) {
+Blockly.JavaScript.data_select = function (block) {
+  store.dispatch(setSpinner(true));
+
   const userDataSetId = block.getFieldValue("SELECT");
 
   let url = `https://j4f002.p.ssafy.io/api/easy/userdataset/${userDataSetId}`;
@@ -94,6 +97,7 @@ Blockly.JavaScript.DataSelect = function (block) {
       console.log(res);
 
       store.dispatch(setModelingStep(res));
+      store.dispatch(setSpinner(false));
     })
     .catch();
 

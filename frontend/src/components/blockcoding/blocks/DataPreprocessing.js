@@ -1,13 +1,13 @@
 import Blockly from "blockly/core";
 import store from "../../../index.js";
-import { setDisplayCode } from "../../../actions/index";
+import { setDisplayCode, setSpinner } from "../../../actions/index";
 
 const dataPreprocessing = {
   type: "DataPreprocessing",
   message0: "데이터 정제",
   previousStatement: null,
   nextStatement: null,
-  colour: 444,
+  colour: "#47a644",
 };
 
 Blockly.Blocks.DataPreprocessing = {
@@ -18,6 +18,7 @@ Blockly.Blocks.DataPreprocessing = {
 
 Blockly.JavaScript.DataPreprocessing = function (block) {
   setTimeout(function () {
+    store.dispatch(setSpinner(true));
     let codeurl = "";
     const userDataSetId = store.getState().userDataSetId;
     const code = store.getState().displayCode;
@@ -40,6 +41,7 @@ Blockly.JavaScript.DataPreprocessing = function (block) {
       .then((res) => res.json())
       .then((res) => {
         store.dispatch(setDisplayCode(code + res.code));
+        store.dispatch(setSpinner(false));
       });
   }, 500);
 

@@ -110,3 +110,10 @@ export const initModelingStep = function (length) {
     payload: length,
   };
 };
+
+export const setSpinner = function (status) {
+  return {
+    type: "SET_SPINNER",
+    payload: status,
+  };
+};

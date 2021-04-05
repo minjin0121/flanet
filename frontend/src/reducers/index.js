@@ -8,6 +8,7 @@ const initialState = {
   displayData: [],
   displayCode: "",
   modelingStep: [],
+  spinner: false,
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -38,6 +39,8 @@ const rootReducer = (state = initialState, action) => {
         ...state,
         modelingStep: state.modelingStep.slice(action.payload + 1),
       };
+    case "SET_SPINNER":
+      return { ...state, spinner: action.payload };
     default:
       return state;
   }

@@ -4,6 +4,7 @@ import {
   setDisplayData,
   setModelingStep,
   setUserDataSetId,
+  setSpinner,
 } from "../../../actions/index";
 
 Blockly.Blocks.ModelCNNTraining = {
@@ -11,12 +12,13 @@ Blockly.Blocks.ModelCNNTraining = {
     this.appendDummyInput().appendField("STEP 3. CNN 모델 학습");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
-    this.setColour("#F2B90C");
+    this.setColour("#0db3d9");
   },
 };
 
 Blockly.JavaScript.ModelCNNTraining = function (block) {
   setTimeout(function () {
+    store.dispatch(setSpinner(true));
     const user = JSON.parse(
       sessionStorage.getItem(
         `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
@@ -47,6 +49,7 @@ Blockly.JavaScript.ModelCNNTraining = function (block) {
         store.dispatch(setUserDataSetId(["training", res.result_training]));
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));
+        store.dispatch(setSpinner(false));
       });
   }, 7000);
 

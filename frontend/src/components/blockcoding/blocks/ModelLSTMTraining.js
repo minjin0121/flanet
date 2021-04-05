@@ -4,6 +4,7 @@ import {
   setDisplayData,
   setModelingStep,
   setUserDataSetId,
+  setSpinner,
 } from "../../../actions/index";
 
 Blockly.Blocks.ModelLSTMTraining = {
@@ -17,6 +18,7 @@ Blockly.Blocks.ModelLSTMTraining = {
 
 Blockly.JavaScript.ModelLSTMTraining = function (block) {
   setTimeout(function () {
+    store.dispatch(setSpinner(true));
     const user = JSON.parse(
       sessionStorage.getItem(
         `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
@@ -47,6 +49,7 @@ Blockly.JavaScript.ModelLSTMTraining = function (block) {
         store.dispatch(setUserDataSetId(["training", res.result_training]));
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));
+        store.dispatch(setSpinner(false));
       });
   }, 7000);
 

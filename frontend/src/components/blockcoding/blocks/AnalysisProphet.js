@@ -5,6 +5,7 @@ import {
   setUserDataSetId,
   setDisplayData,
   setDisplayCode,
+  setSpinner,
 } from "../../../actions/index";
 
 Blockly.Blocks.AnalysisProphet = {
@@ -18,13 +19,14 @@ Blockly.Blocks.AnalysisProphet = {
       .appendField("     민감도")
       .appendField(new Blockly.FieldTextInput("ex. 0.1 (0 ~ 1)"), "CPS");
     this.setTooltip("PROPHET을 통해 분석을 진행할 수 있습니다.");
-    this.setColour("#0DB3D9");
+    this.setColour("#0db3d9");
     this.setPreviousStatement(true, null);
   },
 };
 
 Blockly.JavaScript.AnalysisProphet = function (block) {
   setTimeout(function () {
+    store.dispatch(setSpinner(true));
     const dataId = store.getState().userDataSetId[1];
     const periods = block.getFieldValue("PERIOD");
     const cps = block.getFieldValue("CPS");
@@ -55,12 +57,14 @@ Blockly.JavaScript.AnalysisProphet = function (block) {
         fetch(dataurl, {
           method: "GET",
         })
-          .then((res2) => res2.json())
-          .then((res2) => {
-            store.dispatch(setDisplayData(res2));
+          .then((data) => data.json())
+          .then((data) => {
+            console.log("block result data is", data);
+            store.dispatch(setDisplayData(data));
+            store.dispatch(setSpinner(false));
           });
       });
-  }, 500);
+  }, 500);z
 
   return "AnalysisProphet";
 };

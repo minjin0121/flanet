@@ -231,12 +231,17 @@ function DisplayChart({ result, data }) {
   }
 
   return (
-    <div className="displayChart">
-      <div className="displayTitle">
-        <span>차트</span>
+    <React.Fragment>
+      <input name="nav" type="radio" className="nav" id="chart" />
+      <div className="page chart-page">
+        <div className="page-contents">
+          <div className="displayContent" id="displayChart"></div>
+        </div>
       </div>
-      <div className="displayContent" id="displayChart"></div>
-    </div>
+      <label className="nav" htmlFor="chart">
+        <span>차트</span>
+      </label>
+    </React.Fragment>
   );
 }
 

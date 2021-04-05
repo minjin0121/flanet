@@ -1,6 +1,6 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
-import { setModelingStep } from "../../../actions/index";
+import { setModelingStep, setSpinner } from "../../../actions/index";
 
 Blockly.Blocks.DataPreparation = {
   init() {
@@ -15,7 +15,7 @@ Blockly.Blocks.DataPreparation = {
       .appendField("     Data Set 비율 ")
       .appendField(new Blockly.FieldDropdown(options), "SELECT")
       .appendField(" (Train : Test)");
-    this.setColour("#F2B90C");
+    this.setColour("#47a644");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
   },
@@ -23,6 +23,7 @@ Blockly.Blocks.DataPreparation = {
 
 Blockly.JavaScript.DataPreparation = function (block) {
   setTimeout(function () {
+    store.dispatch(setSpinner(true));
     const rate = block.getFieldValue("SELECT");
     const modelingStep = store.getState().modelingStep;
 
@@ -46,6 +47,7 @@ Blockly.JavaScript.DataPreparation = function (block) {
         console.log("*** TENSORFLOW DATA PREPROCESSING DONE ***");
         console.log(res);
         store.dispatch(setModelingStep(res));
+        store.dispatch(setSpinner(false));
       });
   }, 5000);
 

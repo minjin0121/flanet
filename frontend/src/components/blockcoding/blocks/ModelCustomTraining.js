@@ -53,7 +53,7 @@ Blockly.JavaScript.ModelCustomTraining = function (block) {
       layerList.push(layer);
     }
 
-    const url = "https://j4f002.p.ssafy.io/ml/tensorflow/custom/cnn/training";
+    const url = "https://j4f002.p.ssafy.io/ml/tensorflow/custom/training";
 
     fetch(url, {
       method: "POST",

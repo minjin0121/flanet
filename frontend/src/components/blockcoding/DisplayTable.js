@@ -42,6 +42,9 @@ function DisplayTable({ result, data }) {
         title: {
           text: "데이터 수집 결과",
         },
+        autosize: false,
+        width: 700,
+        height: 500,
       };
 
       document.getElementById("displayTable").innerHTML = "";
@@ -88,6 +91,9 @@ function DisplayTable({ result, data }) {
         title: {
           text: "PROPHET 결과",
         },
+        autosize: false,
+        width: 700,
+        height: 500,
       };
 
       document.getElementById("displayTable").innerHTML = "";
@@ -132,6 +138,9 @@ function DisplayTable({ result, data }) {
           title: {
             text: "모델 훈련 결과",
           },
+          autosize: false,
+          width: 700,
+          height: 500,
         };
 
         Plotly.newPlot("displayTable", tablePlotly, layout);
@@ -183,6 +192,9 @@ function DisplayTable({ result, data }) {
           title: {
             text: "모델 평가 결과",
           },
+          autosize: false,
+          width: 700,
+          height: 500,
         };
 
         Plotly.newPlot("displayTable", tablePlotly, layout);
@@ -217,6 +229,9 @@ function DisplayTable({ result, data }) {
           title: {
             text: "모델 예측 결과",
           },
+          autosize: false,
+          width: 700,
+          height: 500,
         };
 
         Plotly.newPlot("displayTable", tablePlotly, layout);

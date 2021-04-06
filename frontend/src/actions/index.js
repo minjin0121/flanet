@@ -117,3 +117,10 @@ export const setSpinner = function (status) {
     payload: status,
   };
 };
+
+export const setChart = function (data) {
+  return {
+    type: "SET_CHART",
+    payload: data,
+  };
+};

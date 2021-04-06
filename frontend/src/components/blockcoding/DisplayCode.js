@@ -7,7 +7,9 @@ function DisplayCode({ code }) {
     <React.Fragment>
       <input name="nav" type="radio" className="nav" id="code" />
       <div className="page">
-        <div className="page-contents displayCode">{code}</div>
+        <div className="page-contents">
+          <div className="displayCode">{code}</div>
+        </div>
       </div>
       <label className="nav" htmlFor="code">
         <span>코드</span>

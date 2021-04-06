@@ -9,6 +9,7 @@ const initialState = {
   displayCode: "",
   modelingStep: [],
   spinner: false,
+  chart: [],
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -41,6 +42,8 @@ const rootReducer = (state = initialState, action) => {
       };
     case "SET_SPINNER":
       return { ...state, spinner: action.payload };
+    case "SET_CHART":
+      return { ...state, chart: action.payload };
     default:
       return state;
   }

@@ -5,9 +5,10 @@ body {
 }
 
 .blockCoding {
+  font-family: $spoqa-font;
   background-color: $flanet-light-gray;
   border-radius: 8px;
-  height: 83vh;
+  height: 84vh;
   width: 96%;
   margin: 1% 2%;
   display: flex;
@@ -19,8 +20,8 @@ body {
   width: 47%;
   display: flex;
   justify-content: space-evenly;
-  margin: 1% 0%;
-  margin-right: 1%;
+  margin: 1.5% 1% 0.5% 0%;
+  height: 6%;
 
   .button {
     display: flex;
@@ -43,13 +44,14 @@ body {
     background-color: $flanet-yellow;
 
     &:hover {
-      background-color: #fc7f03;
+      transition-duration: 0.3s;
+      opacity: 0.5;
     }
 
     &:active {
       background-color: #fc7f03;
       box-shadow: 0 5px #666;
-      transform: translateY(4px);
+      transform: translateY(2px);
     }
   }
 
@@ -57,13 +59,14 @@ body {
     background-color: $flanet-red;
 
     &:hover {
-      background-color: #a91b0d;
+      transition-duration: 0.3s;
+      opacity: 0.5;
     }
 
     &:active {
       background-color: #a91b0d;
       box-shadow: 0 5px #666;
-      transform: translateY(4px);
+      transform: translateY(2px);
     }
   }
 }
@@ -71,7 +74,10 @@ body {
 .loading {
   width: 47%;
   display: flex;
+  align-items: center;
   justify-content: center;
+  height: 6%;
+  margin-top: 1.5%;
 
   p {
     margin-top: 4%;
@@ -80,7 +86,7 @@ body {
     color: $flanet-blue;
     font-size: 20px;
     transition: text-shadow 4s 1s;
-    text-shadow: 0 0 0.1em, 0 0 0.3em;
+    text-shadow: 0 0 0.5em, 0 0 0.5em #84daed;
   }
 
   .blinking {
@@ -118,12 +124,17 @@ body {
   width: 47%;
   display: flex;
   justify-content: center;
-  margin-top: 1%;
+  align-items: center;
+  height: 6%;
+  margin-top: 1.5%;
 
   p {
     float: left;
     font-weight: bold;
-    color: $flanet-blue;
+    color: #fbfdfe;
+    font-size: 20px;
+    transition: text-shadow 4s 1s;
+    text-shadow: 0 0 0.5em, 0 0 0.5em $flanet-blue;
   }
 }
 
@@ -277,7 +288,7 @@ body {
 }
 
 .blocklyDiv {
-  height: 85%;
+  height: 84%;
   width: 47%;
   margin: 0.5%;
 
@@ -299,7 +310,7 @@ body {
 
 .visualizationArea {
   display: grid;
-  height: 85%;
+  height: 84%;
   width: 47%;
   margin: 0.5%;
   overflow: hidden;
@@ -311,40 +322,8 @@ body {
     display: none;
   }
 
-  label.nav {
-    cursor: pointer;
-    user-select: none;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-sizing: border-box;
-    border-bottom: 2px solid $flanet-green;
-    background: $flanet-gray;
-    transition: background 0.4s, padding-left 0.2s;
-    padding-left: 0;
-
-    &:hover {
-      border-bottom-color: $flanet-green;
-    }
-
-    input[type="radio"]:checked + .page + & {
-      background: $flanet-green;
-      color: #ffffff;
-
-      span {
-        font-weight: bold;
-      }
-    }
-
-    span {
-      padding-left: 0px;
-      position: relative;
-    }
-  }
-
   .page {
-    height: calc(100% - (50px + 60px));
+    height: 100%;
     max-height: 100%;
     background-color: $flanet-white;
     grid-column-start: 1;
@@ -355,9 +334,13 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .page-contents {
-      width: 100%;
       height: 100%;
     }
 
@@ -365,7 +348,6 @@ body {
       padding-right: 15px;
       height: 710px;
       max-height: 100%;
-      overflow-y: auto;
       background-color: $flanet-white;
       color: $flanet-black;
       font-size: 15px;
@@ -400,5 +382,33 @@ body {
       opacity: 1;
       transform: translateY(0px);
     }
+  }
+}
+
+label.nav {
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-bottom: 2px solid $flanet-green;
+  background: $flanet-gray;
+  transition: background 0.4s, padding-left 0.2s;
+  padding-left: 0;
+
+  input[type="radio"]:checked + .page + & {
+    background: $flanet-green;
+    color: #ffffff;
+
+    span {
+      font-weight: bold;
+    }
+  }
+
+  span {
+    padding-left: 0px;
+    position: relative;
   }
 }

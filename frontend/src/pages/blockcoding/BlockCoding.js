@@ -182,7 +182,7 @@ function BlockCoding(spinner) {
         </div>
       ) : (
         <div className="welcome">
-          <p> Welcom FlaNET World! </p>
+          <p> Welcome FlaNET World! </p>
         </div>
       )}
 

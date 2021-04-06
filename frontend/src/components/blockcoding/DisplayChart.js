@@ -1,9 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import Plotly from "plotly.js";
+import store from "../../index.js";
+import { setChart } from "../../actions";
 
 function DisplayChart({ result, data }) {
+  const dispatch = useDispatch();
+
   if (Object.values(data).length > 1) {
     // datas를 날짜와 값만 뽑아서 가공
     let dataDisplay = [];
@@ -23,7 +27,7 @@ function DisplayChart({ result, data }) {
         {
           x: dataDisplay[0],
           y: dataDisplay[1],
-          line: { color: "#17BECF" },
+          line: { color: "#0db3d9" },
           type: "scatter",
         },
       ];
@@ -32,6 +36,9 @@ function DisplayChart({ result, data }) {
         title: {
           text: "데이터 수집 결과",
         },
+        autosize: false,
+        width: 700,
+        height: 500,
       };
 
       document.getElementById("displayChart").innerHTML = "";
@@ -45,7 +52,6 @@ function DisplayChart({ result, data }) {
       let yearlyDisplay = [];
 
       if (data) {
-        console.log("itis", data[0].Close);
         const datasDate = data.map((d) => d.ds);
         const datasYhat = data.map((d) => d.yhat);
         const datasTrend = data.map((d) => d.trend);
@@ -58,8 +64,6 @@ function DisplayChart({ result, data }) {
         const datasCloseTemp = data[0].Close
           ? data.map((d) => d.Close)
           : data.map((d) => d.Temp);
-
-        console.log(datasYearly);
 
         yhatDisplay = [datasDate, datasYhat, datasCloseTemp];
         trendDisplay = [datasDate, datasTrend];
@@ -76,7 +80,7 @@ function DisplayChart({ result, data }) {
         name: "yhat",
         x: yhatDisplay[0],
         y: yhatDisplay[1],
-        line: { color: "red" },
+        line: { color: "#d92525" },
         type: "scatter",
       };
 
@@ -84,7 +88,7 @@ function DisplayChart({ result, data }) {
         name: data[0].Close ? "Close" : "Temp",
         x: yhatDisplay[0],
         y: yhatDisplay[2],
-        line: { color: "blue" },
+        line: { color: "8977ad" },
         type: "scatter",
       };
 
@@ -92,7 +96,7 @@ function DisplayChart({ result, data }) {
         name: "trend",
         x: trendDisplay[0],
         y: trendDisplay[1],
-        line: { color: "yellow" },
+        line: { color: "#f2b90c" },
         type: "scatter",
         xaxis: "x2",
         yaxis: "y2",
@@ -102,7 +106,7 @@ function DisplayChart({ result, data }) {
         name: "weekly",
         x: weeklyDisplay[0],
         y: weeklyDisplay[1],
-        line: { color: "orange" },
+        line: { color: "#47a644" },
         type: "scatter",
         xaxis: "x3",
         yaxis: "y3",
@@ -111,15 +115,15 @@ function DisplayChart({ result, data }) {
       const yearlyPlotly = {
         name: "yearly",
         y: yearlyDisplay,
-        line: { color: "green" },
+        line: { color: "#0db3d9" },
         type: "scatter",
         xaxis: "x4",
         yaxis: "y4",
       };
 
       chartPlotly = [
-        yhatPlotly,
         closePlotly,
+        yhatPlotly,
         trendPlotly,
         weeklyPlotly,
         yearlyPlotly,
@@ -130,10 +134,13 @@ function DisplayChart({ result, data }) {
           text: "PROPHET 결과",
         },
         grid: {
-          rows: 2,
-          columns: 2,
+          rows: 4,
+          columns: 1,
           pattern: "independent",
         },
+        autosize: false,
+        width: 700,
+        height: 2000,
       };
 
       document.getElementById("displayChart").innerHTML = "";
@@ -159,14 +166,14 @@ function DisplayChart({ result, data }) {
             name: "loss",
             x: dataDisplay[0],
             y: dataDisplay[1],
-            line: { color: "red" },
+            line: { color: "#d92525" },
             type: "scatter",
           },
           {
             name: "val_loss",
             x: dataDisplay[0],
             y: dataDisplay[2],
-            line: { color: "#17BECF" },
+            line: { color: "#0db3d9" },
             type: "scatter",
           },
         ];
@@ -175,10 +182,17 @@ function DisplayChart({ result, data }) {
           title: {
             text: "모델 훈련 결과",
           },
+          autosize: false,
+          width: 700,
+          height: 500,
         };
+
+        dispatch(setChart(dataDisplay));
 
         Plotly.newPlot("displayChart", chartPlotly, layout);
       } else if (result[0] === "evaluate") {
+        const trainingDatas = store.getState().chart;
+
         if (data) {
           const datasDate = data.map((d) => d.Date);
           const datasActual = data.map((d) => d.actual);
@@ -188,52 +202,201 @@ function DisplayChart({ result, data }) {
           dataDisplay = [datasDate, datasActual, datasTrain, datasTest];
         }
 
-        chartPlotly = [
+        const trainingChart = [
+          {
+            name: "loss",
+            x: trainingDatas[0],
+            y: trainingDatas[1],
+            line: { color: "#d92525" },
+            type: "scatter",
+          },
+          {
+            name: "val_loss",
+            x: trainingDatas[0],
+            y: trainingDatas[2],
+            line: { color: "#0db3d9" },
+            type: "scatter",
+          },
+        ];
+
+        const evaluateChart = [
           {
             name: "actual",
             x: dataDisplay[0],
             y: dataDisplay[1],
-            line: { color: "black" },
+            line: { color: "#0db3d9" },
             type: "scatter",
+            xaxis: "x2",
+            yaxis: "y2",
           },
           {
             name: "train prediction",
             x: dataDisplay[0],
             y: dataDisplay[2],
-            line: { color: "red" },
+            line: { color: "#47a644" },
             type: "scatter",
+            xaxis: "x2",
+            yaxis: "y2",
           },
           {
             name: "test prediction",
             x: dataDisplay[0],
             y: dataDisplay[3],
-            line: { color: "#17BECF" },
+            line: { color: "#f2b904" },
+            type: "scatter",
+            xaxis: "x2",
+            yaxis: "y2",
+          },
+        ];
+
+        chartPlotly = trainingChart.concat(evaluateChart);
+
+        layout = {
+          title: "모델 훈련 및 평가 결과",
+          grid: {
+            rows: 2,
+            columns: 1,
+            pattern: "independent",
+          },
+          autosize: false,
+          width: 700,
+          height: 1000,
+        };
+
+        document.getElementById("displayChart").innerHTML = "";
+
+        Plotly.newPlot("displayChart", chartPlotly, layout);
+      } else if (result[0] === "predict") {
+        const trainingDatas = store.getState().chart;
+        let predictChart = [];
+
+        const trainingChart = [
+          {
+            name: "loss",
+            x: trainingDatas[0],
+            y: trainingDatas[1],
+            line: { color: "#d92525" },
+            type: "scatter",
+          },
+          {
+            name: "val_loss",
+            x: trainingDatas[0],
+            y: trainingDatas[2],
+            line: { color: "#0db3d9" },
             type: "scatter",
           },
         ];
 
-        layout = {
-          title: {
-            text: "모델 평가 결과",
-          },
-        };
+        if (store.getState().modelingStep.slice(-1)[0].result_evaluate) {
+          const evaluateData = store.getState().modelingStep.slice(-1)[0]
+            .result_evaluate;
 
-        Plotly.newPlot("displayChart", chartPlotly, layout);
-      } else if (result[0] === "predict") {
-        if (data) {
-          const datasDate = data.map((d) => d.date);
-          const datasFuture = data.map((d) => d.future);
+          if (data) {
+            const datasDate = evaluateData.map((d) => d.Date);
+            const datasActual = evaluateData.map((d) => d.actual);
+            const datasTrain = evaluateData.map((d) => d.train_evaluate);
+            const datasTest = evaluateData.map((d) => d.test_evaluate);
+            const datasFutureDate = data.map((d) => d.date);
+            const datasFuture = data.map((d) => d.future);
 
-          dataDisplay = [datasDate, datasFuture];
+            dataDisplay = [
+              datasDate,
+              datasActual,
+              datasTrain,
+              datasTest,
+              datasFutureDate,
+              datasFuture,
+            ];
+          }
+
+          predictChart = [
+            {
+              name: "actual",
+              x: dataDisplay[0],
+              y: dataDisplay[1],
+              line: { color: "#0db3d9" },
+              type: "scatter",
+              xaxis: "x2",
+              yaxis: "y2",
+            },
+            {
+              name: "train prediction",
+              x: dataDisplay[0],
+              y: dataDisplay[2],
+              line: { color: "#47a644" },
+              type: "scatter",
+              xaxis: "x2",
+              yaxis: "y2",
+            },
+            {
+              name: "test prediction",
+              x: dataDisplay[0],
+              y: dataDisplay[3],
+              line: { color: "#f2b90c" },
+              type: "scatter",
+              xaxis: "x2",
+              yaxis: "y2",
+            },
+            {
+              name: "future",
+              x: dataDisplay[4],
+              y: dataDisplay[5],
+              line: { color: "#d92525" },
+              type: "scatter",
+              xaxis: "x2",
+              yaxis: "y2",
+            },
+          ];
+
+          chartPlotly = trainingChart.concat(predictChart);
+
+          layout = {
+            title: "모델 훈련, 평가 및 예측 결과",
+            grid: {
+              rows: 2,
+              columns: 1,
+              pattern: "independent",
+            },
+            autosize: false,
+            width: 700,
+            height: 1000,
+          };
+        } else {
+          if (data) {
+            const datasDate = data.map((d) => d.date);
+            const datasFuture = data.map((d) => d.future);
+
+            dataDisplay = [datasDate, datasFuture];
+          }
+
+          predictChart = [
+            {
+              name: "future",
+              x: dataDisplay[0],
+              y: dataDisplay[1],
+              line: { color: "blue" },
+              type: "scatter",
+              xaxis: "x2",
+              yaxis: "y2",
+            },
+          ];
+
+          chartPlotly = trainingChart.concat(predictChart);
+
+          layout = {
+            title: "모델 훈련, 예측 결과",
+            grid: {
+              rows: 2,
+              columns: 1,
+              pattern: "independent",
+            },
+            autosize: false,
+            width: 700,
+            height: 1000,
+          };
         }
 
-        Plotly.addTraces("displayChart", {
-          name: "future",
-          x: dataDisplay[0],
-          y: dataDisplay[1],
-          line: { color: "blue" },
-          type: "scatter",
-        });
+        Plotly.newPlot("displayChart", chartPlotly, layout);
       }
     }
   } else if (Object.values(data).length > 0) {

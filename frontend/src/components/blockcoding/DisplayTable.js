@@ -27,13 +27,13 @@ function DisplayTable({ result, data }) {
             align: "center",
             line: { width: 1, color: "black" },
             fill: { color: "grey" },
-            font: { family: "Arial", size: 12, color: "white" },
+            font: { family: "Spoqa Han Sans", size: 12, color: "white" },
           },
           cells: {
             values: dataDisplay,
             align: "center",
             line: { color: "black", width: 1 },
-            font: { family: "Arial", size: 11, color: ["black"] },
+            font: { family: "Spoqa Han Sans", size: 11, color: ["black"] },
           },
         },
       ];
@@ -42,6 +42,9 @@ function DisplayTable({ result, data }) {
         title: {
           text: "데이터 수집 결과",
         },
+        autosize: false,
+        width: 700,
+        height: 500,
       };
 
       document.getElementById("displayTable").innerHTML = "";
@@ -73,13 +76,13 @@ function DisplayTable({ result, data }) {
             align: "center",
             line: { width: 1, color: "black" },
             fill: { color: "grey" },
-            font: { family: "Arial", size: 12, color: "white" },
+            font: { family: "Spoqa Han Sans", size: 12, color: "white" },
           },
           cells: {
             values: dataDisplay,
             align: "center",
             line: { color: "black", width: 1 },
-            font: { family: "Arial", size: 11, color: ["black"] },
+            font: { family: "Spoqa Han Sans", size: 11, color: ["black"] },
           },
         },
       ];
@@ -88,6 +91,9 @@ function DisplayTable({ result, data }) {
         title: {
           text: "PROPHET 결과",
         },
+        autosize: false,
+        width: 700,
+        height: 500,
       };
 
       document.getElementById("displayTable").innerHTML = "";
@@ -117,13 +123,13 @@ function DisplayTable({ result, data }) {
               align: "center",
               line: { width: 1, color: "black" },
               fill: { color: "grey" },
-              font: { family: "Arial", size: 12, color: "white" },
+              font: { family: "Spoqa Han Sans", size: 12, color: "white" },
             },
             cells: {
               values: dataDisplay,
               align: "center",
               line: { color: "black", width: 1 },
-              font: { family: "Arial", size: 11, color: ["black"] },
+              font: { family: "Spoqa Han Sans", size: 11, color: ["black"] },
             },
           },
         ];
@@ -132,6 +138,9 @@ function DisplayTable({ result, data }) {
           title: {
             text: "모델 훈련 결과",
           },
+          autosize: false,
+          width: 700,
+          height: 500,
         };
 
         Plotly.newPlot("displayTable", tablePlotly, layout);
@@ -168,13 +177,13 @@ function DisplayTable({ result, data }) {
               align: "center",
               line: { width: 1, color: "black" },
               fill: { color: "grey" },
-              font: { family: "Arial", size: 12, color: "white" },
+              font: { family: "Spoqa Han Sans", size: 12, color: "white" },
             },
             cells: {
               values: dataDisplay,
               align: "center",
               line: { color: "black", width: 1 },
-              font: { family: "Arial", size: 11, color: ["black"] },
+              font: { family: "Spoqa Han Sans", size: 11, color: ["black"] },
             },
           },
         ];
@@ -183,6 +192,9 @@ function DisplayTable({ result, data }) {
           title: {
             text: "모델 평가 결과",
           },
+          autosize: false,
+          width: 700,
+          height: 500,
         };
 
         Plotly.newPlot("displayTable", tablePlotly, layout);
@@ -202,13 +214,13 @@ function DisplayTable({ result, data }) {
               align: "center",
               line: { width: 1, color: "black" },
               fill: { color: "grey" },
-              font: { family: "Arial", size: 12, color: "white" },
+              font: { family: "Spoqa Han Sans", size: 12, color: "white" },
             },
             cells: {
               values: dataDisplay,
               align: "center",
               line: { color: "black", width: 1 },
-              font: { family: "Arial", size: 11, color: ["black"] },
+              font: { family: "Spoqa Han Sans", size: 11, color: ["black"] },
             },
           },
         ];
@@ -217,6 +229,9 @@ function DisplayTable({ result, data }) {
           title: {
             text: "모델 예측 결과",
           },
+          autosize: false,
+          width: 700,
+          height: 500,
         };
 
         Plotly.newPlot("displayTable", tablePlotly, layout);

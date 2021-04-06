@@ -92,6 +92,8 @@ function BlockCoding(spinner) {
       }),
     }).then((res) => {
       console.log(res);
+      dispatch(getUserDataSet(user.uid));
+      dispatch(getUserModelSet(user.uid));
     });
   }
 
@@ -123,7 +125,6 @@ function BlockCoding(spinner) {
       store.getState().userDataSetId[0] === "prophet" ||
       store.getState().userDataSetId[0] === "predict"
     ) {
-      console.log(dataId);
       url = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/${dataId}`;
       fetch(url, {
         method: "GET",
@@ -236,7 +237,6 @@ function BlockCoding(spinner) {
           </Category>
         </React.Fragment>
       </BlocklyWorkspace>
-
       <div className="visualizationArea">
         <DisplayTable />
         <DisplayChart />

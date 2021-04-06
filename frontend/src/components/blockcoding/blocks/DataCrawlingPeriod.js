@@ -93,7 +93,6 @@ Blockly.JavaScript.DataCrawlingPeriod = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log("crawl", res);
       store.dispatch(
         setUserDataSetId([userDataSetName, res.user_data_set.user_data_set_id])
       );

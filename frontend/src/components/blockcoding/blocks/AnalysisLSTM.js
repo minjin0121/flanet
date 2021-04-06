@@ -46,7 +46,7 @@ Blockly.JavaScript.AnalysisLSTM = function (block) {
     })
       .then((res1) => res1.json())
       .then((res1) => {
-        store.dispatch(setUserDataSetId(["training", res1.result_training]));
+        store.dispatch(setUserDataSetId(["training", res1.training_model_id]));
         store.dispatch(setDisplayData(res1.result_training));
 
         url = "https://j4f002.p.ssafy.io/ml/tensorflow/evaluate";
@@ -64,7 +64,7 @@ Blockly.JavaScript.AnalysisLSTM = function (block) {
           .then((res2) => res2.json())
           .then((res2) => {
             store.dispatch(
-              setUserDataSetId(["evaluate", res2.result_evaluate])
+              setUserDataSetId(["evaluate", res1.training_model_id])
             );
             store.dispatch(setDisplayData(res2.result_evaluate));
 
@@ -86,7 +86,7 @@ Blockly.JavaScript.AnalysisLSTM = function (block) {
               .then((res3) => res3.json())
               .then((res3) => {
                 store.dispatch(
-                  setUserDataSetId(["predict", res3.result_predict])
+                  setUserDataSetId(["predict", res1.training_model_id])
                 );
                 store.dispatch(setDisplayData(res3.result_predict));
                 store.dispatch(setSpinner(false));

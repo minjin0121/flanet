@@ -106,7 +106,6 @@ function BlockCoding(spinner) {
       store.getState().userDataSetId[0].slice(-8) === "crawling" ||
       store.getState().userDataSetId[0] === "fileInput"
     ) {
-      console.log("IN");
       url = `https://j4f002.p.ssafy.io/api/easy/userdataset/file/${dataId}`;
       fetch(url, {
         method: "GET",
@@ -120,7 +119,11 @@ function BlockCoding(spinner) {
           alert("데이터를 다운받을 수 없습니다.");
         }
       });
-    } else if (store.getState().userDataSetId[0] === "prophet") {
+    } else if (
+      store.getState().userDataSetId[0] === "prophet" ||
+      store.getState().userDataSetId[0] === "predict"
+    ) {
+      console.log(dataId);
       url = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/${dataId}`;
       fetch(url, {
         method: "GET",
@@ -134,12 +137,14 @@ function BlockCoding(spinner) {
           alert("데이터를 다운받을 수 없습니다.");
         }
       });
+    } else {
+      alert("데이터를 다운받을 수 없습니다.");
     }
   };
 
   // 블록 작업실 초기화 버튼
   const reset = () => {
-    dispatch(setUserDataSetId(["initialize", 0]));
+    dispatch(setUserDataSetId(["initialize", -1]));
     dispatch(setDisplayData([]));
     dispatch(setDisplayCode(""));
     simpleWorkspace.current.workspace.clear();

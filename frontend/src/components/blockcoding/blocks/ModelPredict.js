@@ -57,7 +57,9 @@ Blockly.JavaScript.ModelPredict = function (block) {
         console.log("*** TENSORFLOW CNN PREDICT DONE ***");
         console.log(res.result_predict);
 
-        store.dispatch(setUserDataSetId(["predict", res.result_predict]));
+        store.dispatch(
+          setUserDataSetId(["predict", modelingStep[3].training_model_id])
+        );
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_predict));
         store.dispatch(setSpinner(false));

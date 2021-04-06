@@ -8,7 +8,7 @@ import {
 
 Blockly.Blocks.AnalysisLSTM = {
   init() {
-    this.appendDummyInput().appendField("LSTM 모델 - 훈련, 평가, 추론");
+    this.appendDummyInput().appendField("LSTM 모델 - 학습, 평가, 추론");
     this.appendDummyInput()
       .appendField("     추론 기간")
       .appendField(new Blockly.FieldTextInput("ex. 10, 20, 30"), "PERIOD")

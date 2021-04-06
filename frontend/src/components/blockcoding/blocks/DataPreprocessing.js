@@ -4,10 +4,9 @@ import { setDisplayCode, setSpinner } from "../../../actions/index";
 
 const dataPreprocessing = {
   type: "DataPreprocessing",
-  message0: "데이터 정제",
+  message0: "수집 데이터 정제",
   previousStatement: null,
-  nextStatement: null,
-  colour: "#47a644",
+  colour: "#f2b90c",
 };
 
 Blockly.Blocks.DataPreprocessing = {

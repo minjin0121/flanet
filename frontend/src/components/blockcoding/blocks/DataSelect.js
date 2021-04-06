@@ -52,7 +52,7 @@ Blockly.Blocks.DataSelect = {
     );
 
     this.appendDummyInput("user_data_set")
-      .appendField("STEP 1. 데이터 조회")
+      .appendField("저장된 데이터 선택")
       .appendField(dataSelect, "SELECT");
     this.setNextStatement(true, null);
     this.setColour("#47a644");

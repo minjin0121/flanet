@@ -10,7 +10,7 @@ import {
 
 Blockly.Blocks.ModelLSTMTraining = {
   init() {
-    this.appendDummyInput().appendField("STEP 3. LSTM 모델 학습");
+    this.appendDummyInput().appendField("LSTM 모델 학습");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour("#0db3d9");

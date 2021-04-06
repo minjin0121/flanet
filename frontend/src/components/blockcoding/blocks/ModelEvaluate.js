@@ -10,8 +10,8 @@ import {
 
 Blockly.Blocks.ModelEvaluate = {
   init() {
-    this.appendDummyInput().appendField("STEP 4. 학습 모델 평가");
-    this.setColour("#f2b90c");
+    this.appendDummyInput().appendField("학습 모델 평가");
+    this.setColour("#d92525");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
   },

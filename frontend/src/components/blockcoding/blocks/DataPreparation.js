@@ -14,12 +14,12 @@ Blockly.Blocks.DataPreparation = {
       ["6 : 4", "0.6"],
     ];
 
-    this.appendDummyInput().appendField("STEP 2. 데이터 준비");
+    this.appendDummyInput().appendField("모델링 데이터 정제");
     this.appendDummyInput()
       .appendField("     Data Set 비율 ")
       .appendField(new Blockly.FieldDropdown(options), "SELECT")
       .appendField(" (Train : Test)");
-    this.setColour("#47a644");
+    this.setColour("#f2b90c");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
   },

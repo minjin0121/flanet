@@ -41,7 +41,7 @@ Blockly.Blocks.ModelSelect = {
     );
 
     this.appendDummyInput()
-      .appendField("STEP 3. 학습 모델 선택")
+      .appendField("학습 모델 선택")
       .appendField(modelSelect, "SELECT");
     this.setColour("#0db3d9");
     this.setPreviousStatement(true, null);

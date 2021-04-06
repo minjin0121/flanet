@@ -5,7 +5,6 @@ import { applyMiddleware, createStore } from "redux";
 import { Provider } from "react-redux";
 import { composeWithDevTools } from "redux-devtools-extension";
 import ReduxThunk from "redux-thunk";
-import ReduxLogger from "redux-logger";
 import rootReducer from "./reducers";
 import App from "./App";
 import "./styles/index.scss";
@@ -24,7 +23,7 @@ firebase.initializeApp(firebaseConfig);
 
 const store = createStore(
   rootReducer,
-  composeWithDevTools(applyMiddleware(ReduxThunk, ReduxLogger))
+  composeWithDevTools(applyMiddleware(ReduxThunk))
 );
 
 ReactDOM.render(

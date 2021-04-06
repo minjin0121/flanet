@@ -1,6 +1,10 @@
 import Blockly from "blockly";
 import store from "../../../index.js";
-import { setModelingStep, setSpinner } from "../../../actions/index";
+import {
+  setModelingStep,
+  setSpinner,
+  setUserDataSetId,
+} from "../../../actions/index";
 
 const makeOptionsArray = function (userModelSets) {
   const options = [];
@@ -50,6 +54,7 @@ Blockly.JavaScript.ModelSelect = function (block) {
     store.dispatch(setSpinner(true));
     const trainingModelId = block.getFieldValue("SELECT");
 
+    store.dispatch(setUserDataSetId(["training", trainingModelId]));
     store.dispatch(setModelingStep({ training_model_id: trainingModelId }));
     store.dispatch(setSpinner(false));
   }, 7000);

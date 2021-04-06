@@ -73,7 +73,7 @@ Blockly.JavaScript.ModelCustomTraining = function (block) {
         console.log("*** TENSORFLOW CNN CUSTOM TRAINING DONE ***");
         console.log(res);
 
-        store.dispatch(setUserDataSetId(["training", res.result_training]));
+        store.dispatch(setUserDataSetId(["training", res.training_model_id]));
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));

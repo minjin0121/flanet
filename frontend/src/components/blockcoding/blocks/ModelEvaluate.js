@@ -41,9 +41,11 @@ Blockly.JavaScript.ModelEvaluate = function (block) {
       .then((res) => res.json())
       .then((res) => {
         console.log("*** TENSORFLOW CNN EVALUATE DONE ***");
-        console.log(res.result_evaluate);
+        console.log(res);
 
-        store.dispatch(setUserDataSetId(["evaluate", res.result_evaluate]));
+        store.dispatch(
+          setUserDataSetId(["evaluate", modelingStep[3].training_model_id])
+        );
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_evaluate));
         store.dispatch(setModelingStep(res));

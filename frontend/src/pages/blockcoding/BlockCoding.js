@@ -211,21 +211,21 @@ function BlockCoding(spinner) {
             <Block type="DataCrawlingRealTime" />
             <Block type="DataCrawlingPeriod" />
             <Block type="DataFileInput" />
-            <Block type="DataPreprocessing" />
+            <Block type="DataSelect" />
           </Category>
-          <Category name="데이터 분석">
+          <Category name="데이터 정제">
+            <Block type="DataPreprocessing" />
+            <Block type="DataPreparation" />
+          </Category>
+          <Category name="통합 딥러닝 솔루션">
             <Block type="AnalysisCNN" />
             <Block type="AnalysisLSTM" />
             <Block type="AnalysisProphet" />
           </Category>
-          <Category name="단계별 딥러닝 학습">
-            <Block type="DataSelect" />
-            <Block type="DataPreparation" />
+          <Category name="딥러닝 모델 학습">
             <Block type="ModelCNNTraining" />
             <Block type="ModelLSTMTraining" />
             <Block type="ModelSelect" />
-            <Block type="ModelEvaluate" />
-            <Block type="ModelPredict" />
           </Category>
           <Category name="딥러닝 모델 커스텀">
             <Block type="ModelCustomTraining" />
@@ -234,6 +234,10 @@ function BlockCoding(spinner) {
             <Block type="AveragePooling1D" />
             <Block type="Dropout" />
             <Block type="LSTM" />
+          </Category>
+          <Category name="모델 평가 및 데이터 추론">
+            <Block type="ModelEvaluate" />
+            <Block type="ModelPredict" />
           </Category>
         </React.Fragment>
       </BlocklyWorkspace>

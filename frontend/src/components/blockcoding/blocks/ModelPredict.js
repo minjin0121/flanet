@@ -9,7 +9,7 @@ import {
 
 Blockly.Blocks.ModelPredict = {
   init() {
-    this.appendDummyInput().appendField("STEP 5. 데이터 추론");
+    this.appendDummyInput().appendField("데이터 추론");
     this.appendDummyInput()
       .appendField("     추론 기간")
       .appendField(new Blockly.FieldTextInput("ex. 10, 20, 30"), "PERIOD")

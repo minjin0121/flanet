@@ -10,7 +10,7 @@ import {
 
 Blockly.Blocks.ModelCNNTraining = {
   init() {
-    this.appendDummyInput().appendField("STEP 3. CNN 모델 학습");
+    this.appendDummyInput().appendField("CNN 모델 학습");
     this.setPreviousStatement(true, null);
     this.setNextStatement(true, null);
     this.setColour("#0db3d9");

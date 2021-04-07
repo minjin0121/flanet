@@ -6,6 +6,9 @@ import {
   setModelingStep,
   setUserDataSetId,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 Blockly.Blocks.ModelCNNTraining = {
@@ -18,6 +21,12 @@ Blockly.Blocks.ModelCNNTraining = {
 };
 
 Blockly.JavaScript.ModelCNNTraining = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("학습 실패!"));
+    store.dispatch(setModalOpen(true));
+  };
+
   setTimeout(function () {
     store.dispatch(setSpinner(true));
     const user = JSON.parse(
@@ -53,6 +62,9 @@ Blockly.JavaScript.ModelCNNTraining = function (block) {
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));
         store.dispatch(setSpinner(false));
+      })
+      .catch(() => {
+        openErrorModal();
       });
   }, 7000);
 

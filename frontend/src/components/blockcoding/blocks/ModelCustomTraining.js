@@ -7,6 +7,9 @@ import {
   setDisplayData,
   setModelingStep,
   setUserDataSetId,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 const modelCustomTraining = {
@@ -32,6 +35,12 @@ Blockly.Blocks.ModelCustomTraining = {
 };
 
 Blockly.JavaScript.ModelCustomTraining = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("학습 실패!"));
+    store.dispatch(setModalOpen(true));
+  };
+
   setTimeout(function () {
     const user = JSON.parse(
       sessionStorage.getItem(
@@ -77,6 +86,9 @@ Blockly.JavaScript.ModelCustomTraining = function (block) {
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));
+      })
+      .catch(() => {
+        openErrorModal();
       });
   }, 7000);
 

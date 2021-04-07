@@ -124,3 +124,31 @@ export const setChart = function (data) {
     payload: data,
   };
 };
+
+export const setModalOpen = function (status) {
+  return {
+    type: "SET_MODAL_OPEN",
+    payload: status,
+  };
+};
+
+export const setModalTitle = function (status) {
+  return {
+    type: "SET_MODAL_TITLE",
+    payload: status,
+  };
+};
+
+export const setModalContent = function (status) {
+  return {
+    type: "SET_MODAL_CONTENT",
+    payload: status,
+  };
+};
+
+export const setModalPage = function (modalPage) {
+  return {
+    type: "SET_MODAL_PAGE",
+    payload: modalPage,
+  };
+};

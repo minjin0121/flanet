@@ -7,6 +7,9 @@ import {
   setModelingStep,
   setUserDataSetId,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 let file = "";
@@ -35,6 +38,12 @@ Blockly.Blocks.DataFileInput = {
 };
 
 Blockly.JavaScript.DataFileInput = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("데이터 저장 실패"));
+    store.dispatch(setModalOpen(true));
+  };
+
   store.dispatch(setSpinner(true));
 
   const user = JSON.parse(
@@ -79,7 +88,13 @@ Blockly.JavaScript.DataFileInput = function (block) {
           store.dispatch(setModelingStep({ raw_data: inputRawData }));
           store.dispatch(setDisplayData(res1.data_set));
           store.dispatch(setSpinner(false));
+        })
+        .catch(() => {
+          openErrorModal();
         });
+    })
+    .catch(() => {
+      openErrorModal();
     });
 
   return "DataFileInput";

@@ -10,6 +10,10 @@ const initialState = {
   modelingStep: [],
   spinner: false,
   chart: [],
+  modalOpen: false,
+  modalTitle: "",
+  modalContent: "",
+  modalPage: 0,
 };
 
 const rootReducer = (state = initialState, action) => {
@@ -44,6 +48,14 @@ const rootReducer = (state = initialState, action) => {
       return { ...state, spinner: action.payload };
     case "SET_CHART":
       return { ...state, chart: action.payload };
+    case "SET_MODAL_OPEN":
+      return { ...state, modalOpen: action.payload };
+    case "SET_MODAL_TITLE":
+      return { ...state, modalTitle: action.payload };
+    case "SET_MODAL_CONTENT":
+      return { ...state, modalContent: action.payload };
+    case "SET_MODAL_PAGE":
+      return { ...state, modalPage: action.payload };
     default:
       return state;
   }

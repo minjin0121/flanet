@@ -4,6 +4,9 @@ import {
   setDisplayCode,
   setModelingStep,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 Blockly.Blocks.DataPreparation = {
@@ -26,6 +29,12 @@ Blockly.Blocks.DataPreparation = {
 };
 
 Blockly.JavaScript.DataPreparation = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("학습 실패"));
+    store.dispatch(setModalOpen(true));
+  };
+
   setTimeout(function () {
     store.dispatch(setSpinner(true));
     const rate = block.getFieldValue("SELECT");
@@ -54,6 +63,9 @@ Blockly.JavaScript.DataPreparation = function (block) {
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setModelingStep(res));
         store.dispatch(setSpinner(false));
+      })
+      .catch(() => {
+        openErrorModal();
       });
   }, 5000);
 

@@ -7,6 +7,9 @@ import {
   setModelingStep,
   setUserDataSetId,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 const makeOptionsArray = function (userDataSets) {
@@ -60,6 +63,12 @@ Blockly.Blocks.DataSelect = {
 };
 
 Blockly.JavaScript.DataSelect = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("처리 실패!"));
+    store.dispatch(setModalOpen(true));
+  };
+
   store.dispatch(setSpinner(true));
 
   const userDataSetId = block.getFieldValue("SELECT");
@@ -78,7 +87,9 @@ Blockly.JavaScript.DataSelect = function (block) {
     .then((res) => {
       store.dispatch(setDisplayData(res.data_set));
     })
-    .catch();
+    .catch(() => {
+      openErrorModal();
+    });
 
   url = "https://j4f002.p.ssafy.io/ml/tensorflow/input";
 
@@ -93,14 +104,13 @@ Blockly.JavaScript.DataSelect = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log("*** TENSORFLOW DATA INPUT DONE ***");
-      console.log(res);
-
       store.dispatch(setDisplayCode(res.code));
       store.dispatch(setModelingStep(res));
       store.dispatch(setSpinner(false));
     })
-    .catch();
+    .catch(() => {
+      openErrorModal();
+    });
 
   return "DataSelect";
 };

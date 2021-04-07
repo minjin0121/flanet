@@ -33,6 +33,7 @@ import DisplayTable from "../../components/blockcoding/DisplayTable";
 import DisplayChart from "../../components/blockcoding/DisplayChart";
 import DisplayCode from "../../components/blockcoding/DisplayCode";
 import store from "../../index.js";
+import ModalNotification from "../../components/blockcoding/modals/WarningMdal";
 import {
   getDataList,
   getUserDataSet,
@@ -40,11 +41,29 @@ import {
   setDisplayCode,
   setDisplayData,
   setUserDataSetId,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../actions/index";
 
-function BlockCoding(spinner) {
+function BlockCoding({ spinner, modalOpen, modalTitle, modalContent }) {
   const [simpleWorkspace] = useState(React.createRef());
   const dispatch = useDispatch();
+
+  // 경고 모달 관련 함수
+  const closeModal = () => {
+    dispatch(setModalOpen(false));
+  };
+  const openSuccessModal = () => {
+    dispatch(setModalTitle("success!"));
+    dispatch(setModalContent("데이터를 성공적으로 다운받았습니다."));
+    dispatch(setModalOpen(true));
+  };
+  const openErrorModal = () => {
+    dispatch(setModalTitle("error!"));
+    dispatch(setModalContent("데이터를 다운받을 수 없습니다."));
+    dispatch(setModalOpen(true));
+  };
 
   const user = JSON.parse(
     sessionStorage.getItem(
@@ -61,8 +80,6 @@ function BlockCoding(spinner) {
     dispatch(setDisplayCode(""));
   }, []);
 
-  console.log("spinner", spinner.spinner);
-
   // 실행 버튼
   function execute() {
     BlocklyJS.workspaceToCode(simpleWorkspace.current.workspace);
@@ -76,9 +93,6 @@ function BlockCoding(spinner) {
     );
     const workspaceXmlText = Blockly.Xml.domToPrettyText(workspaceXml);
 
-    console.log(dataId, workspaceXmlText);
-    console.log(typeof workspaceXmlText);
-
     const url = "https://j4f002.p.ssafy.io/api/data/userdataset/xml/update";
 
     fetch(url, {
@@ -90,11 +104,19 @@ function BlockCoding(spinner) {
         user_data_set_id: dataId,
         user_data_set_xml: workspaceXmlText,
       }),
-    }).then((res) => {
-      console.log(res);
-      dispatch(getUserDataSet(user.uid));
-      dispatch(getUserModelSet(user.uid));
-    });
+    })
+      .then((res) => {
+        dispatch(getUserDataSet(user.uid));
+        dispatch(getUserModelSet(user.uid));
+        dispatch(setModalTitle("success!"));
+        dispatch(setModalContent("저장되었습니다."));
+        dispatch(setModalOpen(true));
+      })
+      .catch(() => {
+        dispatch(setModalTitle("error!"));
+        dispatch(setModalContent("저장을 할 수 없습니다."));
+        dispatch(setModalOpen(true));
+      });
   }
 
   // 데이터 다운 버튼
@@ -104,42 +126,56 @@ function BlockCoding(spinner) {
     let url = "";
 
     // 이거 기점으로 다운로드 링크 설정해줄게요 !
-    if (
-      store.getState().userDataSetId[0].slice(-8) === "crawling" ||
-      store.getState().userDataSetId[0] === "fileInput"
-    ) {
-      url = `https://j4f002.p.ssafy.io/api/easy/userdataset/file/${dataId}`;
-      fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then((res) => {
-        if (res.status === 200) {
-          location.href = url;
-        } else {
-          alert("데이터를 다운받을 수 없습니다.");
-        }
-      });
-    } else if (
-      store.getState().userDataSetId[0] === "prophet" ||
-      store.getState().userDataSetId[0] === "predict"
-    ) {
-      url = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/${dataId}`;
-      fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }).then((res) => {
-        if (res.status === 200) {
-          location.href = url;
-        } else {
-          alert("데이터를 다운받을 수 없습니다.");
-        }
-      });
-    } else {
-      alert("데이터를 다운받을 수 없습니다.");
+    try {
+      if (
+        store.getState().userDataSetId[0].slice(-8) === "crawling" ||
+        store.getState().userDataSetId[0] === "fileInput"
+      ) {
+        url = `https://j4f002.p.ssafy.io/api/easy/userdataset/file/${dataId}`;
+        fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => {
+            if (res.status === 200) {
+              location.href = url;
+              openSuccessModal();
+            } else {
+              openErrorModal();
+            }
+          })
+          .catch(() => {
+            openErrorModal();
+          });
+      } else if (
+        store.getState().userDataSetId[0] === "prophet" ||
+        store.getState().userDataSetId[0] === "predict"
+      ) {
+        url = `https://j4f002.p.ssafy.io/csv/download/userdatapredict/${dataId}`;
+        fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => {
+            if (res.status === 200) {
+              location.href = url;
+              openSuccessModal();
+            } else {
+              openErrorModal();
+            }
+          })
+          .catch(() => {
+            openErrorModal();
+          });
+      } else {
+        openErrorModal();
+      }
+    } catch (err) {
+      openErrorModal();
     }
   };
 
@@ -149,6 +185,9 @@ function BlockCoding(spinner) {
     dispatch(setDisplayData([]));
     dispatch(setDisplayCode(""));
     simpleWorkspace.current.workspace.clear();
+    dispatch(setModalTitle("success!"));
+    dispatch(setModalContent("초기화되었습니다."));
+    dispatch(setModalOpen(true));
   };
 
   return (
@@ -246,14 +285,28 @@ function BlockCoding(spinner) {
         <DisplayChart />
         <DisplayCode />
       </div>
+      <React.Fragment>
+        <ModalNotification
+          open={modalOpen}
+          close={closeModal}
+          title={modalTitle}
+          content={modalContent}
+        ></ModalNotification>
+      </React.Fragment>
     </div>
   );
 }
 
 BlockCoding.propTypes = {
   spinner: PropTypes.bool,
+  modalOpen: PropTypes.bool,
+  modalTitle: PropTypes.string,
+  modalContent: PropTypes.string,
 };
 
 export default connect((state) => ({
   spinner: state.spinner,
+  modalOpen: state.modalOpen,
+  modalTitle: state.modalTitle,
+  modalContent: state.modalContent,
 }))(BlockCoding);

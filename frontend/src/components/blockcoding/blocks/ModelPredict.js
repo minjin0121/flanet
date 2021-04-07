@@ -5,6 +5,9 @@ import {
   setDisplayData,
   setUserDataSetId,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 Blockly.Blocks.ModelPredict = {
@@ -23,6 +26,12 @@ Blockly.Blocks.ModelPredict = {
 };
 
 Blockly.JavaScript.ModelPredict = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("추론 실패!"));
+    store.dispatch(setModalOpen(true));
+  };
+
   setTimeout(function () {
     store.dispatch(setSpinner(true));
     const periods = block.getFieldValue("PERIOD");
@@ -33,9 +42,6 @@ Blockly.JavaScript.ModelPredict = function (block) {
     );
     const modelingStep = store.getState().modelingStep;
     const code = store.getState().displayCode;
-
-    console.log("*** MODEL PREDICT ***");
-    console.log(modelingStep);
 
     const url = "https://j4f002.p.ssafy.io/ml/tensorflow/predict";
 
@@ -54,15 +60,15 @@ Blockly.JavaScript.ModelPredict = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("*** TENSORFLOW CNN PREDICT DONE ***");
-        console.log(res.result_predict);
-
         store.dispatch(
           setUserDataSetId(["predict", modelingStep[3].training_model_id])
         );
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_predict));
         store.dispatch(setSpinner(false));
+      })
+      .catch(() => {
+        openErrorModal();
       });
   }, 40000);
 

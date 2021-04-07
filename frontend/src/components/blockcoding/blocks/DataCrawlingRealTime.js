@@ -5,6 +5,9 @@ import {
   setDisplayData,
   setDisplayCode,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 const makeOptionsArray = function (dataLists) {
@@ -44,6 +47,12 @@ Blockly.Blocks.DataCrawlingRealTime = {
 };
 
 Blockly.JavaScript.DataCrawlingRealTime = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("데이터 수집 실패"));
+    store.dispatch(setModalOpen(true));
+  };
+
   store.dispatch(setSpinner(true));
 
   const dataId = block.getFieldValue("DATA");
@@ -77,7 +86,6 @@ Blockly.JavaScript.DataCrawlingRealTime = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
       store.dispatch(
         setUserDataSetId([userDataSetName, res.user_data_set.user_data_set_id])
       );
@@ -87,6 +95,9 @@ Blockly.JavaScript.DataCrawlingRealTime = function (block) {
         ])
       );
       store.dispatch(setSpinner(false));
+    })
+    .catch(() => {
+      openErrorModal();
     });
 
   const codeurl = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}`;
@@ -96,8 +107,10 @@ Blockly.JavaScript.DataCrawlingRealTime = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log("crawl", res);
       store.dispatch(setDisplayCode(res.code));
+    })
+    .catch(() => {
+      openErrorModal();
     });
 
   return "실시간 데이터 수집";

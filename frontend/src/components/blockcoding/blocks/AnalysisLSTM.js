@@ -4,6 +4,9 @@ import {
   setUserDataSetId,
   setDisplayData,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 Blockly.Blocks.AnalysisLSTM = {
@@ -20,6 +23,12 @@ Blockly.Blocks.AnalysisLSTM = {
 };
 
 Blockly.JavaScript.AnalysisLSTM = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("LSTM 학습에 실패했습니다!"));
+    store.dispatch(setModalOpen(true));
+  };
+
   setTimeout(function () {
     store.dispatch(setSpinner(true));
     const dataId = store.getState().userDataSetId[1];
@@ -90,8 +99,17 @@ Blockly.JavaScript.AnalysisLSTM = function (block) {
                 );
                 store.dispatch(setDisplayData(res3.result_predict));
                 store.dispatch(setSpinner(false));
+              })
+              .catch(() => {
+                openErrorModal();
               });
+          })
+          .catch(() => {
+            openErrorModal();
           });
+      })
+      .catch(() => {
+        openErrorModal();
       });
   }, 7000);
 

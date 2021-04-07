@@ -6,6 +6,9 @@ import {
   setModelingStep,
   setUserDataSetId,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 Blockly.Blocks.ModelCNNTraining = {
@@ -18,6 +21,12 @@ Blockly.Blocks.ModelCNNTraining = {
 };
 
 Blockly.JavaScript.ModelCNNTraining = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("학습 실패!"));
+    store.dispatch(setModalOpen(true));
+  };
+
   setTimeout(function () {
     store.dispatch(setSpinner(true));
     const user = JSON.parse(
@@ -27,9 +36,6 @@ Blockly.JavaScript.ModelCNNTraining = function (block) {
     );
     const modelingStep = store.getState().modelingStep;
     const code = store.getState().displayCode;
-
-    console.log("*** CNN TRAINING ***");
-    console.log(modelingStep);
 
     const url = "https://j4f002.p.ssafy.io/ml/tensorflow/cnn/training";
 
@@ -45,14 +51,14 @@ Blockly.JavaScript.ModelCNNTraining = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("*** TENSORFLOW CNN TRAINING DONE ***");
-        console.log(res);
-
         store.dispatch(setUserDataSetId(["training", res.training_model_id]));
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_training));
         store.dispatch(setModelingStep(res));
         store.dispatch(setSpinner(false));
+      })
+      .catch(() => {
+        openErrorModal();
       });
   }, 7000);
 

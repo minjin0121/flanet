@@ -4,6 +4,9 @@ import {
   setDisplayCode,
   setModelingStep,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 Blockly.Blocks.DataPreparation = {
@@ -26,14 +29,17 @@ Blockly.Blocks.DataPreparation = {
 };
 
 Blockly.JavaScript.DataPreparation = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("학습 실패"));
+    store.dispatch(setModalOpen(true));
+  };
+
   setTimeout(function () {
     store.dispatch(setSpinner(true));
     const rate = block.getFieldValue("SELECT");
     const modelingStep = store.getState().modelingStep;
     const code = store.getState().displayCode;
-
-    console.log("*** DATA PREPARATION ***");
-    console.log(modelingStep);
 
     const url = "https://j4f002.p.ssafy.io/ml/tensorflow/preprocess";
 
@@ -49,11 +55,12 @@ Blockly.JavaScript.DataPreparation = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("*** TENSORFLOW DATA PREPROCESSING DONE ***");
-        console.log(res);
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setModelingStep(res));
         store.dispatch(setSpinner(false));
+      })
+      .catch(() => {
+        openErrorModal();
       });
   }, 5000);
 

@@ -8,6 +8,9 @@ import {
   setModelingStep,
   setUserDataSetId,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 const makeOptionsArray = function (dataLists) {
@@ -45,7 +48,7 @@ Blockly.Blocks.DataCrawlingPeriod = {
       .appendField(dataSelect, "DATA");
     this.appendDummyInput()
       .appendField("    기간 : ")
-      .appendField(new Blockly.FieldDate("2020-01-01"), "STARTDATE")
+      .appendField(new Blockly.FieldDate("2018-03-01"), "STARTDATE")
       .appendField("부터")
       .appendField(new Blockly.FieldDate(today), "ENDDATE")
       .appendField("까지");
@@ -56,6 +59,12 @@ Blockly.Blocks.DataCrawlingPeriod = {
 };
 
 Blockly.JavaScript.DataCrawlingPeriod = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("데이터 수집 실패"));
+    store.dispatch(setModalOpen(true));
+  };
+
   store.dispatch(setSpinner(true));
 
   const dataId = block.getFieldValue("DATA");
@@ -109,6 +118,9 @@ Blockly.JavaScript.DataCrawlingPeriod = function (block) {
 
       store.dispatch(setModelingStep({ raw_data: inputRawData }));
       store.dispatch(setSpinner(false));
+    })
+    .catch(() => {
+      openErrorModal();
     });
 
   url = `https://j4f002.p.ssafy.io/api/code/crawling/${dataId}/period`;
@@ -119,6 +131,9 @@ Blockly.JavaScript.DataCrawlingPeriod = function (block) {
     .then((res) => res.json())
     .then((res) => {
       store.dispatch(setDisplayCode(res.code));
+    })
+    .catch(() => {
+      openErrorModal();
     });
 
   return "DataCrawlingPeriod";

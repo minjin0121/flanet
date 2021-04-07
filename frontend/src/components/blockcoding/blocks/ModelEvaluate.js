@@ -6,6 +6,9 @@ import {
   setModelingStep,
   setUserDataSetId,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 Blockly.Blocks.ModelEvaluate = {
@@ -18,13 +21,16 @@ Blockly.Blocks.ModelEvaluate = {
 };
 
 Blockly.JavaScript.ModelEvaluate = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("평가 실패!"));
+    store.dispatch(setModalOpen(true));
+  };
+
   setTimeout(function () {
     store.dispatch(setSpinner(true));
     const modelingStep = store.getState().modelingStep;
     const code = store.getState().displayCode;
-
-    console.log("*** MODEL EVALUATE *** ");
-    console.log(modelingStep);
 
     const url = "https://j4f002.p.ssafy.io/ml/tensorflow/evaluate";
 
@@ -40,9 +46,6 @@ Blockly.JavaScript.ModelEvaluate = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("*** TENSORFLOW CNN EVALUATE DONE ***");
-        console.log(res);
-
         store.dispatch(
           setUserDataSetId(["evaluate", modelingStep[3].training_model_id])
         );
@@ -50,6 +53,9 @@ Blockly.JavaScript.ModelEvaluate = function (block) {
         store.dispatch(setDisplayData(res.result_evaluate));
         store.dispatch(setModelingStep(res));
         store.dispatch(setSpinner(false));
+      })
+      .catch(() => {
+        openErrorModal();
       });
   }, 30000);
 

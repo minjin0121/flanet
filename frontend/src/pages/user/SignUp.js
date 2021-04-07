@@ -22,7 +22,6 @@ function SignUp() {
         history.push("/signin");
       })
       .catch((error) => {
-        console.log(error.code);
         if (error.code === "auth/invalid-email") {
           alert("이메일 형식을 맞춰주세요.");
         } else if (error.code === "auth/weak-password") {

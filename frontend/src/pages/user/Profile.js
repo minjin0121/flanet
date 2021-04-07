@@ -1,18 +1,38 @@
 import ScheduleIcon from "@material-ui/icons/Schedule";
+import PropTypes from "prop-types";
 import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 import BorderColorIcon from "@material-ui/icons/BorderColor";
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, connect } from "react-redux";
 import {
   getUserDataSet,
   getDataList,
   getUserModelSet,
   getUserPredictDataSet,
   getModelList,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../actions/index";
+import ModalNotification from "../../components/blockcoding/modals/WarningMdal";
 
-function Profile() {
+function Profile({ modalOpen, modalTitle, modalContent }) {
   const dispatch = useDispatch();
+
+  const closeModal = () => {
+    dispatch(setModalOpen(false));
+  };
+  const openSuccessModal = () => {
+    dispatch(setModalTitle("success!"));
+    dispatch(setModalContent("변경되었습니다!"));
+    dispatch(setModalOpen(true));
+  };
+  const openErrorModal = () => {
+    dispatch(setModalTitle("error!"));
+    dispatch(setModalContent("실패했습니다!"));
+    dispatch(setModalOpen(true));
+  };
+
   const user = JSON.parse(
     sessionStorage.getItem(
       `firebase:authUser:${process.env.REACT_APP_FIREBASE_APIKEY}:[DEFAULT]`
@@ -52,11 +72,16 @@ function Profile() {
         training_model_id: modelXmlSets.modelXmlList[idx].training_model_id,
         training_model_name: editModelNameFix,
       }),
-    }).then(() => {
-      dispatch(getUserModelSet(user.uid));
-      editModelName[idx] = false;
-      setEditModelName([...editModelName]);
-    });
+    })
+      .then(() => {
+        dispatch(getUserModelSet(user.uid));
+        editModelName[idx] = false;
+        setEditModelName([...editModelName]);
+        openSuccessModal();
+      })
+      .catch(() => {
+        openErrorModal();
+      });
   };
 
   const setEditPredictList = function (idx) {
@@ -82,11 +107,16 @@ function Profile() {
           predictXmlSets.predictXmlList[idx].user_data_predict_id,
         user_data_predict_name: editPredictNameFix,
       }),
-    }).then(() => {
-      dispatch(getUserPredictDataSet(user.uid));
-      editPredictName[idx] = false;
-      setEditPredictName([...editPredictName]);
-    });
+    })
+      .then(() => {
+        dispatch(getUserPredictDataSet(user.uid));
+        editPredictName[idx] = false;
+        setEditPredictName([...editPredictName]);
+        openSuccessModal();
+      })
+      .catch(() => {
+        openErrorModal();
+      });
   };
 
   const setEditDataList = function (idx) {
@@ -111,12 +141,16 @@ function Profile() {
           userDataXmlSets.userDataXmlList[idx].user_data_set_xml,
         user_data_set_name: editDataNameFix,
       }),
-    }).then(() => {
-      console.log(predictXmlSets.predictXmlList);
-      dispatch(getUserDataSet(user.uid));
-      editDataName[idx] = false;
-      setEditDataName([...editDataName]);
-    });
+    })
+      .then(() => {
+        dispatch(getUserDataSet(user.uid));
+        editDataName[idx] = false;
+        setEditDataName([...editDataName]);
+        openSuccessModal();
+      })
+      .catch(() => {
+        openErrorModal();
+      });
   };
 
   // History 크롤링
@@ -784,8 +818,28 @@ function Profile() {
             ))}
         </div>
       </div>
+      <React.Fragment>
+        <ModalNotification
+          open={modalOpen}
+          close={closeModal}
+          title={modalTitle}
+          content={modalContent}
+        ></ModalNotification>
+      </React.Fragment>
     </div>
   );
 }
 
-export default Profile;
+Profile.propTypes = {
+  modalOpen: PropTypes.bool,
+  modalTitle: PropTypes.string,
+  modalContent: PropTypes.string,
+};
+
+// export default Profile;
+
+export default connect((state) => ({
+  modalOpen: state.modalOpen,
+  modalTitle: state.modalTitle,
+  modalContent: state.modalContent,
+}))(Profile);

@@ -6,6 +6,9 @@ import {
   setDisplayData,
   setDisplayCode,
   setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
 } from "../../../actions/index";
 
 Blockly.Blocks.AnalysisProphet = {
@@ -59,10 +62,19 @@ Blockly.JavaScript.AnalysisProphet = function (block) {
         })
           .then((data) => data.json())
           .then((data) => {
-            console.log("block result data is", data);
             store.dispatch(setDisplayData(data));
             store.dispatch(setSpinner(false));
+          })
+          .catch(() => {
+            store.dispatch(setModalTitle("error!"));
+            store.dispatch(setModalContent("분석 및 추론 실패."));
+            store.dispatch(setModalOpen(true));
           });
+      })
+      .catch(() => {
+        store.dispatch(setModalTitle("error!"));
+        store.dispatch(setModalContent("분석 및 추론 실패."));
+        store.dispatch(setModalOpen(true));
       });
   }, 500);
 

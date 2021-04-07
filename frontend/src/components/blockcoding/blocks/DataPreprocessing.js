@@ -1,6 +1,12 @@
 import Blockly from "blockly/core";
 import store from "../../../index.js";
-import { setDisplayCode, setSpinner } from "../../../actions/index";
+import {
+  setDisplayCode,
+  setSpinner,
+  setModalOpen,
+  setModalTitle,
+  setModalContent,
+} from "../../../actions/index";
 
 const dataPreprocessing = {
   type: "DataPreprocessing",
@@ -16,6 +22,12 @@ Blockly.Blocks.DataPreprocessing = {
 };
 
 Blockly.JavaScript.DataPreprocessing = function (block) {
+  const openErrorModal = () => {
+    store.dispatch(setModalTitle("error!"));
+    store.dispatch(setModalContent("전처리 실패"));
+    store.dispatch(setModalOpen(true));
+  };
+
   setTimeout(function () {
     store.dispatch(setSpinner(true));
     let codeurl = "";
@@ -41,6 +53,9 @@ Blockly.JavaScript.DataPreprocessing = function (block) {
       .then((res) => {
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setSpinner(false));
+      })
+      .catch(() => {
+        openErrorModal();
       });
   }, 500);
 

@@ -87,7 +87,7 @@ Blockly.JavaScript.ModelCustomTraining = function (block) {
       .catch(() => {
         openErrorModal();
       });
-  }, 7000);
+  }, 1500);
 
   return "ModelCustomTraining";
 };
@@ -167,7 +167,7 @@ const listCreateMutator = {
 
 const listCreateHelper = function () {
   this.getInput("EMPTY").insertFieldAt(0, createTrainingPlus(), "PLUS");
-  this.updateShape_(1);
+  this.updateShape_(2);
 };
 
 Blockly.Extensions.registerMutator(

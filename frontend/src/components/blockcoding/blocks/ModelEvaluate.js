@@ -57,7 +57,7 @@ Blockly.JavaScript.ModelEvaluate = function (block) {
       .catch(() => {
         openErrorModal();
       });
-  }, 30000);
+  }, 15000);
 
   return "ModelEvaluate";
 };

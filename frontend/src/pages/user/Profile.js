@@ -51,7 +51,7 @@ function Profile({ modalOpen, modalTitle, modalContent }) {
   const setEditModelList = function (idx) {
     const a = [];
 
-    if (modelXmlSets.modelXmlList[idx].training_model_user_id === "MANAGER") {
+    if (modelXmlSets.modelXmlList[idx].user_id === "MANAGER") {
       alert("기본 모델은 이름을 지정할 수 없습니다.");
       return;
     }

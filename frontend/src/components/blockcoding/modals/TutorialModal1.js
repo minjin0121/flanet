@@ -29,35 +29,7 @@ const TutorialModal1 = ({ open, close }) => {
             </button>
           </header>
           <main>
-            <div className="main-title">
-              <h1>
-                FlaNET에 오신 것을 환영합니다.
-                <br />
-              </h1>
-              <span className="h3-none">
-                FlaNET은 머신 러닝에 관심이 있는 모두를 위한 블록 코딩
-                서비스입니다!
-                <br />
-                튜토리얼을 통해 머신러닝을 학습해보아요!{" "}
-                <img
-                  src={`${process.env.PUBLIC_URL}/img/flanet_logo.png`}
-                  className="tutorial-img-1-1"
-                  alt="home_block"
-                />
-              </span>
-            </div>
             <br />
-            <h1 className="main-title">FlaNET</h1>
-            <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_1_1.png`}
-              className="tutorial-img-1-1"
-              alt="home_block"
-            />
-            <br />
-            <br />
-            <div className="main-title h3-none"></div>
-            <br />
-
             <div className="main-title">
               <h1>
                 1. 블록코딩을 위한 Workspace!

@@ -48,7 +48,7 @@ Blockly.Blocks.DataCrawlingPeriod = {
       .appendField(dataSelect, "DATA");
     this.appendDummyInput()
       .appendField("    기간 : ")
-      .appendField(new Blockly.FieldDate("2020-01-01"), "STARTDATE")
+      .appendField(new Blockly.FieldDate("2018-03-01"), "STARTDATE")
       .appendField("부터")
       .appendField(new Blockly.FieldDate(today), "ENDDATE")
       .appendField("까지");

@@ -41,9 +41,6 @@ Blockly.JavaScript.DataPreparation = function (block) {
     const modelingStep = store.getState().modelingStep;
     const code = store.getState().displayCode;
 
-    console.log("*** DATA PREPARATION ***");
-    console.log(modelingStep);
-
     const url = "https://j4f002.p.ssafy.io/ml/tensorflow/preprocess";
 
     fetch(url, {
@@ -58,8 +55,6 @@ Blockly.JavaScript.DataPreparation = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("*** TENSORFLOW DATA PREPROCESSING DONE ***");
-        console.log(res);
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setModelingStep(res));
         store.dispatch(setSpinner(false));

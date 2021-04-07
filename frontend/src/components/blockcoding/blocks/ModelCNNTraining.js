@@ -37,9 +37,6 @@ Blockly.JavaScript.ModelCNNTraining = function (block) {
     const modelingStep = store.getState().modelingStep;
     const code = store.getState().displayCode;
 
-    console.log("*** CNN TRAINING ***");
-    console.log(modelingStep);
-
     const url = "https://j4f002.p.ssafy.io/ml/tensorflow/cnn/training";
 
     fetch(url, {
@@ -54,9 +51,6 @@ Blockly.JavaScript.ModelCNNTraining = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("*** TENSORFLOW CNN TRAINING DONE ***");
-        console.log(res);
-
         store.dispatch(setUserDataSetId(["training", res.training_model_id]));
         store.dispatch(setDisplayCode(`${code}\n${res.code}`));
         store.dispatch(setDisplayData(res.result_training));

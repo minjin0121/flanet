@@ -62,7 +62,6 @@ Blockly.JavaScript.AnalysisProphet = function (block) {
         })
           .then((data) => data.json())
           .then((data) => {
-            console.log("block result data is", data);
             store.dispatch(setDisplayData(data));
             store.dispatch(setSpinner(false));
           })

@@ -43,9 +43,6 @@ Blockly.JavaScript.ModelPredict = function (block) {
     const modelingStep = store.getState().modelingStep;
     const code = store.getState().displayCode;
 
-    console.log("*** MODEL PREDICT ***");
-    console.log(modelingStep);
-
     const url = "https://j4f002.p.ssafy.io/ml/tensorflow/predict";
 
     fetch(url, {
@@ -63,9 +60,6 @@ Blockly.JavaScript.ModelPredict = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("*** TENSORFLOW CNN PREDICT DONE ***");
-        console.log(res.result_predict);
-
         store.dispatch(
           setUserDataSetId(["predict", modelingStep[3].training_model_id])
         );

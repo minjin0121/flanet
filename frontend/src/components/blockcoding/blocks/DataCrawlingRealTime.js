@@ -86,7 +86,6 @@ Blockly.JavaScript.DataCrawlingRealTime = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log(res);
       store.dispatch(
         setUserDataSetId([userDataSetName, res.user_data_set.user_data_set_id])
       );
@@ -108,7 +107,6 @@ Blockly.JavaScript.DataCrawlingRealTime = function (block) {
   })
     .then((res) => res.json())
     .then((res) => {
-      console.log("crawl", res);
       store.dispatch(setDisplayCode(res.code));
     })
     .catch(() => {

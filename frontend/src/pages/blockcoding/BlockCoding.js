@@ -80,8 +80,6 @@ function BlockCoding({ spinner, modalOpen, modalTitle, modalContent }) {
     dispatch(setDisplayCode(""));
   }, []);
 
-  console.log("spinner", spinner.spinner);
-
   // 실행 버튼
   function execute() {
     BlocklyJS.workspaceToCode(simpleWorkspace.current.workspace);
@@ -94,9 +92,6 @@ function BlockCoding({ spinner, modalOpen, modalTitle, modalContent }) {
       simpleWorkspace.current.workspace
     );
     const workspaceXmlText = Blockly.Xml.domToPrettyText(workspaceXml);
-
-    console.log(dataId, workspaceXmlText);
-    console.log(typeof workspaceXmlText);
 
     const url = "https://j4f002.p.ssafy.io/api/data/userdataset/xml/update";
 
@@ -111,7 +106,6 @@ function BlockCoding({ spinner, modalOpen, modalTitle, modalContent }) {
       }),
     })
       .then((res) => {
-        console.log(res);
         dispatch(getUserDataSet(user.uid));
         dispatch(getUserModelSet(user.uid));
         dispatch(setModalTitle("success!"));

@@ -32,9 +32,6 @@ Blockly.JavaScript.ModelEvaluate = function (block) {
     const modelingStep = store.getState().modelingStep;
     const code = store.getState().displayCode;
 
-    console.log("*** MODEL EVALUATE *** ");
-    console.log(modelingStep);
-
     const url = "https://j4f002.p.ssafy.io/ml/tensorflow/evaluate";
 
     fetch(url, {
@@ -49,9 +46,6 @@ Blockly.JavaScript.ModelEvaluate = function (block) {
     })
       .then((res) => res.json())
       .then((res) => {
-        console.log("*** TENSORFLOW CNN EVALUATE DONE ***");
-        console.log(res);
-
         store.dispatch(
           setUserDataSetId(["evaluate", modelingStep[3].training_model_id])
         );

@@ -14,7 +14,6 @@ const WarningMdal = ({ open, close, title, content }) => {
           </header>
           <main className="modal-size-2">
             <h3> {content}</h3>
-            {/* <div className ="main-title"></div> */}
           </main>
           <footer>
             <button className="close" onClick={close}>

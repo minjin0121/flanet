@@ -143,7 +143,6 @@ function Profile({ modalOpen, modalTitle, modalContent }) {
       }),
     })
       .then(() => {
-        console.log(predictXmlSets.predictXmlList);
         dispatch(getUserDataSet(user.uid));
         editDataName[idx] = false;
         setEditDataName([...editDataName]);

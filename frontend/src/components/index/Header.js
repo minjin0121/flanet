@@ -45,27 +45,29 @@ function Header({ modalPage }) {
   const tutorialClose4 = () => {
     setTutorialOpen4(false);
   };
-  const pageNumber = store.getState().modalPage;
 
-  const modalChangeTime = 350;
+  setTimeout(function () {
+    const pageNumber = store.getState().modalPage;
 
-  if (pageNumber === 1) {
-    setTimeout(() => setTutorialOpen0(true), modalChangeTime);
-    dispatch(setModalPage(0));
-  } else if (pageNumber === 2) {
-    setTimeout(() => setTutorialOpen1(true), modalChangeTime);
-    dispatch(setModalPage(0));
-  } else if (pageNumber === 3) {
-    setTimeout(() => setTutorialOpen2(true), modalChangeTime);
-    dispatch(setModalPage(0));
-  } else if (pageNumber === 4) {
-    setTimeout(() => setTutorialOpen3(true), modalChangeTime);
-    dispatch(setModalPage(0));
-  } else if (pageNumber === 5) {
-    setTimeout(() => setTutorialOpen4(true), modalChangeTime);
-    dispatch(setModalPage(0));
-  }
+    const modalChangeTime = 250;
 
+    if (pageNumber === 1) {
+      setTimeout(() => setTutorialOpen0(true), modalChangeTime);
+      dispatch(setModalPage(0));
+    } else if (pageNumber === 2) {
+      setTimeout(() => setTutorialOpen1(true), modalChangeTime);
+      dispatch(setModalPage(0));
+    } else if (pageNumber === 3) {
+      setTimeout(() => setTutorialOpen2(true), modalChangeTime);
+      dispatch(setModalPage(0));
+    } else if (pageNumber === 4) {
+      setTimeout(() => setTutorialOpen3(true), modalChangeTime);
+      dispatch(setModalPage(0));
+    } else if (pageNumber === 5) {
+      setTimeout(() => setTutorialOpen4(true), modalChangeTime);
+      dispatch(setModalPage(0));
+    }
+  }, 200);
   return (
     <header className="header">
       <div className="defaultBackgroundNavColor" />
@@ -109,7 +111,7 @@ function Header({ modalPage }) {
   );
 }
 Header.propTypes = {
-  modalPage: PropTypes.number,
+  modalPage: PropTypes.any,
 };
 
 export default Header;

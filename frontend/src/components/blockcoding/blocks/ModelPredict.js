@@ -70,7 +70,7 @@ Blockly.JavaScript.ModelPredict = function (block) {
       .catch(() => {
         openErrorModal();
       });
-  }, 40000);
+  }, 16000);
 
   return "ModelPredict";
 };

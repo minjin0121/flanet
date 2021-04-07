@@ -44,7 +44,7 @@ const TutorialModal1 = ({ open, close }) => {
             </div>
             <br />
             <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_1_2.png`}
+              src={`${process.env.PUBLIC_URL}/img/tutorial_1_2.PNG`}
               className="tutorial-img-1-3"
               alt="home_block"
             />

@@ -39,7 +39,7 @@ const TutorialModal2 = ({ open, close }) => {
             <h2>1. 데이터 수집 블록 코딩</h2>
             <br />
             <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_2_1.png`}
+              src={`${process.env.PUBLIC_URL}/img/tutorial_2_1.PNG`}
               className="tutorial-img-1-1"
               alt="home_block"
             />
@@ -83,7 +83,7 @@ const TutorialModal2 = ({ open, close }) => {
             <h2>2. 데이터 정제 블록 코딩</h2>
             <br />
             <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_2_3.png`}
+              src={`${process.env.PUBLIC_URL}/img/tutorial_2_3.PNG`}
               className="tutorial-img-1-1"
               alt="home_block"
             />
@@ -99,7 +99,7 @@ const TutorialModal2 = ({ open, close }) => {
             <h2>3. 통합 딥러닝 솔루션</h2>
             <br />
             <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_2_4.png`}
+              src={`${process.env.PUBLIC_URL}/img/tutorial_2_4.PNG`}
               className="tutorial-img-1-1"
               alt="home_block"
             />

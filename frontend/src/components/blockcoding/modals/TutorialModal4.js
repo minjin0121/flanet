@@ -74,7 +74,7 @@ const TutorialModal4 = ({ open, close }) => {
             <br />
             <br />
             <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_4_3.png`}
+              src={`${process.env.PUBLIC_URL}/img/tutorial_4_3.PNG`}
               className="tutorial-img-1-1"
               alt="이미지"
             />
@@ -88,7 +88,7 @@ const TutorialModal4 = ({ open, close }) => {
             <br />
             <br />
             <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_4_4.png`}
+              src={`${process.env.PUBLIC_URL}/img/tutorial_4_4.PNG`}
               className="tutorial-img-1-3"
               alt="home_block"
             />

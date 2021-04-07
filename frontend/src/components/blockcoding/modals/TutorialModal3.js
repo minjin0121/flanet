@@ -32,7 +32,7 @@ const TutorialModal3 = ({ open, close }) => {
             <h2>4. 딥러닝 모델 학습</h2>
             <br />
             <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_3_1.png`}
+              src={`${process.env.PUBLIC_URL}/img/tutorial_3_1.PNG`}
               className="tutorial-img-1-1"
               alt="home_block"
             />
@@ -50,7 +50,7 @@ const TutorialModal3 = ({ open, close }) => {
             <h2>5. 딥러닝 모델 커스텀</h2>
             <br />
             <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_3_2.png`}
+              src={`${process.env.PUBLIC_URL}/img/tutorial_3_2.PNG`}
               className="tutorial-img-1-1"
               alt="home_block"
             />
@@ -78,7 +78,7 @@ const TutorialModal3 = ({ open, close }) => {
             <h2>6. 모델 평가 및 데이터 추론</h2>
             <br />
             <img
-              src={`${process.env.PUBLIC_URL}/img/tutorial_3_4.png`}
+              src={`${process.env.PUBLIC_URL}/img/tutorial_3_4.PNG`}
               className="tutorial-img-1-3"
               alt="home_block"
             />

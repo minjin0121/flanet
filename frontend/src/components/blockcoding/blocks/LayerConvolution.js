@@ -5,7 +5,7 @@ Blockly.Blocks.Conv1D = {
     this.appendDummyInput().appendField("Convolution Layer");
     this.appendDummyInput()
       .appendField("     필터 크기 ")
-      .appendField(new Blockly.FieldTextInput("128"), "filters");
+      .appendField(new Blockly.FieldTextInput("64"), "filters");
     this.appendDummyInput()
       .appendField("     커널 크기 ")
       .appendField(new Blockly.FieldTextInput("3"), "kernel_size");
